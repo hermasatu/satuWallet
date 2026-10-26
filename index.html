@@ -272,7 +272,7 @@ table.rk-l td .inp.ti{border-color:transparent;background:transparent;padding:4p
 <script>
 /* ===== KONFIGURASI ===== */
 const API_URL = "https://vfryxascchrmfikjpoxd.supabase.co/functions/v1/hyper-service"; // Supabase Edge Function (versi KartuKu)
-const APP_VERSION = "kartuku-sb 2026.10.29"; // dipakai widget Catatan dev
+const APP_VERSION = "kartuku-sb 2026.10.30"; // dipakai widget Catatan dev
 const GCID = "GANTI_DENGAN_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // OAuth Web Client ID (sama dengan Script Property GOOGLE_CLIENT_ID)
 // Autentikasi: login email + password -> token sesi disimpan di localStorage (kunci "SESSION_TOKEN"). Tidak ada rahasia di file ini.
 
@@ -1648,4 +1648,23 @@ const PG_X=['#15803d','#be123c','#7c3aed','#0369a1','#a16207','#9d174d'];
 function pgSync(){Object.keys(PG_).filter(k=>k.startsWith('U:')).forEach(k=>delete PG_[k]);const nn=PG_.NONE;delete PG_.NONE;cpurps().forEach((x,i)=>{PG_['U:'+x.name]=[x.name,PG_X[i%PG_X.length]]});PG_.NONE=nn}
 
 boot();
+
+/* ---------- DN-261026-224634-219: catatan yang sudah dikerjakan Claude otomatis pindah ke "Selesai" ----------
+   Cara kerja: setiap rilis, Claude menambahkan ID catatan yang selesai ke DN_DONE di bawah ini.
+   Saat aplikasi dibuka (atau tombol "Sinkron status" diklik), catatan berstatus Baru/Dikerjakan yang ID-nya ada di daftar
+   diubah ke Selesai + versi + catatan penyelesaian. Catatan Ditolak / sudah Selesai tidak disentuh. */
+const DN_DONE = {"DN-261026-163910-424":["kartuku-sb 2026.10.28","Klik Abaikan tidak melompat ke atas (scroll & kotak ringkasan dipertahankan)."],"DN-261026-163809-142":["kartuku-sb 2026.10.28","Penampil PDF: zoom 50–400% (tombol / Ctrl+scroll) + lapisan teks agar bisa disalin."],"DN-261026-163446-180":["kartuku-sb 2026.10.28","API key format AQ. diterima + Memori AI di Supabase."],"DN-261026-191702-151":["kartuku-sb 2026.10.29","Batas AI 10×/6 jam dihapus."],"DN-261026-191857-412":["kartuku-sb 2026.10.29","Poin & Miles, nama program bebas."],"DN-261026-191635-204":["kartuku-sb 2026.10.29","Centang & aksi massal baris ringkasan + konfirmasi."],"DN-261026-191528-293":["kartuku-sb 2026.10.29","Header lebih ramping + pie chart kategori."],"DN-261026-191411-791":["kartuku-sb 2026.10.29","Konfirmasi Yakin / Tidak Jadi untuk langkah krusial."],"DN-261026-191334-439":["kartuku-sb 2026.10.29","Hierarki tampilan baru; info halaman di pojok kanan bawah → lompat ke PDF."],"DN-261026-191235-483":["kartuku-sb 2026.10.29","Kartu ringkas klik-untuk-edit + warna status."],"DN-261026-191122-256":["kartuku-sb 2026.10.29","Jenis paling kiri, kategori setelah nama (autofill dari nama), split di kanan nominal."],"DN-261026-190847-899":["kartuku-sb 2026.10.29","Bagian split menjorok & lebih kecil."],"DN-261026-180443-521":["kartuku-sb 2026.10.29","Semua jenis boleh + / − (refund di kategori sama)."],"DN-261026-180334-540":["kartuku-sb 2026.10.29","Tagihan lalu & total pembayaran jadi baris Tagihan / Pembayaran."],"DN-261026-180205-413":["kartuku-sb 2026.10.29","Geser urutan baris (seret / tombol naik-turun)."],"DN-261026-175934-253":["kartuku-sb 2026.10.29","Tambah Jenis manual."],"DN-261026-175324-493":["kartuku-sb 2026.10.29","Tambah Tujuan manual."],"DN-261026-190647-821":["kartuku-sb 2026.10.29","Tambah & hapus kategori dari pilihan kategori."],"DN-261026-174940-769":["kartuku-sb 2026.10.29","Tombol Pintar tidak crash lagi."],"DN-261026-224634-219":["kartuku-sb 2026.10.30","Catatan yang sudah dikerjakan otomatis pindah ke Selesai (daftar DN_DONE di index.html, jalan saat aplikasi dibuka) + tombol \"Sinkron status\"."]};
+let dnAutoBusy=false;
+async function dnAutoDone(silent){if(dnAutoBusy)return 0;dnAutoBusy=true;let n=0;
+ try{const L=DN.list&&!DN.loading?DN.list:((await call('api_devNotes',[])).notes||[]);
+  const todo=L.filter(x=>x.ID&&DN_DONE[x.Code]&&x.Status!='DONE'&&x.Status!='REJECTED');
+  for(const x of todo){const [v,r]=DN_DONE[x.Code];try{await call('api_setDevNoteStatus',[uuid(),[x.ID],'DONE',{version:v,resolution:x.Resolution||r}]);x.Status='DONE';x.Done_Version=v;if(!x.Resolution)x.Resolution=r;n++}catch(e){}}
+  if(DN.list&&L!==DN.list)DN.list=null;
+  if(n&&!silent)toast(n+' catatan dipindah ke Selesai');else if(!silent)toast('Semua status sudah sesuai');
+  if(n&&tab=='n')render()}catch(e){if(!silent)toast(e.message)}finally{dnAutoBusy=false}return n}
+(function(){const ld=dnLoad;dnLoad=async function(){await ld.apply(this,arguments);const n=await dnAutoDone(true);if(n){toast(n+' catatan yang sudah dikerjakan dipindah ke Selesai');if(tab=='n')render()}}})();
+const dnAutoOnce=()=>dnAutoDone(true).then(n=>{if(n){toast(n+' catatan yang sudah dikerjakan dipindah ke Selesai');if(tab=='n'){DN.list=null;dnLoad()}}});
+(function w(k){if(loaded&&ME)return dnAutoOnce();if(k<40)setTimeout(()=>w(k+1),1500)})(0);
+(function(){const b=boot;boot=async function(){const r=await b.apply(this,arguments);setTimeout(()=>{if(ME)dnAutoOnce()},2500);return r}})();
+(function(){const v=dnv;dnv=function(){const h=v.apply(this,arguments);return h.replace('<div class="dn-tabs"','<div style="display:flex;justify-content:flex-end;margin:0 0 6px"><button class="bg2 text-xs" onclick="dnAutoDone().then(()=>{DN.list=null;dnLoad()})" title="Pindahkan catatan yang sudah dikerjakan ke Selesai">Sinkron status</button></div><div class="dn-tabs"')}})();
 </script></body></html>
