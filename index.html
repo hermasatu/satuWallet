@@ -78,7 +78,14 @@ h2.text-xl{font-size:1.2rem}.hero .text-4xl{font-size:2rem;line-height:1.1}
  .pane-d{position:sticky;top:64px;align-self:start}.pane-t{max-height:calc(100vh - 140px);overflow:auto;padding-right:4px}}
 .pdfv{position:relative;overflow:auto;max-height:68vh;background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:6px}
 @media(min-width:768px){.pdfv{max-height:calc(100vh - 140px)}}
-.pgv{position:relative;background:#fff;margin-bottom:8px;border-radius:6px;overflow:hidden;box-shadow:var(--sh)}
+.pgv{position:relative;background:#fff;margin:0 auto 8px;border-radius:6px;overflow:hidden;box-shadow:var(--sh);max-width:none}
+.pdfz{position:sticky;top:-6px;left:0;z-index:5;display:flex;align-items:center;gap:6px;margin:-6px -6px 8px;padding:6px 8px;background:color-mix(in srgb,var(--cd) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--bd)}
+.pdfz button{border:1px solid var(--bd);background:var(--cd);color:var(--fg);border-radius:6px;padding:3px 8px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;cursor:pointer}.pdfz button:hover{border-color:var(--mu)}
+.pdfzv{font-size:12.5px;font-weight:700;min-width:42px;text-align:center;font-variant-numeric:tabular-nums}.pdfzh{font-size:11.5px;color:var(--mu);margin-left:auto}
+.imgv{margin:0 auto}
+.textLayer{position:absolute;inset:0;overflow:hidden;line-height:1;text-align:initial;-webkit-text-size-adjust:none;text-size-adjust:none;forced-color-adjust:none;transform-origin:0 0;z-index:2}
+.textLayer span,.textLayer br{color:transparent;position:absolute;white-space:pre;cursor:text;transform-origin:0% 0%}
+.textLayer ::selection{background:rgba(37,99,235,.3)}.textLayer .endOfContent{display:block;position:absolute;inset:100% 0 0;z-index:-1;cursor:default;user-select:none}
 .pgn{position:absolute;top:6px;right:8px;font-size:.65rem;background:rgba(0,0,0,.55);color:#fff;border-radius:99px;padding:1px 7px;z-index:2}
 .txtv{font-size:.7rem;white-space:pre-wrap;word-break:break-word}
 .vr{border:1px solid var(--bd);border-radius:12px;padding:.4rem;margin-bottom:.4rem;background:var(--cd)}.vr-s{background:var(--pl)}
@@ -228,7 +235,7 @@ table.rk-l td .inp.ti{border-color:transparent;background:transparent;padding:4p
 <script>
 /* ===== KONFIGURASI ===== */
 const API_URL = "https://vfryxascchrmfikjpoxd.supabase.co/functions/v1/hyper-service"; // Supabase Edge Function (versi KartuKu)
-const APP_VERSION = "kartuku-sb 2026.10.27"; // dipakai widget Catatan dev
+const APP_VERSION = "kartuku-sb 2026.10.28"; // dipakai widget Catatan dev
 const GCID = "GANTI_DENGAN_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // OAuth Web Client ID (sama dengan Script Property GOOGLE_CLIENT_ID)
 // Autentikasi: login email + password -> token sesi disimpan di localStorage (kunci "SESSION_TOKEN"). Tidak ada rahasia di file ini.
 
@@ -310,7 +317,7 @@ async function viewProof(id){
   const url=URL.createObjectURL(new Blob([u],{type:r.mime}));if(w)w.location=url;else location.href=url}
  catch(e){if(w)w.close();toast(e.message)}}
 const seg=()=>`<div class="sg mb-3">${[['c','Kartu'],['d','Dompet'],['k','Kategori'],['p','Pintar'],['s','Pengaturan']].map(([k,l])=>`<button class="${G==k?'on':''}" onclick="G='${k}';render()">${l}</button>`).join('')}</div>`;
-function mvs(){return `<h2 class="font-extrabold text-xl mb-2">Kelola</h2>${seg()}<div class="cd p-4"><b>Akun</b><div class="text-sm mt-1">${ME?E(ME.name||''):''}</div><div class="mu text-xs">${ME?E(ME.email||''):''}</div><div class="mu text-xs mt-2">Login: ${ME&&ME.google?'Google tertaut':'email + password'}${ME&&ME.hasPassword===false?' · belum ada password':''}. Data akun ini terpisah dari pengguna lain.</div><div class="flex gap-2 flex-wrap items-center mt-3">${ME&&!ME.google?'<div id="g_link"></div>':''}<button class="bg2" onclick="pwf()">${ME&&ME.hasPassword===false?'Buat password':'Ganti password'}</button><button class="bg2 rd" onclick="logout(true)">Keluar / Logout</button></div></div><div class="cd p-4 mt-3"><b class="flex items-center gap-2">${ic('bulb',18)} AI · Gemini</b><div class="mu text-xs mt-1">Dipakai untuk membaca PDF tagihan / struk / mutasi dan saran kategori.</div><div id="ai_box"></div></div><div class="cd p-4 mt-3"><div class="flex items-center justify-between gap-2"><b class="flex items-center gap-2">${ic('note',18)} Catatan developer</b><button class="bg2" onclick="go('n')">Buka</button></div><div class="mu text-xs mt-1">Catat bug / permintaan lewat tombol <b>Catatan Dev</b> di pojok kiri bawah (Alt+N). Tiap catatan dapat ID DN-…</div></div><div class="cd p-4 mt-3"><b>Koneksi</b><div class="mu text-xs break-all mt-1">Supabase · ${E(API_URL)}</div><div class="mu text-xs">Versi ${APP_VERSION}</div></div>`}
+function mvs(){return `<h2 class="font-extrabold text-xl mb-2">Kelola</h2>${seg()}<div class="cd p-4"><b>Akun</b><div class="text-sm mt-1">${ME?E(ME.name||''):''}</div><div class="mu text-xs">${ME?E(ME.email||''):''}</div><div class="mu text-xs mt-2">Login: ${ME&&ME.google?'Google tertaut':'email + password'}${ME&&ME.hasPassword===false?' · belum ada password':''}. Data akun ini terpisah dari pengguna lain.</div><div class="flex gap-2 flex-wrap items-center mt-3">${ME&&!ME.google?'<div id="g_link"></div>':''}<button class="bg2" onclick="pwf()">${ME&&ME.hasPassword===false?'Buat password':'Ganti password'}</button><button class="bg2 rd" onclick="logout(true)">Keluar / Logout</button></div></div><div class="cd p-4 mt-3"><b class="flex items-center gap-2">${ic('bulb',18)} AI · Gemini</b><div class="mu text-xs mt-1">Dipakai untuk membaca PDF tagihan / struk / mutasi dan saran kategori.</div><div id="ai_box"></div></div><div class="cd p-4 mt-3"><b class="flex items-center gap-2">${ic('brain',18)} Memori AI</b><div class="mu text-xs mt-1">Konteks yang ikut dikirim ke AI setiap kali membaca tagihan / struk / mutasi dan menyarankan kategori. Tulis hal yang perlu AI tahu tentang keuanganmu — pola dari transaksimu juga dipelajari otomatis, jadi makin lama makin pintar.</div><div id="mem_box"></div></div><div class="cd p-4 mt-3"><div class="flex items-center justify-between gap-2"><b class="flex items-center gap-2">${ic('note',18)} Catatan developer</b><button class="bg2" onclick="go('n')">Buka</button></div><div class="mu text-xs mt-1">Catat bug / permintaan lewat tombol <b>Catatan Dev</b> di pojok kiri bawah (Alt+N). Tiap catatan dapat ID DN-…</div></div><div class="cd p-4 mt-3"><b>Koneksi</b><div class="mu text-xs break-all mt-1">Supabase · ${E(API_URL)}</div><div class="mu text-xs">Versi ${APP_VERSION}</div></div>`}
 
 /* ===== BACKEND: callBackend + actionId ===== */
 // payload = array argumen fungsi backend, mis. callBackend('api_saveTransaction',[actionId, tx])
@@ -359,7 +366,7 @@ async function reload(){try{const r=await call('api_bootstrap',[1]);S={...S,acco
 function bell(){const n=S.N.filter(x=>x.daysTo<=3).length;$('#bc').textContent=n||''}
 function go(t){tab=t;render();scrollTo(0,0)}
 function nav(p){if(p=='up')return upT();if(p=='tr'){Q.r=true;go('t')}else if(p=='tt'){Q.t=true;go('t')}else go(p)}
-function render(){if(!loaded)return;const v=$('#v');if(R&&R.viewerEl)R.vsc=R.viewerEl.scrollTop;v.classList.toggle('wide',(tab=='b'&&!!R&&R.st=='prev')||tab=='r');v.innerHTML=({h:home,t:tv,b:bv,m:mv,r:rkv,n:dnv}[tab]||home)();railSync();bell();if(tab=='h')charts();if(tab=='b'&&R)mountRekon();if(tab=='m'&&G=='s'&&$('#g_link'))gBtn('#g_link',gLink);if(tab=='m'&&G=='s')aiLoad()}
+function render(){if(!loaded)return;const v=$('#v');if(R&&R.viewerEl)R.vsc=R.viewerEl.scrollTop;const same=render._t===tab,sy=scrollY,vt=$('#vtab'),vts=vt?vt.scrollTop:0;render._t=tab;if(same){v.style.minHeight=v.offsetHeight+'px';clearTimeout(render._h);render._h=setTimeout(()=>{v.style.minHeight=''},2500)}v.classList.toggle('wide',(tab=='b'&&!!R&&R.st=='prev')||tab=='r');v.innerHTML=({h:home,t:tv,b:bv,m:mv,r:rkv,n:dnv}[tab]||home)();railSync();bell();if(tab=='h')charts();if(tab=='b'&&R)mountRekon();if(tab=='m'&&G=='s'&&$('#g_link'))gBtn('#g_link',gLink);if(tab=='m'&&G=='s'){aiLoad();memLoad()}if(same){scrollTo(0,sy);const v2=$('#vtab');if(v2)v2.scrollTop=vts}}
 
 /* ===== BERANDA ===== */
 function home(){
@@ -791,10 +798,10 @@ function pmapH(){const P=R.P,n={TRX:0,SUM:0,INFO:0,REJ:0};P.items.forEach(x=>n[x
 function pasteToPrev(){R.bpd=R.bpd||'';const o={kind:'paste',lines:pasteCells(R.ptxt).lines};R.o=o;const el=document.createElement('div');el.className='pdfv';el.innerHTML=`<pre class="txtv">${E(R.ptxt.slice(0,60000))}</pre>`;R.viewerEl=el;R.st='prev';R.pane='t';R.aiUsed=false;render();pvM()}
 /* Ringkasan & baris ditolak di tabel verifikasi (Modul C: tidak ada baris yang hilang diam-diam) */
 function sumRowsH(){const s=R.sumRows||[];if(!s.length&&!R.runBad)return '';const rej=s.filter(x=>x.st=='REJ'&&!x.ok);
- return `<details class="cd p-3 mt-2 text-sm" ${rej.length?'open':''}><summary class="font-semibold cursor-pointer">Baris ringkasan & di luar transaksi (${s.length})${rej.length?` · <span class="rd">${rej.length} ditolak perlu ditinjau</span>`:''}</summary>
+ return `<details class="cd p-3 mt-2 text-sm" ${rej.length||R.sumOpen?'open':''} ontoggle="R.sumOpen=this.open"><summary class="font-semibold cursor-pointer">Baris ringkasan & di luar transaksi (${s.length})${rej.length?` · <span class="rd">${rej.length} ditolak perlu ditinjau</span>`:''}</summary>
  ${s.map(x=>`<div class="flex justify-between gap-2 items-center mt-1" style="border-bottom:1px solid var(--bd);padding:3px 0"><div class="min-w-0 text-xs" style="word-break:break-word"><span class="pill ${x.st=='REJ'&&!x.ok?'pa':'nw2'}">${x.st=='SUM'?x.kind:x.st=='REJ'?(x.ok?'diabaikan':'ditolak'):'info'}</span> ${E(x.label||x.raw||x.text||'')}${x.why||x.reason?' <i class="mu">— '+E(x.why||x.reason)+'</i>':''}</div><div class="flex gap-1 items-center whitespace-nowrap">${x.a!=null?`<b class="text-xs">${x.neg?'−':''}${rp(x.a)}</b>`:''}${x.st=='REJ'&&!x.ok||x.kind=='FEE'||x.kind=='INTEREST'?`<button class="bg2" onclick="sumToRow(${x.rid})">Jadikan transaksi</button>`:''}${x.st=='REJ'&&!x.ok?`<button class="bg2" onclick="sumOk(${x.rid})">Abaikan</button>`:''}</div></div>`).join('')}
  ${R.runBad?`<div class="text-xs rd mt-1">${R.runBad} baris: saldo berjalan bank ≠ hitungan aplikasi — periksa baris bertanda.</div>`:''}</details>`}
-function sumOk(id){const x=(R.sumRows||[]).find(z=>z.rid==id);if(x)x.ok=1;render()}
+function sumOk(id){const x=(R.sumRows||[]).find(z=>z.rid==id);if(x)x.ok=1;R.sumOpen=true;render()}
 function sumToRow(id){const x=(R.sumRows||[]).find(z=>z.rid==id);if(!x)return;const rw=mkRow({dt:R.bpd||TODAY(),bk:R.bpd||TODAY(),m:x.label||x.raw||'Baris tagihan',a:x.a||0,cr:!!x.neg});R.rows.push(rw);R.sumRows=R.sumRows.filter(z=>z!==x);render();toast('Ditambahkan ke tabel — lengkapi tanggal / nominal / jenisnya')}
 function importMeta(){const s=R.sumRows||[];return{source:R.importSrc||(R.aiUsed?'PDF_AI':R.o&&R.o.kind=='pdf'?'PDF_LOCAL':R.o&&R.o.kind=='sheet'?'SHEET':'MANUAL'),
  summaryRows:s.filter(x=>x.st=='SUM').map(x=>({label:x.label||x.raw,amount:x.a==null?null:(x.neg?-x.a:x.a),kind:x.kind})),rejectedRows:s.filter(x=>x.st=='REJ'&&!x.ok).map(x=>({text:x.raw||x.text,reason:x.why||x.reason})),
@@ -911,14 +918,22 @@ async function aiRead(o,f,hadPw){ // teks dikirim bila ada; PDF scan / gambar di
  return await call('api_aiExtract',[p])}
 async function buildViewer(o){
  const el=document.createElement('div');el.className='pdfv';
- if(o.kind=='img')el.innerHTML=`<img src="${o.url}" alt="Dokumen" style="width:100%;border-radius:8px;display:block">`;
+ if(o.kind=='img'){el._z=1;el.innerHTML=`${zoomBar()}<div class="imgv"><img src="${o.url}" alt="Dokumen" style="width:100%;border-radius:8px;display:block"></div>`;wireZoom(el);}
  else if(o.kind=='sheet')el.innerHTML=`<pre class="txtv">${E(o.lines.slice(0,300).join('\n'))}</pre>`;
- else{for(let i=1;i<=o.doc.numPages;i++){const d=document.createElement('div');d.className='pgv';d.dataset.p=i;d.style.aspectRatio='1/1.414';d.innerHTML=`<span class="pgn">Hal. ${i}</span>`;el.appendChild(d)}
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done=1;drawPage(o.doc,e.target,el)}}),{root:el,rootMargin:'500px'});
-  el.querySelectorAll('.pgv').forEach(d=>io.observe(d))}
+ else{el._doc=o.doc;el._z=1;el.innerHTML=zoomBar();for(let i=1;i<=o.doc.numPages;i++){const d=document.createElement('div');d.className='pgv';d.dataset.p=i;d.style.aspectRatio='1/1.414';d.innerHTML=`<span class="pgn">Hal. ${i}</span>`;el.appendChild(d)}
+  pdfObserve(el);wireZoom(el)}
  return el}
-async function drawPage(doc,d,el){try{const pg=await doc.getPage(+d.dataset.p),v0=pg.getViewport({scale:1}),k=Math.max(280,el.clientWidth-14)/v0.width,dpr=Math.min(2,window.devicePixelRatio||1),vp=pg.getViewport({scale:k*dpr}),c=document.createElement('canvas');
- c.width=vp.width;c.height=vp.height;c.style.cssText='width:100%;display:block';d.style.aspectRatio=v0.width+'/'+v0.height;await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;d.appendChild(c)}catch(e){}}
+const zoomBar=()=>`<div class="pdfz" role="toolbar" aria-label="Zoom dokumen"><button type="button" data-z="-" title="Perkecil (Ctrl + scroll)" aria-label="Perkecil">${ic('zout',16)}</button><span class="pdfzv">100%</span><button type="button" data-z="+" title="Perbesar (Ctrl + scroll)" aria-label="Perbesar">${ic('zin',16)}</button><button type="button" data-z="0" title="Kembali pas lebar">Pas lebar</button><span class="pdfzh">blok teks untuk menyalin</span></div>`;
+function wireZoom(el){el.querySelector('.pdfz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const z=el._z||1;pdfZoom(el,b.dataset.z=='0'?1:b.dataset.z=='+'?z+.25:z-.25)});
+ el.addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();pdfZoom(el,(el._z||1)*(e.deltaY<0?1.1:1/1.1))},{passive:false})}
+function pdfObserve(el){if(el._io)el._io.disconnect();el._io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done=1;drawPage(el._doc,e.target,el)}}),{root:el,rootMargin:'500px'});el.querySelectorAll('.pgv').forEach(d=>el._io.observe(d))}
+function pdfZoom(el,z){z=Math.round(Math.min(4,Math.max(.5,z))*100)/100;if(z==el._z)return;const rx=el.scrollWidth>el.clientWidth?(el.scrollLeft+el.clientWidth/2)/el.scrollWidth:.5,ry=(el.scrollTop+el.clientHeight/2)/Math.max(1,el.scrollHeight);el._z=z;el.querySelector('.pdfzv').textContent=Math.round(z*100)+'%';
+ const img=el.querySelector('.imgv');if(img){img.style.width=(z*100)+'%'}
+ else{const base=Math.max(280,el.clientWidth-14);el.querySelectorAll('.pgv').forEach(d=>{d.querySelectorAll('canvas,.textLayer').forEach(x=>x.remove());delete d.dataset.done;d.style.width=Math.round(base*z)+'px'});pdfObserve(el)}
+ el.scrollTop=ry*el.scrollHeight-el.clientHeight/2;el.scrollLeft=rx*el.scrollWidth-el.clientWidth/2}
+async function drawPage(doc,d,el){try{const pg=await doc.getPage(+d.dataset.p),v0=pg.getViewport({scale:1}),z=el._z||1,k=Math.max(280,el.clientWidth-14)*z/v0.width,dpr=Math.min(2.5,window.devicePixelRatio||1),vp=pg.getViewport({scale:k*dpr}),c=document.createElement('canvas');
+ c.width=vp.width;c.height=vp.height;c.style.cssText='width:100%;display:block';d.style.width=Math.round(v0.width*k)+'px';d.style.aspectRatio=v0.width+'/'+v0.height;await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;if((el._z||1)!=z)return;d.appendChild(c);
+ try{const tc=await pg.getTextContent(),tl=document.createElement('div');tl.className='textLayer';tl.style.setProperty('--scale-factor',k);d.appendChild(tl);const t=pdfjsLib.renderTextLayer({textContentSource:tc,container:tl,viewport:pg.getViewport({scale:k}),textDivs:[]});if(t&&t.promise)await t.promise}catch(e){}}catch(e){}}
 function pdfGo(n){const el=R&&R.viewerEl,d=el&&el.querySelector('.pgv[data-p="'+n+'"]');if(d)el.scrollTop=d.offsetTop-4}
 function pane(p){R.pane=p;const s=$('#spl');if(s)s.dataset.p=p;document.querySelectorAll('.mtog button').forEach((b,i)=>b.classList.toggle('on',(i==0?'d':'t')==p))}
 function showDoc(n){pane('d');setTimeout(()=>pdfGo(n),80)}
@@ -1075,7 +1090,7 @@ async function ddo(t,id){const card=t=='c',mode=document.querySelector('input[na
 if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; // worker juga dimuat lewat <script> di <head> sebagai cadangan (mode main-thread)
 document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=ic(e.dataset.i,+e.dataset.s||20));
 addEventListener('paste',e=>{if(!FM||!FM.sp||!$('#m .ov'))return;const f=[...((e.clipboardData&&e.clipboardData.files)||[])].find(x=>/^image\//.test(x.type));if(f){e.preventDefault();smart(f)}});
-Object.assign(P,{table:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/>'});
+Object.assign(P,{zin:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/>',zout:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/>',brain:'<path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M12 5v13"/>',table:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/>'});
 
 /* =====================================================================
  * TAMBAHAN booq.id: sidebar menu, Rekap Tagihan (1 halaman besar),
@@ -1345,14 +1360,14 @@ function aiH(c) {
   const st = c.hasKey ? `<span class="pill dn">Aktif</span> <span class="mu text-xs">${c.source == 'app' ? 'diisi dari aplikasi' : 'dari Supabase Secrets'} · ${E(c.masked)}${c.autoModel || c.model ? ' · model ' + E(c.model || c.autoModel) : ''}</span>` : `<span class="pill up">Belum diatur</span> <span class="mu text-xs">fitur baca PDF/struk dengan AI belum bisa dipakai</span>`;
   if (!c.canEdit) return `<div class="mt-1">${st}</div><p class="mu text-xs mt-2">Hanya akun pemilik yang bisa mengubah API key.</p>`;
   return `<div class="mt-1">${st}</div>
-   <p class="lb">API key Gemini</p><input id="ai_k" class="inp" type="password" autocomplete="off" placeholder="${c.hasKey ? 'Kosongkan bila tidak diganti' : 'Tempel API key (AIza…)'}">
+   <p class="lb">API key Gemini</p><input id="ai_k" class="inp" type="password" autocomplete="off" spellcheck="false" maxlength="300" placeholder="${c.hasKey ? 'Kosongkan bila tidak diganti' : 'Tempel API key (AIza…)'}">
    <p class="lb">Model (opsional — kosong = pilih otomatis)</p><input id="ai_m" class="inp" value="${E(c.model)}" placeholder="mis. gemini-flash-latest">
    <div class="flex gap-2 flex-wrap mt-3"><button class="bt" id="ai_s" onclick="aiSave()">Simpan & cek</button>${c.hasKey ? '<button class="bg2" onclick="aiTest(this)">Tes AI</button>' : ''}${c.source == 'app' ? '<button class="bg2 rd" onclick="aiRemove()">Hapus key</button>' : ''}</div>
    <p class="mu text-xs mt-2">Buat key gratis di <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="text-decoration:underline">aistudio.google.com/apikey</a>. Key disimpan di server (terkunci) dan tidak ditampilkan utuh lagi. Batas pemakaian AI: ${c.limit}× per ±6 jam.</p>`;
 }
 async function aiSave() {
   const b = $('#ai_s'), k = $('#ai_k').value.trim(), m = $('#ai_m').value.trim(); b.disabled = true; b.textContent = 'Mengecek…';
-  try { const r = await call('api_setAiConfig', [{ key: k, model: m }]); toast(r.models ? 'API key valid · ' + r.models.length + ' model tersedia' : 'Tersimpan'); aiLoad(); }
+  try { const r = await call('api_setAiConfig', [{ key: k, model: m }]); toast(r.models && r.models.length ? 'API key valid · ' + r.models.length + ' model tersedia' : r.model ? 'API key valid · model ' + r.model : 'Tersimpan'); aiLoad(); }
   catch (e) { toast(e.message); b.disabled = false; b.textContent = 'Simpan & cek'; }
 }
 async function aiTest(b) { b.disabled = true; b.textContent = 'Menguji…'; try { const r = await call('api_testAi', []); toast('AI jalan · model ' + r.model); } catch (e) { toast(e.message); } b.disabled = false; b.textContent = 'Tes AI'; }
@@ -1360,6 +1375,22 @@ async function aiRemove() { if (!confirm('Hapus API key Gemini dari aplikasi?'))
 
 $('#rail_v').textContent=APP_VERSION;document.querySelectorAll('#rail [data-i],.nv [data-i]').forEach(e => e.innerHTML = ic(e.dataset.i, +e.dataset.s || 18));
 setTimeout(() => { dnFab(); dnFlush(); }, 1500);
+
+
+/* ===== Memori AI (Kelola → Pengaturan) ===== */
+const MEMK={PROFIL:'Profil',PREFERENSI:'Preferensi',ATURAN:'Aturan',FAKTA:'Fakta'};let MEM=null;
+async function memLoad(){const el=$('#mem_box');if(!el)return;el.innerHTML='<p class="mu text-sm mt-2">Memuat…</p>';try{MEM=await call('api_aiMemory',[]);memRender()}catch(e){el.innerHTML=`<p class="rd text-sm">${E(e.message)}</p>`}}
+function memRender(){const el=$('#mem_box');if(!el||!MEM)return;const L=MEM.memories||[];
+ el.innerHTML=`<div class="flex gap-2 mt-3 flex-wrap"><select id="mem_k" class="inp" style="width:auto">${Object.keys(MEMK).map(k=>`<option value="${k}">${MEMK[k]}</option>`).join('')}</select><input id="mem_t" class="inp" style="flex:1;min-width:200px" maxlength="1000" placeholder="mis. Kartu Mandiri dipakai untuk belanja bisnis Waterground" onkeydown="if(event.key=='Enter')memAdd()"><button class="bt" onclick="memAdd()">Tambah</button></div>
+ <div class="mt-2">${L.map(m=>`<div class="flex gap-2 items-start py-2" style="border-bottom:1px solid var(--bd);${m.Active=='FALSE'?'opacity:.55':''}"><span class="pill nw2" style="flex:none">${MEMK[m.Kind]||m.Kind}</span><div class="text-sm" style="flex:1;white-space:pre-wrap">${E(m.Text)}</div><label class="flex items-center gap-1 text-xs mu" style="flex:none" title="Aktif = ikut dikirim ke AI"><input type="checkbox" ${m.Active!='FALSE'?'checked':''} onchange="memSet('${m.ID}',{Active:this.checked})"> aktif</label><button class="bg2" style="padding:2px 8px;flex:none" onclick="memEdit('${m.ID}')">Edit</button><button class="bg2 rd" style="padding:2px 6px;flex:none" onclick="memDel('${m.ID}')" aria-label="Hapus">${ic('trash',14)}</button></div>`).join('')||'<p class="mu text-sm">Belum ada memori yang kamu tulis.</p>'}</div>
+ <div class="mu text-xs mt-2">Dipelajari otomatis dari ${MEM.txCount} transaksi: <b>${MEM.learned}</b> pola merchant${MEM.cardLines?` · ${MEM.cardLines} kebiasaan kartu`:''}.</div>
+ <div class="flex gap-2 flex-wrap mt-2"><button class="bg2" onclick="memPreview()">${ic('eye',14)} Lihat konteks yang dikirim ke AI</button><button class="bg2" onclick="memDl()">${ic('down',14)} Unduh memori (.md)</button></div>`}
+async function memAdd(){const t=$('#mem_t').value.trim();if(!t)return toast('Tulis memorinya dulu');try{await call('api_saveAiMemory',[uuid(),{Kind:$('#mem_k').value,Text:t}]);toast('Memori ditambahkan');memLoad()}catch(e){toast(e.message)}}
+async function memSet(id,p){try{await call('api_saveAiMemory',[uuid(),{ID:id,...p}]);memLoad()}catch(e){toast(e.message)}}
+function memEdit(id){const m=(MEM.memories||[]).find(x=>x.ID==id);if(!m)return;mo(`<h3 class="font-extrabold text-xl">Edit memori AI</h3><p class="lb">Jenis</p><select id="me_k" class="inp">${Object.keys(MEMK).map(k=>`<option value="${k}" ${k==m.Kind?'selected':''}>${MEMK[k]}</option>`).join('')}</select><p class="lb">Isi</p><textarea id="me_t" class="inp" rows="4" maxlength="1000">${E(m.Text)}</textarea><div class="flex gap-2 pt-4"><button class="bg2 flex-1" onclick="cm()">Batal</button><button class="bt flex-1" onclick="memSet('${id}',{Kind:$('#me_k').value,Text:$('#me_t').value});cm()">Simpan</button></div>`)}
+async function memDel(id){if(!confirm('Hapus memori ini?'))return;try{await call('api_deleteAiMemory',[uuid(),id]);memLoad()}catch(e){toast(e.message)}}
+function memPreview(){mo(`<h3 class="font-extrabold text-xl">Konteks yang dikirim ke AI</h3><p class="mu text-xs">Dikirim bersama setiap permintaan AI (baca tagihan / struk / mutasi, saran kategori).</p><pre class="txtv mt-2" style="white-space:pre-wrap;max-height:60vh;overflow:auto">${E(MEM.context||'(belum ada — tambahkan memori atau rapikan kategori transaksi)')}</pre><div class="flex gap-2 pt-4"><button class="bt flex-1" onclick="cm()">Tutup</button></div>`)}
+function memDl(){const d=new Date(),st=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');const body=`# Memori AI — booq.id KartuKu\n_Diunduh ${st} · versi ${APP_VERSION}_\n\nBerikan file ini ke AI agent lain sebagai konteks keuangan pribadimu.\n\n${MEM.context||'(kosong)'}\n`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([body],{type:'text/markdown'}));a.download='memori-ai-booq-'+st+'.md';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 
 boot();
 </script></body></html>
