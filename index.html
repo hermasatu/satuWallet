@@ -4877,8 +4877,6 @@ Object.assign(DN_DONE,{
 .dot7{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none}.dot7.PAID{background:#16a34a}.dot7.PART{background:#f59e0b}.dot7.OPEN{background:#dc2626}.dot7.NONE{background:#cbd5e1}
 .chf7{display:inline-flex;align-items:center;gap:5px;border:1px solid #14213d;color:#14213d;background:#fff;border-radius:999px;padding:2px 8px;font-size:11.5px;font-weight:600;cursor:pointer}
 /* ---- Catatan dev di sidebar ---- */
-#dnfab .dn-fab{display:none!important}
-@media(min-width:900px){html.dsk #dnfab{display:none!important}}
 #rail button[data-t="n"]{position:relative}
 #rail .dn7a{margin-left:auto;width:22px;height:22px;border-radius:6px;display:inline-grid;place-items:center;border:1px solid currentColor;opacity:.75;font-size:14px;line-height:1}#rail .dn7a:hover{opacity:1}
 #rail .dn7q{margin-left:4px;min-width:18px;height:18px;border-radius:9px;background:#dc2626;color:#fff;font-size:10.5px;font-weight:700;display:inline-grid;place-items:center;padding:0 5px}
@@ -5337,5 +5335,44 @@ Object.assign(DN_DONE,{
 'DN-261030-121925-263':['kartuku-sb 2026.11.07','Kelola Kartu: tombol Rapikan data kartu dengan AI (Google Search) — bank, nama, jaringan termasuk BCA Card, jenis, tier + daftar salah input untuk dikonfirmasi; jaringan tampil logo saja, jenis kartu pakai ikon vektor.'],
 'DN-261030-121317-130':['kartuku-sb 2026.11.07','Kartu tagihan: gambar kartu setinggi kartu tagihan tanpa logo menimpa, tombol Bayar di kanan (sebelah kiri tong sampah).']});
 
+/* ---------- Widget Catatan Developer kembali — selalu di atas semua halaman, popup, penampil gambar & PDF (tidak pernah tertutup) ---------- */
+(function(){const st=document.createElement('style');st.id='css1107dn';st.textContent=`
+#dnfab{position:fixed!important;z-index:2147483647!important;display:flex!important;flex-direction:column;align-items:flex-start;gap:6px;pointer-events:none;left:auto;top:auto;bottom:auto;right:auto;width:auto!important;height:auto!important;padding:0!important;overflow:visible!important;font-size:13px!important}
+#dnfab.off{display:none!important}
+#dnfab>*{pointer-events:auto}
+#dnfab .dn7w{display:inline-flex;align-items:center;gap:0;height:40px;min-width:40px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:#14213d;color:#fff;font:600 12.5px/1 inherit;box-shadow:0 8px 22px rgba(15,23,42,.35),0 0 0 3px rgba(255,255,255,.85);cursor:pointer;touch-action:none;user-select:none;transition:background .15s,box-shadow .15s}
+#dnfab .dn7w:hover{background:#1f2f57}#dnfab .dn7w svg{width:16px!important;height:16px!important;flex:none;margin:0!important}
+#dnfab .dn7w .l{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .2s,margin .2s}#dnfab .dn7w:hover .l,#dnfab .dn7w:focus-visible .l{max-width:120px;margin-left:7px}
+#dnfab .dn7w.drag{cursor:grabbing;box-shadow:0 14px 30px rgba(15,23,42,.45),0 0 0 3px #fbbf24}
+#dnfab .dn7b{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;border-radius:9px;background:#dc2626;color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;padding:0 4px;box-shadow:0 0 0 2px #fff}
+#dnfab .dn7wr{position:relative;display:inline-flex}
+#dnfab .dn-q{font-size:11.5px!important}
+.dn-ov{z-index:2147483646!important}
+#dn_hl{z-index:2147483642!important;pointer-events:none}#dn_tip{z-index:2147483643!important}
+.ask-ov{z-index:2147483647!important}
+`;document.head.appendChild(st)})();
+/* tampilkan lagi bila sebelumnya disembunyikan (sekali) */
+try{if(!localStorage.getItem('kk_dnw1107')){localStorage.setItem('kk_dn_hide','0');localStorage.setItem('kk_dnw1107','1')}}catch(e){}
+const dnPos7=()=>{try{return JSON.parse(localStorage.getItem('kk_dnpos')||'null')}catch(e){return null}};
+function dnPlace7(el){const p=dnPos7(),w=el.offsetWidth||44,h=el.offsetHeight||44;let x,y;if(p){x=p.x*innerWidth;y=p.y*innerHeight}else{x=innerWidth>=900?(document.documentElement.classList.contains('rc')?72:252):12;y=innerHeight-(innerWidth>=900?60:150)}
+ x=Math.max(6,Math.min(innerWidth-w-6,x));y=Math.max(6,Math.min(innerHeight-h-6,y));el.style.left=x+'px';el.style.top=y+'px';el.style.bottom='auto';el.style.right='auto'}
+dnFab=function(){let el=$('#dnfab');if(!el){el=document.createElement('div');el.id='dnfab';document.body.appendChild(el)}
+ if(el.parentNode!==document.body||el!==document.body.lastElementChild)document.body.appendChild(el);
+ const q=dnQ().length,show=!!getSess()&&loaded&&!$('#au')&&!DN.pick;el.classList.toggle('off',!show);if(!show)return;
+ if(!el.querySelector('.dn7w')){el.innerHTML=`<span class="dn7wr"><button type="button" class="dn7w" aria-label="Catatan developer (Alt+N)" title="Catatan Dev (Alt+N) · seret untuk memindah">${ic('note',16)}<span class="l">Catatan Dev</span></button></span><button type="button" class="dn-q" style="display:none" onclick="dnFlush(true)"><span class="dn-qd"></span><span class="n"></span></button>`;dnDrag7(el.querySelector('.dn7w'),el)}
+ const wr=el.querySelector('.dn7wr');let bd=wr.querySelector('.dn7b');if(q){if(!bd){wr.insertAdjacentHTML('beforeend','<span class="dn7b"></span>');bd=wr.querySelector('.dn7b')}bd.textContent=q}else if(bd)bd.remove();
+ const qb=el.querySelector('.dn-q');qb.style.display=q?'':'none';qb.querySelector('.n').textContent=q+' perlu dikirim ulang';dnPlace7(el)};
+function dnDrag7(btn,el){let sx,sy,ox,oy,mv=false,on=false;
+ btn.addEventListener('pointerdown',e=>{if(e.button)return;on=true;mv=false;sx=e.clientX;sy=e.clientY;const r=el.getBoundingClientRect();ox=r.left;oy=r.top;btn.setPointerCapture(e.pointerId)});
+ btn.addEventListener('pointermove',e=>{if(!on)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!mv&&Math.hypot(dx,dy)<5)return;mv=true;btn.classList.add('drag');el.style.left=Math.max(6,Math.min(innerWidth-el.offsetWidth-6,ox+dx))+'px';el.style.top=Math.max(6,Math.min(innerHeight-el.offsetHeight-6,oy+dy))+'px'});
+ const up=e=>{if(!on)return;on=false;btn.classList.remove('drag');if(mv){const r=el.getBoundingClientRect();try{localStorage.setItem('kk_dnpos',JSON.stringify({x:r.left/innerWidth,y:r.top/innerHeight}))}catch(x){}}else dnNew()};
+ btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',()=>{on=false;btn.classList.remove('drag')})}
+addEventListener('resize',()=>{const el=$('#dnfab');if(el&&!el.classList.contains('off'))dnPlace7(el)});
+/* popup / penampil baru yang ditambahkan ke body tidak boleh menutupi widget: widget selalu dipindah ke elemen terakhir */
+new MutationObserver(ms=>{const el=$('#dnfab');if(!el||el===document.body.lastElementChild)return;if(ms.some(m=>[...m.addedNodes].some(n=>n.nodeType==1&&n!==el&&n.id!='dn_ov')))document.body.appendChild(el)}).observe(document.body,{childList:true});
+/* popup modal (fokus dikunci / inert) tetap bisa klik widget */
+document.addEventListener('keydown',e=>{if(e.altKey&&(e.key=='n'||e.key=='N')&&!DN.pick&&!$('#dn_ov')){e.preventDefault();e.stopPropagation();dnNew()}},true);
+setTimeout(()=>{try{dnFab()}catch(e){}},300);
+Object.assign(DN_DONE,{});
 
 </script></body></html>
