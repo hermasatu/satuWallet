@@ -275,7 +275,7 @@ table.rk-l td .inp.ti{border-color:transparent;background:transparent;padding:4p
 <script>
 /* ===== KONFIGURASI ===== */
 const API_URL = "https://vfryxascchrmfikjpoxd.supabase.co/functions/v1/hyper-service"; // Supabase Edge Function (versi KartuKu)
-const APP_VERSION = "kartuku-sb 2026.11.05"; // dipakai widget Catatan dev
+const APP_VERSION = "kartuku-sb 2026.11.06"; // dipakai widget Catatan dev
 const GCID = "GANTI_DENGAN_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // OAuth Web Client ID (sama dengan Script Property GOOGLE_CLIENT_ID)
 // Autentikasi: login email + password -> token sesi disimpan di localStorage (kunci "SESSION_TOKEN"). Tidak ada rahasia di file ini.
 
@@ -4556,5 +4556,176 @@ Object.assign(DN_DONE,{
 'DN-261029-024045-420':['kartuku-sb 2026.11.05','Form pembayaran cicilan: foto kiri (kosong = ikon foto), isian kanan; hover = quick view besar, hover di quick view = kaca pembesar.'],
 'DN-261029-022853-946':['kartuku-sb 2026.11.05','Gambar cicilan setinggi kartu, PNG transparan tanpa bingkai, rasio menyesuaikan; hover = tombol pensil (ganti) & tong sampah (hapus).'],
 'DN-261029-022410-963':['kartuku-sb 2026.11.05','Tombol "Nama & biaya" diganti ikon pensil di sebelah nama cicilan.']});
+
+
+/* =====================================================================
+   kartuku-sb 2026.11.06 — 15 catatan developer 30 Okt 2026 + tagihan lama otomatis lunas + impor rekap lama
+   ===================================================================== */
+(function(){const st=document.createElement('style');st.id='css1106';st.textContent=`
+/* DN-261030-092124-743: tipografi software keuangan — IBM Plex Sans, angka tabular, hierarki rapi */
+:root{--fs:13px;--fs-s:12px;--fs-xs:11px;--lh:1.45}
+body{letter-spacing:-.003em}
+#v h2{font-size:18px!important;font-weight:700!important;letter-spacing:-.015em}
+.lb{font-size:10.5px!important;font-weight:600!important;letter-spacing:.06em!important;color:#64748b!important}
+.inp,select.inp{font-size:13px!important}.bt,.bg2{font-weight:600;letter-spacing:.005em}
+b,strong{font-weight:600}.amt,.lr-v,.bl-a,.rk5 .bl,.fl b,.tbl td.r{font-variant-numeric:tabular-nums lining-nums}
+.text-xs{font-size:11px!important}.text-sm{font-size:12.5px!important}
+/* DN-261030-090617-511: ikon Kartu Kredit di sidebar sejajar menu lain */
+html.dsk .rail button.sub{padding-left:10px!important;font-size:13px!important}
+html.dsk .rail button.sub .rl{opacity:.9}
+/* DN-261030-112545-325: rekening dipakai dominan, + Rekening kecil */
+.psw{display:flex;gap:6px;align-items:stretch}.psw select{flex:1;font-size:13.5px!important;font-weight:600;padding:.5rem .6rem!important}
+.psw .pa{flex:none;width:38px;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--mu);display:grid;place-items:center;cursor:pointer}.psw .pa:hover{color:var(--focus);border-color:var(--focus)}
+.psh{font-size:11px;color:var(--mu);margin-top:4px;display:flex;gap:6px;align-items:center}.psh button{border:0;background:none;color:var(--focus);cursor:pointer;font-size:11px;padding:0;font-weight:600}
+/* DN-261030-114951-679: tagihan 2 sisi — daftar kiri, detail kanan */
+.bqd{border:1px solid var(--bd);border-radius:12px;background:var(--cd);padding:12px;min-height:240px}
+.bqd .sh2h{display:none}.bqd h3{font-size:16px!important}
+.bl.sel{outline:2px solid #14213d;outline-offset:1px}
+/* DN-261030-114903-194: quick filter kapsul logo */
+.qf{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 6px}.qf button{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--bd);background:var(--cd);border-radius:999px;padding:2px 10px 2px 4px;font-size:12px;cursor:pointer;color:var(--ink2);font-weight:600}
+.qf button img{width:18px;height:18px;border-radius:50%;background:#fff;object-fit:contain}.qf button.on{background:#14213d;color:#fff;border-color:#14213d}.qf .sep{width:1px;background:var(--bd);margin:0 3px}
+/* DN-261030-091818-245: mini kartu + logo bank di daftar tagihan (beda dari Kelola Kartu: kecil, horizontal, tanpa aksi) */
+.blc{float:left;width:52px;height:33px;margin:1px 10px 0 0;border-radius:5px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--c1,#1e3a8a),#0b1020);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.blc img.ci{width:100%;height:100%;object-fit:cover}.blc .lg{position:absolute;left:4px;top:4px;width:14px;height:14px;border-radius:3px;background:#fff;object-fit:contain}
+.blc .l4{position:absolute;right:4px;bottom:2px;color:#fff;font:600 8.5px/1 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.04em;text-shadow:0 1px 1px rgba(0,0,0,.5)}
+/* DN-261030-085841-922: bukti tidak kaku */
+.e4{grid-template-columns:clamp(90px,16cqw,170px) minmax(0,1fr) minmax(0,1.05fr)!important}
+@container vt (max-width:720px){.e4{grid-template-columns:clamp(84px,24cqw,150px) minmax(0,1fr)!important}}
+.e4 .thb{aspect-ratio:auto;min-height:72px}.e4 .thb.has img{height:auto;max-height:260px}
+/* DN-261030-084411-746: hasil baca bukti tampil di baris */
+.its{border:1px dashed var(--bd);border-radius:8px;padding:5px 8px;font-size:11.5px;background:var(--sunk)}
+.its div{display:flex;justify-content:space-between;gap:8px}.its .iv{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px}.its .ok{color:var(--gn)}.its .bad{color:var(--rd)}
+/* DN-261030-092005-126: password PDF */
+.pwb{max-width:320px;margin:24px auto;text-align:left}.pwb label.rm{display:flex;gap:6px;align-items:center;font-size:12px;margin-top:6px;color:var(--ink2)}
+.itc .sh{grid-column:1/-1}
+`;document.head.appendChild(st)})();
+
+/* ---------- DN-261030-092124-743: font profesional default IBM Plex Sans (masih bisa diganti di Pengaturan → Tampilan) ---------- */
+(function(){const G0=uiGet;uiGet=function(){const u=G0.apply(this,arguments);let raw={};try{raw=JSON.parse(localStorage.getItem('kk_ui')||'{}')}catch(e){}if(!raw.font||(raw.font=='inter'&&!raw.f1106))u.font='plex';return u};
+ const S0=uiSet;uiSet=function(k,v){if(k=='font'){try{const u=JSON.parse(localStorage.getItem('kk_ui')||'{}');u.f1106=1;localStorage.setItem('kk_ui',JSON.stringify(u))}catch(e){}}return S0.apply(this,arguments)};try{uiApply()}catch(e){}})();
+
+/* ---------- DN-261030-082416-964: label RINGKAS — penjelasan di label dipindah ke hover ("Total tagihan (Rp · minus = saldo kredit)" → "Total tagihan") ---------- */
+function lbTidy(root){(root||document).querySelectorAll('p.lb:not([data-lt]),.lbx:not([data-lt])').forEach(p=>{p.dataset.lt=1;const tips=[];
+ [...p.childNodes].forEach(n=>{if(n.nodeType!=3)return;let t=n.textContent;t=t.replace(/\s*\(([^()]*)\)/g,(m,x)=>{x=x.trim();if(x.length>=4&&!/^\d+$/.test(x))tips.push(x);return ''});const d=t.match(/\s+[—–]\s+(.+)$/);if(d){tips.push(d[1].trim());t=t.slice(0,d.index)}n.textContent=t});
+ if(tips.length&&!p.querySelector('.tipi'))p.insertAdjacentHTML('beforeend',tipI(tips.join(' · ')))})}
+new MutationObserver(()=>{clearTimeout(window.__lbt);window.__lbt=setTimeout(()=>lbTidy(),30)}).observe(document.body,{childList:true,subtree:true});
+
+/* ---------- DN-261030-092005-126: PDF tanpa password → kotak password + "Ingat password" (tersimpan TERENKRIPSI) ---------- */
+const PWK_SALT='booq.kk.pdfpw.v1';let PWKEY=null;
+async function pwCK(){if(PWKEY)return PWKEY;const base=await crypto.subtle.importKey('raw',new TextEncoder().encode((ME&&ME.email||'kk')+'|'+PWK_SALT),'PBKDF2',false,['deriveKey']);
+ PWKEY=await crypto.subtle.deriveKey({name:'PBKDF2',salt:new TextEncoder().encode(PWK_SALT),iterations:120000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);return PWKEY}
+const b64e=u=>btoa(String.fromCharCode(...new Uint8Array(u))),b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function pwEnc(pw){const iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},await pwCK(),new TextEncoder().encode(pw));return 'enc1:'+b64e(iv)+'.'+b64e(ct)}
+async function pwDec(v){v=String(v||'');if(!v.startsWith('enc1:'))return v;try{const [a,b]=v.slice(5).split('.');return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(a)},await pwCK(),b64d(b)))}catch(e){return ''}}
+pwList=async function(){if(PWL)return PWL;let raw={};try{raw=JSON.parse(localStorage.getItem('kk_pdfpw')||'{}')}catch(e){}try{const r=await call('api_pdfPw',[uuid(),{}]);Object.assign(raw,(r.data&&r.data.list)||{})}catch(e){}
+ const out={},plain=[];for(const k of Object.keys(raw)){const v=await pwDec(raw[k]);if(v)out[k]=v;if(raw[k]&&!String(raw[k]).startsWith('enc1:'))plain.push(k)}PWL=out;
+ try{const enc={};for(const k of Object.keys(out))enc[k]=await pwEnc(out[k]);localStorage.setItem('kk_pdfpw',JSON.stringify(enc));for(const k of plain)await call('api_pdfPw',[uuid(),{key:k,pw:enc[k]}])}catch(e){}return PWL};
+pwSave=async function(key,pw){await pwList();if(!pw||PWL[key]===pw)return;PWL[key]=pw;try{const enc=await pwEnc(pw),L=JSON.parse(localStorage.getItem('kk_pdfpw')||'{}');L[key]=enc;localStorage.setItem('kk_pdfpw',JSON.stringify(L));await call('api_pdfPw',[uuid(),{key,pw:enc}])}catch(e){}};
+function pwBox(el,onOk,hint){el.innerHTML=`<div class="pwb"><p class="lb" style="margin-top:0">Password PDF</p><div class="flex gap-2"><input type="password" class="inp" autocomplete="off" placeholder="${E(hint||'mis. tanggal lahir DDMMYYYY')}"><button type="button" class="bt">Buka</button></div><label class="rm"><input type="checkbox" checked> Ingat password ${tipI('Disimpan terenkripsi (AES-GCM). PDF berikutnya dari bank yang sama langsung terbuka.')}</label><p class="text-xs rd mt-1"></p></div>`;
+ const i=el.querySelector('input[type=password]'),b=el.querySelector('button'),c=el.querySelector('input[type=checkbox]'),er=el.querySelector('p.rd');const go=async()=>{if(!i.value)return i.focus();b.disabled=true;er.textContent='';try{await onOk(i.value,c.checked)}catch(e){er.textContent=e&&e.name=='PasswordException'?'Password salah.':(e.message||'Gagal membuka');b.disabled=false}};b.onclick=go;i.onkeydown=e=>{if(e.key=='Enter')go()};setTimeout(()=>i.focus(),50)}
+async function dpPw(id){const el=$('#dp_d');if(!el)return;const b=S.bills.find(x=>x.ID==id),c=b&&S.cards.find(x=>x.ID==b.Card_ID),key='C:'+(c?(cardBank(c)||c.Name):'');
+ pwBox(el,async(pw,rem)=>{const r=await call('api_getStatement',[id]),u=b64d(r.base64);const doc=await pdfjsLib.getDocument({data:u,password:pw}).promise;if(rem)pwSave(key,pw);const v=await buildViewer({kind:'pdf',doc});const e2=$('#dp_d');if(e2){e2.innerHTML='';e2.appendChild(v)}},c?'Password PDF '+(cardBank(c)||c.Name):'')}
+(function(){const B=bdt;bdt=async function(id){const r=await B.apply(this,arguments);const el=$('#dp_d');if(el&&/password/i.test(el.textContent))dpPw(id);return r}})();
+/* form upload tagihan: password + ingat password */
+(function(){const RV=rv;rv=function(){let h=RV.apply(this,arguments);return h.replace(/(<input id="f_rpw"[^>]*>)/,'$1<label class="text-xs flex items-center gap-1 mt-1" style="color:var(--ink2)"><input type="checkbox" id="f_rpwr" checked> Ingat password</label>')}})();
+(function(){const PS=pwSave;pwSave=async function(key,pw){const c=$('#f_rpwr');if(c&&!c.checked)return;return PS.apply(this,arguments)}})();
+
+/* ---------- DN-261030-113829-655: tanggal bayar langsung terisi dari bukti (juga tampilan kalender) ---------- */
+function dpSync(id){const h=$('#'+id);if(!h)return;const w=h.closest('.dpw')||h.parentNode,t=w&&w.querySelector('.dpt');if(t&&t!==h)t.value=h.value?fdd(h.value):''}
+(function(){const PD=pdates;pdates=function(ds,src){PD.apply(this,arguments);const P=FM&&FM.pay;if(!P)return;if(!P.date&&ds&&ds.length){const T=TODAY(),b=S.bills.find(x=>x.ID==P.billId),lo=b&&(b.Print_Date||'')||'';
+  const ok=ds.filter(x=>x.date<=T&&(!lo||x.date>=lo)),pick=(ok.find(x=>x.kind=='transaction')||ok.sort((a,c)=>c.date.localeCompare(a.date))[0]||ds[0]);if(pick){ppick(pick.date,src,pick.label||'');const el=$('#pz_d');if(el&&ds.length>1)el.innerHTML+=` <span class="mu">· lain: ${ds.filter(x=>x.date!=pick.date).slice(0,3).map(x=>`<button class="bg2 sm" onclick="ppick('${x.date}','${src}','')">${fdd(x.date)}</button>`).join(' ')}</span>`}}dpSync('f_pd')}})();
+(function(){const PP=ppick;ppick=function(){PP.apply(this,arguments);dpSync('f_pd')}})();
+
+/* ---------- DN-261030-112545-325: rekening dipakai dominan; + Rekening jadi ikon kecil; hasil OCR jadi saran kecil ---------- */
+(function(){const BP=bp;bp=function(){BP.apply(this,arguments);const sel=$('#f_ps'),qb=$('#rk_qb');if(!sel)return;const w=sel.parentNode;w.className='psw';if(qb){qb.className='pa';qb.innerHTML=ic('plus',15);qb.dataset.tip='Tambah rekening baru'}
+ if(!$('#psh'))w.insertAdjacentHTML('afterend','<div class="psh" id="psh"></div>')}})();
+rkOcrHint=function(){const P=FM&&FM.pay,sel=$('#f_ps'),h=$('#psh');if(!P||!sel||!P.ocr)return;const g=ocrAcc(P.ocr);const known=(S.accounts||[]).find(a=>(g.accNo&&a.accNo&&a.accNo==g.accNo)||(g.accNo&&a.last4&&g.accNo.endsWith(a.last4)&&(!g.bank||bankKey(a.bank)==g.bank)));
+ if(known){rkSelSet(known.id);if(h)h.innerHTML=`${ic('check',11)} Terbaca dari bukti: ${E(known.name)}`;return}if((!g.bank&&!g.accNo)||!h)return;
+ h.innerHTML=`${ic('scan',11)} Terbaca: <b>${E(g.bank||'')} ${g.accNo?'••'+E(g.accNo.slice(-4)):''}</b> belum terdaftar <button type="button" id="psh_b">+ Tambahkan</button>`;$('#psh_b').onclick=()=>rkQuick({bank:g.bank,accNo:g.accNo,holder:g.holder,src:'OCR bukti bayar'})};
+
+/* ---------- DN-261030-090009-970: nama toko / merchant di rincian pesanan ---------- */
+(function(){const L0=itLs;itLs=function(){let h=L0.apply(this,arguments);const o=itT()&&itT().itm;if(!o)return h;let j=0;
+ return h.replace(/<textarea class="inp ti" rows="2" maxlength="200" placeholder="Keterangan belanja/g,m=>{const k=j++,l=o.lines[k]||{};return `<input class="inp ti sh" value="${E(l.shop||'')}" maxlength="80" placeholder="Nama toko / merchant (mis. Waterground Official Shop)" onchange="itU(${k},'shop',this.value)">`+m})}})();
+itemsOut=function(x){const o=x.itm;if(o&&o.v==2){const lines=(o.lines||[]).filter(l=>l.inv||l.desc||l.shop||pn(l.amt)).map(l=>({inv:String(l.inv||'').trim(),shop:String(l.shop||'').trim(),desc:String(l.desc||'').trim(),amt:Math.round(pn(l.amt))})),fees={ship:Math.round(pn(o.fees&&o.fees.ship)),admin:Math.round(pn(o.fees&&o.fees.admin)),other:Math.round(pn(o.fees&&o.fees.other))},files=(o.files||[]).filter(f=>f&&f.id);
+ if(lines.length||files.length||fees.ship||fees.admin||fees.other)return JSON.stringify({v:2,lines,fees,files});return ''}const d=String(x.ds||'').trim(),q=pn(x.qt),k=String(x.sk||'').trim();return d||q>0||k?JSON.stringify({desc:d,qty:q>0?q:'',sku:k}):''};
+/* hasil AI rincian membawa nama toko */
+(function(){const C=call;call=async function(a,p){const r=await C.apply(this,arguments);if(a=='api_aiItems'&&r&&Array.isArray(r.lines)&&ITM0){ITM0.shops=r.lines.map(l=>l.shop||'')}return r}})();
+let ITM0=null;
+/* ---------- DN-261030-084728-930: setelah OCR, kategori, akun & catatan diisi ulang (machine learning + AI) — termasuk tiap bagian split ---------- */
+(function(){const A=itAuto;itAuto=async function(id,i){ITM0={};const ok=await A.apply(this,arguments);const r=R&&R.rows&&R.rows.find(x=>x.id==id),t=r&&(i==null?r:r.sp&&r.sp[i]);
+ if(ok&&t&&t.itm&&ITM0.shops){t.itm.lines.forEach((l,k)=>{if(!l.shop&&ITM0.shops[k])l.shop=ITM0.shops[k]})}ITM0=null;if(ok&&r)await ocrReclass(id,i);return ok}})();
+async function ocrReclass(id,i){const r=R.rows.find(x=>x.id==id);if(!r)return;const parts=i==null?(r.sp?r.sp.map((p,k)=>k):[null]):[i],c=S.cards.find(x=>x.ID==R.c);
+ const ocrOf=t=>((t&&t.itm&&t.itm.files)||[]).map(f=>OCRC[f.id]||'').join(' ').slice(0,400)||((r.itm&&r.itm.files)||[]).map(f=>OCRC[f.id]||'').join(' ').slice(0,400);
+ const rows=parts.map(k=>{const t=k==null?r:r.sp[k],sh=((t.itm&&t.itm.lines)||[]).map(l=>[l.shop,l.desc].filter(Boolean).join(' ')).join('; ');return {m:(k==null?r.m:(t.l||r.m))+(sh?' · '+sh:''),a:k==null?r.a:pn(t.a),dt:r.dt,t:r.t,card:c?c.Name:'',nt:(k==null?r.nt:t.n)||'',ocr:ocrOf(t)}});
+ try{const res=await call('api_aiAssist',[{mode:'ROWS',rows}]);(res.rows||[]).forEach(s=>{const k=parts[s.i];const t=k==null?r:r.sp[k];if(!t)return;
+  if(s.k&&(s.conf>=.4||!t.k)){t.k=s.k;if(k==null){r.kSrc='AI';r.kMan=0}}if(s.pp){const v=s.pp.toLowerCase()=='pribadi'?'PERSONAL':s.pp.toLowerCase()=='bisnis'?'BUSINESS':(cpurps().find(p=>p.name.toLowerCase()==s.pp.toLowerCase())||{}).name;if(v)t.pp=v}
+  if(s.ch&&k==null)r.ch=s.ch;if(s.nt){if(k==null){r.nt=s.nt;r.ntAI=1}else t.n=s.nt}});r.aiQ=1;r.cf=0;rowRf(id);toast('Kategori, akun & catatan diisi ulang dari bukti — periksa lalu Selesai')}catch(e){}}
+
+/* ---------- DN-261030-084411-746: transaksi TIDAK split juga menampilkan hasil baca bukti (no. pesanan, toko, nominal) ---------- */
+(function(){const V=vEdit;vEdit=function(r){let h=V.apply(this,arguments);if(r.sp||!r.itm||r.itm.v!=2)return h;const o=r.itm,L=(o.lines||[]).filter(l=>l.inv||l.desc||pn(l.amt)||l.shop);if(!L.length)return h;
+ const tot=L.reduce((s,l)=>s+pn(l.amt),0)+pn(o.fees.ship)+pn(o.fees.admin)+pn(o.fees.other),ok=Math.round(tot)==Math.round(r.a);
+ const s=`<div class="its" onclick="itOpen(${r.id},null)" data-tip="Dari bukti — klik untuk rincian">${L.map(l=>`<div><span class="min-w-0" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.inv?`<span class="iv">${E(l.inv)}</span> `:''}${E(l.shop||l.desc||'')}</span><b>${pn(l.amt)?rp(l.amt):''}</b></div>`).join('')}${o.fees.ship||o.fees.admin||o.fees.other?`<div class="mu"><span>Ongkir / admin / lain</span><b>${rp(pn(o.fees.ship)+pn(o.fees.admin)+pn(o.fees.other))}</b></div>`:''}<div class="${ok?'ok':'bad'}"><span>${ok?ic('check',10)+' cocok nominal':'selisih '+rp(r.a-tot)}</span><b>${rp(tot)}</b></div></div>`;
+ return h.replace('<div class="c-mid">','<div class="c-mid">'+s)}})();
+
+/* ---------- DN-261030-084105-675: PDF / gambar bisa diseret ke thumbnail bukti (baris tabel tidak lagi "memakan" drop) ---------- */
+document.addEventListener('dragover',e=>{const dt=e.dataTransfer;if(!dt||![...(dt.types||[])].includes('Files'))return;const z=fzZone(e.target);if(z&&fzInput(z)&&z.closest('.vx')){e.preventDefault();e.stopPropagation();z.classList.add('fz-ov')}},true);
+document.addEventListener('drop',e=>{const dt=e.dataTransfer;if(!dt||![...(dt.types||[])].includes('Files'))return;const z=fzZone(e.target),inp=fzInput(z);if(!inp||!z.closest('.vx'))return;e.preventDefault();e.stopPropagation();z.classList.remove('fz-ov');fzGive(inp,[...dt.files])},true);
+
+/* ---------- DN-261030-083919-160: bagian split memakai nama merchant, bukan "tanpa nama" ---------- */
+(function(){const S0=spRow;spRow=function(id){S0.apply(this,arguments);const r=R.rows.find(x=>x.id==id);(r&&r.sp||[]).forEach(p=>{if(!p.l)p.l=r.m});rowRf(id)}})();
+(function(){const A0=spAdd;spAdd=function(id){A0.apply(this,arguments);const r=R.rows.find(x=>x.id==id);(r&&r.sp||[]).forEach(p=>{if(!p.l)p.l=r.m});rowRf(id)}})();
+(function(){const K=vKids;vKids=function(r){(r.sp||[]).forEach(p=>{if(!String(p.l||'').trim())p.l=r.m});return K.apply(this,arguments)}})();
+
+/* ---------- DN-261030-114951-679 / 114903-194 / 091818-245: Tagihan 2 sisi · quick filter berlogo · mini kartu ---------- */
+Object.assign(BQ,{bk:'',nw:'',sel:null});
+const NETS4=['Visa','Mastercard','JCB','American Express','UnionPay','GPN'];
+const bqNet=c=>{const s=String((c&&c.Network)||'')+' '+String((c&&c.Name)||'');return NETS4.find(n=>new RegExp('\\b'+n+'\\b','i').test(s))||''};
+function blMini(c){if(!c)return '';const cx=cctxOf(c)||{},bk=cardBank(c),bl=bankLogo(bk),col=BANK_CLR[bankKey(bk)]||'#1e3a8a';return `<span class="blc" style="--c1:${col}">${cx.imageId?`<img class="ci" data-fid="${E(cx.imageId)}" alt="">`:''}${bl?`<img class="lg" src="${E(bl)}" alt="" referrerpolicy="no-referrer">`:''}<span class="l4">${E(c.Last4||'')}</span></span>`}
+(function(){const BV=bv;bv=function(){if(R)return BV.apply(this,arguments);const keep=S.bills;
+ if(BQ.bk||BQ.nw)S.bills=keep.filter(b=>{const c=S.cards.find(x=>x.ID==b.Card_ID)||{};return (!BQ.bk||bankKey(cardBank(c))==BQ.bk||cardBank(c)==BQ.bk)&&(!BQ.nw||bqNet(c)==BQ.nw)});
+ let h;try{h=BV.apply(this,arguments)}finally{S.bills=keep}const tp=document.createElement('div');tp.innerHTML=h;
+ const used=S.cards.filter(c=>keep.some(b=>b.Card_ID==c.ID)),bks=[...new Set(used.map(c=>bankKey(cardBank(c))||cardBank(c)).filter(Boolean))].sort(),nws=[...new Set(used.map(bqNet).filter(Boolean))];
+ const chip=(k,v,l,lg)=>`<button type="button" class="${BQ[k]==v?'on':''}" onclick="BQ.${k}=BQ.${k}=='${E(v)}'?'':'${E(v)}';render()">${lg?`<img src="${E(lg)}" alt="" referrerpolicy="no-referrer">`:'<span style="width:4px"></span>'}${E(l)}</button>`;
+ const qf=`<div class="qf">${bks.map(b=>chip('bk',b,b,bankLogo(b))).join('')}${nws.length?'<span class="sep"></span>':''}${nws.map(n=>chip('nw',n,n,netLogo(n))).join('')}</div>`;const bar=tp.querySelector('.bq');if(bar)bar.insertAdjacentHTML('afterend',qf);
+ tp.querySelectorAll('.bl').forEach(el=>{const id=((el.getAttribute('onclick')||'').match(/bdt\('([^']+)'\)/)||[])[1],b=keep.find(x=>x.ID==id);if(!b)return;el.setAttribute('onclick',`bqSel('${id}')`);if(BQ.sel==id)el.classList.add('sel');const nm=el.querySelector('.bl-b > .min-w-0');if(nm&&!nm.querySelector('.blc')){nm.insertAdjacentHTML('afterbegin',blMini(S.cards.find(c=>c.ID==b.Card_ID)));nm.style.overflow='hidden'}});
+ if(innerWidth<900)return tp.innerHTML;if(!BQ.sel||!keep.find(b=>b.ID==BQ.sel)){const f=tp.querySelector('.bl');BQ.sel=f?((f.getAttribute('onclick')||'').match(/bqSel\('([^']+)'\)/)||[])[1]:null;if(f)f.classList.add('sel')}
+ const head=tp.firstElementChild?tp.firstElementChild.outerHTML:'';if(tp.firstElementChild)tp.firstElementChild.remove();setTimeout(()=>{const d=$('#bq_det');if(d&&!d.dataset.id&&BQ.sel)bdtPanel(BQ.sel)},0);
+ return head+sxH('tag',tp.innerHTML,`<div class="bqd" id="bq_det">${BQ.sel?'':'<p class="mu text-sm text-center py-6">Pilih tagihan di kiri.</p>'}</div>`)}})();
+function bqSel(id){if(innerWidth<900)return bdt(id);BQ.sel=id;document.querySelectorAll('#v .bl.sel').forEach(x=>x.classList.remove('sel'));const el=[...document.querySelectorAll('#v .bl')].find(x=>(x.getAttribute('onclick')||'').includes("'"+id+"'"));if(el)el.classList.add('sel');bdtPanel(id)}
+let BDP=null;
+async function bdtPanel(id){const d=$('#bq_det');if(!d)return;d.dataset.id=id;BDP=id;const M=mo,C=cm;mo=function(h){const p=$('#bq_det');if(p&&BDP==id){p.innerHTML=h.replace(/onclick="cm\(\)" aria-label="Tutup"/,`onclick="BQ.sel=null;render()" aria-label="Tutup"`);return}return M.apply(this,arguments)};
+ try{const pr=bdt(id);mo=M;await pr}catch(e){mo=M}finally{mo=M}const p=$('#bq_det');if(!p||p.dataset.id!=id)return;
+ const e=p.querySelector(`button[onclick="cm();bf('${id}')"]`);if(e){e.setAttribute('onclick',`billReedit('${id}')`);e.innerHTML=ic('sliders',14)+' Edit'}const h3=p.querySelector('h3'),b=S.bills.find(x=>x.ID==id);if(h3&&b)h3.innerHTML=cardLblH(b.Card_ID);
+ p.querySelectorAll('button[onclick^="cm();"]').forEach(x=>x.setAttribute('onclick',x.getAttribute('onclick').replace(/^cm\(\);/,'')));const el=p.querySelector('#dp_d');if(el&&/password/i.test(el.textContent))dpPw(id)}
+
+/* ---------- Permintaan pemilik: tagihan lama (periode sebelum bulan ini) langsung lunas tanpa bukti — sekali jalan ---------- */
+setTimeout(async()=>{try{if(localStorage.getItem('kk_settle1106'))return;const r=await call('api_settleOld',[uuid(),{}]);localStorage.setItem('kk_settle1106','1');const d=r.data||{};if(d.settled){toast(d.settled+' tagihan lama (sebelum '+perL(d.before)+') ditandai lunas tanpa bukti');await reload()}}catch(e){}},5000);
+async function settleOld(){if(!await askSure('Semua tagihan dengan periode <b>sebelum bulan ini</b> yang belum lunas ditandai lunas tanpa bukti pembayaran.',{title:'Lunaskan tagihan lama?',yes:'Ya, lunaskan',danger:false}))return;try{const r=await call('api_settleOld',[uuid(),{}]),d=r.data||{};await reload();toast((d.settled||0)+' tagihan ditandai lunas')}catch(e){toast(e.message)}}
+
+/* ---------- impor rekap lama: akun yang belum ada dibuat otomatis; kolom Cicilan ke / dari dikenali ---------- */
+RXF.push('icur','itot');Object.assign(RXL,{icur:'Cicilan ke',itot:'Cicilan dari'});Object.assign(RXH,{icur:/^cicilan ke$/i,itot:/^cicilan dari$/i,type:/^(tipe|jenis|type)$/i});
+(function(){const RR=rxRows;rxRows=function(){const m=RX.map,g=(r,k)=>m[k]==null?'':r[m[k]],D0=RX.D,out=[];try{D0.forEach(r=>{RX.D=[r];const L=RR.call(this);if(L.length){const x=L[0];x.ty=String(g(r,'type')||'');x.ic=parseInt(g(r,'icur'),10)||'';x.it=parseInt(g(r,'itot'),10)||'';out.push(x)}})}finally{RX.D=D0}return out}})();
+(function(){const G0=rxGo;rxGo=async function(){const L=rxRows(),have=new Set(['pribadi','bisnis','personal','business'].concat(cpurps().map(p=>p.name.toLowerCase()))),nw=[...new Set(L.map(x=>String(x.pp||'').trim()).filter(v=>v&&!have.has(v.toLowerCase())))];
+ if(nw.length){try{await saveLists({purposes:cpurps().concat(nw.map(n=>({name:n,personal:false,parent:''})))});toast(nw.length+' akun baru dibuat: '+nw.join(', '))}catch(e){toast(e.message)}}
+ const C=call;call=async function(a,p){if(a=='api_importRows'&&p&&p[1]&&p[1].mode=='CC'){const q=p[1];q.rows.forEach(o=>{const x=L.find(z=>z.dt==o.Date&&z.m==o.Merchant&&z.a==o.Amount);if(x&&x.ic&&x.it&&x.it>=x.ic&&!x.cr){o.Type='Cicilan';o.Installment_Current=x.ic;o.Installment_Total=x.it}})}return C.apply(this,arguments)};
+ try{return await G0.apply(this,arguments)}finally{call=C}}})();
+
+/* ---------- Catatan Developer: 15 catatan selesai ---------- */
+Object.assign(DN_DONE,{
+'DN-261030-114951-679':['kartuku-sb 2026.11.06','Tagihan 2 sisi: klik kartu tagihan di kiri → detail (total, dokumen, transaksi, bayar, edit) muncul di kanan; pemisah bisa digeser / ditutup.'],
+'DN-261030-114903-194':['kartuku-sb 2026.11.06','Quick filter kapsul berlogo per bank (BCA, BNI, Danamon…) dan jaringan (Visa, Mastercard, JCB…).'],
+'DN-261030-113829-655':['kartuku-sb 2026.11.06','Tanggal bayar langsung terisi dari bukti (kalender ikut terisi); bila ada beberapa tanggal, dipilih yang paling masuk akal & sisanya bisa diklik.'],
+'DN-261030-112545-325':['kartuku-sb 2026.11.06','Pilihan rekening dipakai dominan; + Rekening jadi ikon kecil; hasil OCR jadi saran kecil di bawah.'],
+'DN-261030-092124-743':['kartuku-sb 2026.11.06','Font profesional IBM Plex Sans + angka tabular, ukuran & ketebalan label/tombol diseragamkan di seluruh aplikasi.'],
+'DN-261030-092005-126':['kartuku-sb 2026.11.06','PDF terproteksi selalu menampilkan kotak password + centang "Ingat password"; password disimpan terenkripsi AES-GCM (bukan teks asli).'],
+'DN-261030-091818-245':['kartuku-sb 2026.11.06','Daftar tagihan menampilkan mini kartu (foto kartu / warna bank + logo + 4 digit) — kecil & horizontal, beda dari Kelola Kartu.'],
+'DN-261030-090009-970':['kartuku-sb 2026.11.06','Rincian pesanan punya kolom nama toko / merchant, diisi AI dari bukti.'],
+'DN-261030-085841-922':['kartuku-sb 2026.11.06','Thumbnail bukti menyesuaikan lebar panel & rasio foto (tidak kaku).'],
+'DN-261030-084728-930':['kartuku-sb 2026.11.06','Setelah OCR bukti, kategori, akun & catatan diisi ulang (riwayat + AI), termasuk setiap bagian split.'],
+'DN-261030-084411-746':['kartuku-sb 2026.11.06','Transaksi tidak split menampilkan hasil baca bukti: no. pesanan, toko, nominal + cek cocok dengan nominal transaksi.'],
+'DN-261030-084105-675':['kartuku-sb 2026.11.06','PDF / gambar bisa diseret ke thumbnail bukti di baris tagihan.'],
+'DN-261030-083919-160':['kartuku-sb 2026.11.06','Bagian split otomatis bernama merchant, tidak lagi "tanpa nama".'],
+'DN-261030-090617-511':['kartuku-sb 2026.11.06','Ikon Kartu Kredit di sidebar sejajar dengan menu lain.'],
+'DN-261030-082416-964':['kartuku-sb 2026.11.06','Label ringkas di semua halaman: penjelasan dalam kurung / setelah tanda — dipindah ke ikon i (hover), mis. "Total tagihan".']});
 
 </script></body></html>
