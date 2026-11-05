@@ -275,7 +275,7 @@ table.rk-l td .inp.ti{border-color:transparent;background:transparent;padding:4p
 <script>
 /* ===== KONFIGURASI ===== */
 const API_URL = "https://vfryxascchrmfikjpoxd.supabase.co/functions/v1/hyper-service"; // Supabase Edge Function (versi KartuKu)
-const APP_VERSION = "kartuku-sb 2026.11.14"; // dipakai widget Catatan dev
+const APP_VERSION = "kartuku-sb 2026.11.15"; // dipakai widget Catatan dev
 const GCID = "GANTI_DENGAN_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // OAuth Web Client ID (sama dengan Script Property GOOGLE_CLIENT_ID)
 // Autentikasi: login email + password -> token sesi disimpan di localStorage (kunci "SESSION_TOKEN"). Tidak ada rahasia di file ini.
 
@@ -3227,7 +3227,7 @@ const NET_DOM={Visa:'visa.co.id',Mastercard:'mastercard.co.id',JCB:'global.jcb',
 Object.keys(BANK_DOM).forEach(b=>{if(!BANKS.includes(b))BANKS.push(b)});
 const BANK_CLR={BCA:'#0060af',BNI:'#f15a23',BRI:'#00529c',Mandiri:'#003d79','CIMB Niaga':'#7a0019',Danamon:'#f37021',OCBC:'#d0021b',UOB:'#0b3b8c',Permata:'#0d8c5c',Maybank:'#d4a400',HSBC:'#db0011',Citibank:'#056dae',Mega:'#e09a00',Panin:'#0066b3',BTN:'#0055a5','Bank DBS':'#e31837','Standard Chartered':'#0072aa',Sinarmas:'#c8102e',BSI:'#00a39d'};
 const favi=d=>`https://www.google.com/s2/favicons?domain=${d}&sz=64`;
-const bankKey=s=>{s=String(s||'').toLowerCase();if(!s)return '';const ks=Object.keys(BANK_DOM).sort((a,b)=>b.length-a.length);return ks.find(k=>s==k.toLowerCase())||ks.find(k=>new RegExp('\\b'+k.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b').test(s))||''};
+const bankKey=s=>{const k15=bankSyn15(s);if(k15)return k15; /* 2026.11.15 (DN-261103-200953-434): sinonim bank */ s=String(s||'').toLowerCase();if(!s)return '';const ks=Object.keys(BANK_DOM).sort((a,b)=>b.length-a.length);return ks.find(k=>s==k.toLowerCase())||ks.find(k=>new RegExp('\\b'+k.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b').test(s))||''};
 function bankLogo(b){const L=(S.settings&&S.settings.Bank_Logos)||{};if(b&&L[b])return L[b];const k=bankKey(b);if(k&&L[k])return L[k];return k?favi(BANK_DOM[k]):''}
 const netLogo=n=>{const k=Object.keys(NET_DOM).find(x=>String(n||'').toLowerCase().includes(x.toLowerCase()));return k?favi(NET_DOM[k]):''};
 const cardBank=c=>c.Bank||bankKey(c.Name)||'';
@@ -7776,5 +7776,229 @@ Object.assign(DN_DONE,Object.fromEntries([
 ['DN-261101-165405-533','Halaman dibagikan: ikon mata tepat di tengah kotak password + animasi kedip buka/tutup.'],
 ['DN-261101-165301-747','Cicilan › bukti transfer: No. referensi 2 baris terbaca utuh, rekening asal tersensor dicocokkan ke rekening tercatat, pola per bank dipelajari (hemat AI), hasil bisa diedit (pensil) dan koreksinya dipelajari.']
 ].map(([k,v])=>[k,['kartuku-sb 2026.11.14',v]])));
+
+
+
+/* =====================================================================
+   kartuku-sb 2026.11.15 — gelombang 1 · TAGIHAN (10 catatan developer 2–5 Nov 2026)
+   CSS css1115a · fungsi berakhiran 15
+   ===================================================================== */
+(function(){const st=document.createElement('style');st.id='css1115a';st.textContent=`
+/* DN-261102-202401-732 · DN-261103-203712-278: jendela password di tengah, area lain disamarkan */
+#pw15{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:16px;background:rgba(15,23,42,.5);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);animation:fi14 .15s ease}
+#pw15 .b{width:min(400px,100%);background:#fff;border-radius:16px;padding:20px;box-shadow:0 24px 60px rgba(15,23,42,.35)}
+#pw15 h3{font-weight:800;font-size:17px;margin:0 0 2px;display:flex;align-items:center;gap:8px;color:#14213d}
+#pw15 .s{font-size:12px;color:#64748b;margin-bottom:12px;word-break:break-all}
+#pw15 .f{position:relative}#pw15 .f input{padding-right:42px;font-size:15px;letter-spacing:.04em}
+#pw15 .f button{position:absolute;right:4px;top:0;bottom:0;margin:auto 0;height:32px;width:34px;border:0;background:none;color:#64748b;cursor:pointer;display:grid;place-items:center}
+#pw15 .e{font-size:12px;color:#dc2626;min-height:16px;margin-top:5px}
+#pw15 label.r{display:flex;align-items:center;gap:6px;font-size:12px;color:#334155;margin-top:6px;cursor:pointer}
+#pw15 .ft{display:flex;gap:8px;margin-top:14px}#pw15 .ft .bt{flex:2;justify-content:center}#pw15 .ft .bg2{flex:1}
+@keyframes sh15{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}#pw15 .b.bad{animation:sh15 .22s ease 2}
+/* DN-261105-160000-140: konfirmasi "Tidak ada tagihan" */
+.pd14 .r .nb15{margin-left:auto;flex:none;border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:1px 9px;font-size:11px;font-weight:600;color:#475569;cursor:pointer;white-space:nowrap}
+.pd14 .r .nb15:hover{border-color:#16a34a;color:#15803d;background:#f0fdf4}.pd14 .nbx15{border:0;background:none;color:#2563eb;font-size:11.5px;cursor:pointer;padding:4px 0 0}
+.nbf15{display:grid;grid-template-columns:1fr 150px;gap:8px;margin-top:10px}
+/* DN-261103-201219-405: rekonsiliasi dengan logika + / − berwarna */
+.rc15{border:1px solid #e2e8f0;border-left-width:4px;border-radius:12px;padding:12px 14px;margin-bottom:8px;background:#fff;font-size:13px}
+.rc15 .hd{display:flex;align-items:center;gap:8px;margin-bottom:6px}.rc15 .hd b{flex:1;font-weight:800;color:#14213d}
+.rc15 .st{font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px}
+.rc15 .r{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:6px;padding:3px 0;font-variant-numeric:tabular-nums}
+.rc15 .r i{font-style:normal;font-weight:800;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-size:13px}
+.rc15 .r span{color:#475569}.rc15 .r b{text-align:right;font-weight:700;white-space:nowrap}
+.rc15 .r.p i{background:#fee2e2;color:#b91c1c}.rc15 .r.p b{color:#b91c1c}
+.rc15 .r.m i{background:#dcfce7;color:#15803d}.rc15 .r.m b{color:#15803d}
+.rc15 .r.z{opacity:.45}
+.rc15 .r.q{border-top:1.5px solid #14213d;margin-top:4px;padding-top:6px}.rc15 .r.q i{background:#14213d;color:#fff}.rc15 .r.q span,.rc15 .r.q b{color:#14213d;font-weight:800}
+.rc15 .r.k i{background:#e0e7ff;color:#3730a3}.rc15 .r.k b{color:#14213d}
+.rc15 .r.d{border-top:1px dashed #cbd5e1;margin-top:4px;padding-top:6px}
+.rc15 .lg{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:#64748b;margin-top:6px}.rc15 .lg em{font-style:normal;font-weight:800}
+.rc15 .nt{font-size:11.5px;color:#64748b;margin-top:4px}
+/* DN-261105-155831-497: banyak bukti pembayaran + total */
+.pm15{margin-top:10px;border:1px solid #e2e8f0;border-radius:12px;padding:8px 10px;background:#f8fafc}
+.pm15 .hd{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#64748b}.pm15 .hd label{margin-left:auto;cursor:pointer;text-transform:none;letter-spacing:0}
+.pm15r{display:grid;grid-template-columns:20px 38px minmax(0,1fr) 120px 140px 28px;gap:6px;align-items:center;padding:5px 0;border-top:1px solid #eef2f7}
+.pm15r .n{width:20px;height:20px;border-radius:6px;background:#14213d;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.pm15r .f{width:38px;height:38px;border-radius:8px;overflow:hidden;background:#fff;border:1px solid #e2e8f0;display:grid;place-items:center}.pm15r .f img{width:100%;height:100%;object-fit:cover}
+.pm15r .m{min-width:0}.pm15r .m b{display:block;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pm15r .m small{font-size:11px;color:#64748b}
+.pm15r.busy{opacity:.6}.pm15r .inp{font-size:12.5px!important;padding:5px 7px!important}
+.pm15t{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:6px 0 0;border-top:1px solid #e2e8f0;margin-top:4px;font-variant-numeric:tabular-nums}.pm15t span{color:#475569}.pm15t b{color:#14213d}
+.pm15t.s{border-top:0;padding-top:2px}
+@media(max-width:640px){.pm15r{grid-template-columns:20px 38px minmax(0,1fr) 28px}.pm15r .inp{grid-column:2/-1}}
+/* DN-261102-201945-697: AI gagal → tombol Isi dengan AI */
+.af15{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0;border:1px solid #fde68a;background:#fffbeb;border-radius:10px;padding:7px 10px;font-size:12.5px;color:#78350f;font-weight:400}
+.af15 span{flex:1;min-width:200px}.af15 b{font-weight:700}.af15 .bt{white-space:nowrap}
+/* DN-261102-201723-987: penghitung waktu loader */
+.ul14 .tm15{font-variant-numeric:tabular-nums;color:#94a3b8;font-size:11px}
+/* DN-261104-135232-716: teks bukti di posisinya pada foto */
+.ow15{position:relative;display:inline-block;max-width:100%;line-height:0}.ow15>img{display:block;max-width:100%}
+.ol15{position:absolute;inset:0;pointer-events:none;line-height:1}
+.ol15 .w{position:absolute;pointer-events:auto;background:rgba(255,255,255,.9);color:#0f172a;border-radius:3px;box-shadow:0 0 0 1px rgba(37,99,235,.35);white-space:nowrap;overflow:hidden;display:flex;align-items:center;padding:0 2px;cursor:copy;user-select:text;-webkit-user-select:text;font-family:inherit}
+.ol15 .w:hover{background:#eef2ff;z-index:3;overflow:visible;box-shadow:0 0 0 1.5px #2563eb}.ol15 .w.cp{background:#dcfce7}
+.ol15 .ld{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;color:#334155;box-shadow:0 4px 14px rgba(15,23,42,.18);display:flex;align-items:center;gap:7px;pointer-events:auto;line-height:1.2}
+.ol15 .ld i{width:14px;height:14px;border-radius:50%;border:2px solid #e2e8f0;border-top-color:#14213d;animation:sp13 .8s linear infinite}
+.ol15 .tg{position:absolute;right:8px;top:8px;pointer-events:auto;display:flex;gap:4px;line-height:1.2}.ol15 .tg button{border:0;background:rgba(20,33,61,.9);color:#fff;border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:600;cursor:pointer}
+.ol15.hide .w{opacity:0}.ol15.hide .w:hover{opacity:1}
+`;document.head.appendChild(st)})();
+
+/* ---------- DN-261103-200953-434: kamus sinonim bank — "Bank Rakyat Indonesia" = "BRI" = "Bank BRI" (dipakai bankKey) ---------- */
+var BSYN15=null;
+function bnorm15(s){return ' '+String(s||'').toLowerCase().replace(/\bpt\.?\s|\btbk\.?|\(persero\)|\bpersero\b/g,' ').replace(/[^a-z0-9$]+/g,' ').replace(/\s+/g,' ').trim()+' '}
+function bankSyn15(s){if(!s)return '';if(!BSYN15){const T={BCA:['bank central asia','bca','klikbca','mybca','bank bca'],'blu BCA Digital':['blu','bca digital','blu by bca','bank digital bca'],BRI:['bank rakyat indonesia','bank bri','bri','brimo','bri easy','bri card'],BNI:['bank negara indonesia','bank bni','bni','bni 46','wondr'],Mandiri:['bank mandiri','mandiri','livin','livin by mandiri'],
+ 'CIMB Niaga':['bank cimb niaga','cimb niaga','cimb','niaga','octo'],Danamon:['bank danamon','danamon','d bank','dbank'],OCBC:['bank ocbc nisp','ocbc nisp','ocbc indonesia','ocbc','nisp'],UOB:['united overseas bank','uob indonesia','bank uob','uob','tmrw'],Permata:['bank permata','permatabank','permata'],Maybank:['maybank indonesia','maybank','bank internasional indonesia','bii'],
+ HSBC:['hongkong and shanghai','hsbc'],Citibank:['citibank','citi'],Mega:['bank mega'],Panin:['panin bank','bank panin','paninbank','panin'],BTN:['bank tabungan negara','btn'],'Bank Jago':['bank jago','jago'],'Bank DBS':['bank dbs indonesia','dbs indonesia','bank dbs','dbs bank','digibank','dbs'],'Standard Chartered':['standard chartered','stanchart'],Sinarmas:['bank sinarmas','sinarmas','simobi'],
+ 'KB Bukopin':['kb bukopin','bank kb bukopin','bukopin','kb bank'],BSI:['bank syariah indonesia','bsi'],'Bank DKI':['bank dki','jakone'],BJB:['bank bjb','bank jabar banten','bjb'],SeaBank:['seabank','sea bank'],'Allo Bank':['allo bank','allo'],Jenius:['jenius','smbc indonesia','bank smbc indonesia','btpn'],Superbank:['superbank'],'Hana Bank':['keb hana','hana bank','line bank'],
+ 'Bank Aladin':['bank aladin','aladin'],Krom:['krom'],'Neo Commerce':['bank neo commerce','neo commerce','neobank'],Nobu:['nobu bank','nobu'],QNB:['qnb'],'MNC Bank':['mnc bank','motionbanking'],ICBC:['icbc'],'Bank of China':['bank of china'],Shinhan:['shinhan'],'Bank Commonwealth':['commonwealth'],'Bank Victoria':['bank victoria'],'Bank Sahabat Sampoerna':['sampoerna']};
+ BSYN15=[];Object.keys(T).forEach(k=>T[k].concat([k]).forEach(a=>BSYN15.push([bnorm15(a).trim(),k])));BSYN15.sort((a,b)=>b[0].length-a[0].length)}
+ const n=bnorm15(s);if(!n.trim())return '';for(const [a,k] of BSYN15)if(a&&n.includes(' '+a+' '))return k;return ''}
+(function(){const C0=cardProfile;cardProfile=async function(){try{if(R&&R.info&&R.info.bank){const k=bankKey(R.info.bank);if(k)R.info.bank=k}}catch(e){}return C0.apply(this,arguments)}})();
+
+/* ---------- DN-261102-202401-732 · DN-261103-203712-278: jendela password terpusat (dipakai upload tagihan & mutasi) ---------- */
+function pwAsk15(o){o=o||{};return new Promise(res=>{let d=$('#pw15');if(d)d.remove();d=document.createElement('div');d.id='pw15';
+ d.innerHTML=`<div class="b${o.err?' bad':''}" role="dialog" aria-modal="true"><h3>${ic('lock',18)} ${E(o.title||'Dokumen terkunci password')}</h3><div class="s">${E(o.sub||'')}</div>
+ <div class="f"><input id="pw15i" type="password" class="inp" placeholder="${E(o.ph||'mis. tanggal lahir DDMMYYYY')}" autocomplete="off"><button type="button" aria-label="Lihat password" onclick="const i=$('#pw15i');i.type=i.type=='password'?'text':'password'">${ic('eye11',17)}</button></div>
+ <div class="e">${E(o.err||'')}</div><label class="r"><input type="checkbox" id="pw15r" checked> Ingat password (tersimpan terenkripsi)</label>
+ <div class="ft"><button type="button" class="bg2" data-a="0">Batal</button><button type="button" class="bt inline-flex items-center gap-1" data-a="1">${ic('key',14)} Buka dokumen</button></div></div>`;
+ document.body.appendChild(d);const i=d.querySelector('#pw15i');setTimeout(()=>i.focus(),50);const done=v=>{d.remove();res(v)},ok=()=>{if(!i.value){i.focus();return}done({pw:i.value,rem:d.querySelector('#pw15r').checked})};
+ d.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a=='0')done(null);else ok()});
+ i.addEventListener('keydown',e=>{if(e.key=='Enter'){e.preventDefault();ok()}else if(e.key=='Escape'){e.preventDefault();done(null)}})})}
+const stem15=n=>String(n||'').toLowerCase().replace(/\.[a-z0-9]+$/,'').replace(/[\d_\-.()\[\]]+/g,' ').replace(/\s+/g,' ').trim().slice(0,60);
+async function pwRem15(name,pw,bank){try{if(bank)await pwSave('C:'+bank,pw);await pwSave('F:'+stem15(name).replace(/\s/g,'').slice(0,30),pw)}catch(e){}}
+/** buka PDF; bila terkunci & password tersimpan tidak cocok → tanya di tengah layar. true = bisa dibuka */
+async function pdfUnlock15(f,label){if(!f||!(/pdf/i.test(f.type)||/\.pdf$/i.test(f.name||'')))return true;let err='';
+ for(let k=0;k<6;k++){try{const doc=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;try{doc.destroy()}catch(e){}return true}catch(e){if(!e||e.name!='PasswordException')return true}
+  const v=await pwAsk15({title:label||'PDF terkunci password',sub:f.name,err});if(!v)return false;
+  try{const doc=await pdfjsLib.getDocument({data:new Uint8Array(await f.arrayBuffer()),password:v.pw}).promise;try{doc.destroy()}catch(e){}await pwList();PWL['S:'+Date.now()]=v.pw;try{PWS7['F:'+stem15(f.name)]=v.pw}catch(e){}if(v.rem)await pwRem15(f.name,v.pw);toast('PDF terbuka'+(v.rem?' · password diingat':''));return true}
+  catch(e){if(e&&e.name=='PasswordException'){err='Password salah — coba lagi';continue}return true}}return false}
+
+/* ---------- popup Upload Tagihan: password terpusat · Tidak ada tagihan · belajar koreksi ---------- */
+/* DN-261105-160000-140: "Tidak ada tagihan" untuk kartu + periode — pengingat hilang, tercatat di Learn_Map.nobill */
+const nbKey15=(cid,per)=>cid+'|'+per;
+const noBill15=(cid,per)=>!!(LRN13().nobill||{})[nbKey15(cid,per)];
+(function(){const R0=remind9;remind9=function(){return R0.apply(this,arguments).filter(x=>!(x&&x.c&&noBill15(x.c.ID,x.per)))}})();
+async function nbSet15(cid,per){const c=S.cards.find(x=>x.ID==cid);if(!c||!/^\d{4}-\d{2}$/.test(per||''))return toast('Pilih kartu & bulan');
+ if((S.bills||[]).some(b=>cardFam9(cid).has(b.Card_ID)&&b.Statement_Period==per))return toast('Tagihan '+perL(per)+' kartu ini sudah ada');
+ if(!await askSure(`<b>${E(cardLbl(c))}</b><br>Periode <b>${E(perL(per))}</b> dikonfirmasi <b>tidak ada tagihan</b> (tidak ada transaksi / saldo nol). Pengingat periode ini dihapus.`,{title:'Tidak ada tagihan?',yes:'Ya, tidak ada tagihan',danger:false}))return false;
+ lrnSet13('nobill',nbKey15(cid,per),{at:TODAY()});toast('Dicatat: '+c.Name+' tidak ada tagihan '+perL(per));cm2();if(UP9&&!UP9.f)upM9();else render();return true}
+function nbPick15(){const cs=S.cards.filter(c=>c.Status=='Aktif'&&!famOf9(c.ID)).sort((a,b)=>cardLbl(a).localeCompare(cardLbl(b)));const pm=TODAY().slice(0,7);
+ mo2(`<div class="flex items-center gap-2"><h3 class="font-extrabold text-xl" style="flex:1;margin:0">Tidak ada tagihan</h3><button class="ib7" onclick="cm2()">${ic('x',15)}</button></div>
+ <p class="mu7 mt-1">Kartu yang bulan ini tidak menerbitkan lembar tagihan (tanpa transaksi).</p><div class="nbf15"><select id="nb15c" class="inp">${cs.map(c=>`<option value="${c.ID}">${E(cardLbl(c))}</option>`).join('')}</select><input id="nb15p" type="month" class="inp" value="${pm}" max="${pm}"></div>
+ <div class="flex gap-2 pt-3"><button class="bg2" style="flex:1" onclick="cm2()">Batal</button><button class="bt" style="flex:2" onclick="nbSet15($('#nb15c').value,$('#nb15p').value)">${ic('check',14)} Konfirmasi tidak ada tagihan</button></div>`)}
+
+/* DN-261102-201459-373: koreksi kartu / tanggal / nama di popup dipelajari (Learn_Map.upc · upd · upn) */
+function upSig15(U){const i=U.info||{},s=[];if(i.l4&&i.l4.length)s.push('L:'+[...i.l4].sort().join(','));const st=stem15(U.f&&U.f.name);if(st.replace(/\s/g,'').length>=3)s.push('F:'+st);return s}
+function upLearnApply15(U){if(!U||!U.info)return 0;const i=U.info,M=LRN13();let ch=0;
+ if(!U.cU15){for(const k of upSig15(U)){const cid=(M.upc||{})[k];if(cid&&S.cards.some(c=>c.ID==cid)){if(U.c!=cid||i.c!=cid){U.c=cid;i.c=cid;i.cL15=1;ch=1}break}}}
+ const cid=U.c||i.c,L=cid&&(M.upd||{})[cid];
+ if(L){const put=(y,m,d)=>{while(m>12){m-=12;y++}while(m<1){m+=12;y--}return y+'-'+p2_9(m)+'-'+p2_9(Math.min(d,new Date(y,m,0).getDate()))};
+  if(L.sd&&i.pd&&!U.pdU14){const d=+i.pd.slice(8,10);if(d!=L.sd&&Math.abs(d-L.sd)<=8){i.pd=put(+i.pd.slice(0,4),+i.pd.slice(5,7),L.sd);i.pdL15=1;ch=1}}
+  if(L.dd&&i.pd&&!U.ddU14){const y=+i.pd.slice(0,4),m=+i.pd.slice(5,7),v=put(y,L.dd<=+i.pd.slice(8,10)?m+1:m,L.dd);if(i.dd!=v&&(!i.dd||diffD(i.dd,v)<=40)){i.dd=v;i.ddL15=1;ch=1}}}
+ const nm=cid&&(M.upn||{})[cid];if(nm&&!U.nameU14&&i.name!=nm){i.name=nm;ch=1}return ch}
+(function(){const R0=upRead9;upRead9=async function(){const r=await R0.apply(this,arguments);try{if(UP9&&upLearnApply15(UP9))upM9()}catch(e){}return r}})();
+(function(){const G0=upGo9;upGo9=async function(){const U=UP9;try{if(U&&U.f){const v=id=>($('#'+id)||{}).value||'',cid=v('up9c')||U.c||(U.info||{}).c;
+ if(cid){if(U.cU15&&v('up9c'))upSig15(U).forEach(k=>lrnSet13('upc',k,cid));
+  const pd=v('up9d'),dd=v('up9dd'),cur=(LRN13().upd||{})[cid]||{},n={...cur};let ch=0;if(U.pdU14&&pd){n.sd=+pd.slice(8,10);ch=1}if(U.ddU14&&dd){n.dd=+dd.slice(8,10);ch=1}if(ch){n.n=(cur.n||0)+1;lrnSet13('upd',cid,n)}
+  if(U.nameU14&&v('up9n').trim())lrnSet13('upn',cid,v('up9n').trim().slice(0,80))}}}catch(e){}return G0.apply(this,arguments)}})();
+
+(function(){const M0=upM9;upM9=function(){M0.apply(this,arguments);const U=UP9,box=$('#m .up9');if(!U||!box)return;try{
+ if(!U.f){const L=remind9().slice(0,6),rows=box.querySelectorAll('.pd14 .r');rows.forEach((r,j)=>{const x=L[j];if(!x||r.querySelector('.nb15'))return;r.insertAdjacentHTML('beforeend',`<button type="button" class="nb15" data-tip="Kartu ini tidak menerbitkan tagihan periode ${E(perL(x.per))} — pengingat dihapus" onclick="event.stopPropagation();nbSet15('${x.c.ID}','${x.per}')">${ic('check',10)} Tidak ada tagihan</button>`)});
+  const pd=box.querySelector('.pd14');if(pd&&!pd.querySelector('.nbx15'))pd.insertAdjacentHTML('beforeend',`<button type="button" class="nbx15" onclick="nbPick15()">+ Konfirmasi "Tidak ada tagihan" untuk kartu lain…</button>`);return}
+ /* kartu dipilih manual = dipelajari */
+ const sc=$('#up9c');if(sc&&!sc.dataset.l15){sc.dataset.l15=1;sc.addEventListener('change',()=>{if(UP9)UP9.cU15=1})}
+ const i=U.info||{},qs=box.querySelector('.qs14');if(qs&&(i.cL15||i.pdL15||i.ddL15)&&!qs.querySelector('.lr15'))qs.insertAdjacentHTML('beforeend',`<span class="lr15" data-tip="Kartu / tanggal disesuaikan dengan koreksimu sebelumnya untuk file serupa">${ic('brain',11)} pola dipelajari</span>`);
+ /* password: jendela di tengah layar */
+ if(U.need){const pw=box.querySelector('#up9pw');if(pw&&!U.pwX15){const w=pw.parentNode;[w.previousElementSibling,w,w.nextElementSibling].forEach(e=>{if(e)e.style.display='none'})}
+  if(!U.pwA15&&!U.pwX15){U.pwA15=1;const err=U.err||'';setTimeout(()=>pwAsk15({title:'PDF tagihan terkunci password',sub:U.f.name,err}).then(async v=>{if(UP9!==U)return;U.pwA15=0;if(!v){U.pwX15=1;upM9();return}
+   await upRead9(v.pw);if(UP9===U&&!U.need&&v.rem){const c=S.cards.find(x=>x.ID==(U.c||(U.info||{}).c));await pwRem15(U.f.name,v.pw,c?(cardBank(c)||c.Name):'')}}),30)}}}catch(e){}}})();
+
+/* ---------- DN-261102-201723-987: baca AI lebih cepat (server: tingkat "berpikir" model diturunkan) + penghitung detik ---------- */
+let UBT15=0,UBI15=null;
+(function(){const B0=upBusy14;upBusy14=function(on){B0.apply(this,arguments);if(!on){UBT15=0;clearInterval(UBI15);UBI15=null;return}if(!UBT15)UBT15=Date.now();
+ const tick=()=>{const d=$('#m .up9 .ul14');if(!d){clearInterval(UBI15);UBI15=null;UBT15=0;return}let s=d.querySelector('.tm15');if(!s){s=document.createElement('small');s.className='tm15';d.appendChild(s)}s.textContent=Math.round((Date.now()-UBT15)/1000)+' detik'};tick();if(!UBI15)UBI15=setInterval(tick,1000)}})();
+
+/* ---------- DN-261102-201945-697: AI gagal di awal → bar "Isi dengan AI" (mode gratis / berbayar mengikuti Pengaturan) ---------- */
+(function(){const T=tblH;tblH=function(){let h=T.apply(this,arguments);try{if(R&&R.rows&&R.file&&!R.aiUsed&&!R.localOk&&R.importSrc!='PASTE'){
+ const bar=`<div class="af15">${ic('alert',14)}<span><b>AI belum berhasil membaca lembar ini</b>${R.aiErr?' — '+E(String(R.aiErr).slice(0,180)):''}. Baris di bawah dari baca lokal (bisa kurang lengkap).</span><button type="button" class="bt sm inline-flex items-center gap-1" onclick="aiRetry15()" data-tip="Baca ulang dengan AI. Mengikuti mode AI di Kelola › Pengaturan: key gratis dulu, gagal 3× → key berbayar.">${ic('ai',13)} Isi dengan AI</button></div>`;
+ h=h.replace(/(<b>Verifikasi hasil baca[^<]*<\/b>)/,'$1'+bar)}}catch(e){}return h}})();
+async function aiRetry15(){if(!R||!R.file)return;if(R.rows.some(x=>x.ed||x.cf)&&!await askSure('Perubahan di tabel ini diganti hasil baca AI.',{title:'Isi dengan AI?',yes:'Ya, isi dengan AI',danger:false}))return;R.forceAI=1;ekstrak()}
+
+/* ---------- DN-261103-201219-405: rekonsiliasi dengan logika + / − dan warna yang jelas ---------- */
+function rcCard15(c){const n=v=>v==null||v===''?null:Math.abs(+v),col={OK:'#16a34a',DIFF:'#dc2626'}[c.status]||'#d97706',stl={OK:'Cocok',DIFF:'Ada selisih',REVIEW:'Perlu ditinjau'}[c.status]||'Data kurang';
+ const row=(s,l,v,tip,cls)=>`<div class="r ${cls||(s=='+'?'p':'m')}${!cls&&!v?' z':''}"><i>${s}</i><span>${E(l)}${tip?' '+tipI(tip):''}</span><b>${v==null?'—':(cls?'':s=='+'?'+ ':'− ')+rp(v)}</b></div>`;
+ const ex=c.expected==null?null:+c.expected,tot=c.total==null?null:+c.total,df=ex==null||tot==null?null:Math.round(tot-ex);
+ return `<div class="rc15" style="border-left-color:${col}"><div class="hd"><b>Rekonsiliasi tagihan</b><span class="st" style="background:${col}1a;color:${col}">${stl}</span></div>
+ ${row('+','Tagihan sebelumnya',n(c.previousBalance),'Sisa tagihan bulan lalu yang terbawa ke lembar ini')}
+ ${row('−','Pembayaran di statement',n(c.payments),'Pembayaran yang dicatat bank di periode ini')}
+ ${row('+','Transaksi debit',n(c.charges),'Belanja, cicilan, biaya, bunga, iuran')}
+ ${row('−','Cashback',n(c.cashback))}${row('−','Refund',n(c.refunds))}${row('−','Kredit lain',n(c.otherCredits))}
+ ${row('=','Seharusnya',ex==null?null:Math.abs(ex),'Hitungan dari baris: tagihan lalu + debit − pembayaran − kredit','q')}
+ ${row('≡','Total tagihan bank',tot==null?null:Math.abs(tot),'Angka total tagihan di lembar bank','k')}
+ ${df==null?'':`<div class="r d ${df?'p':'m'}"><i>${df?'!':'✓'}</i><span>${df?'Selisih (bank − hitungan)':'Selisih'}</span><b>${df?(df>0?'+ ':'− ')+rp(Math.abs(df)):'Rp 0 · sama persis'}</b></div>`}
+ <div class="lg"><span><em style="color:#b91c1c">+ merah</em> menambah tagihan</span><span><em style="color:#15803d">− hijau</em> mengurangi tagihan</span>${c.net!=null?`<span>Pengeluaran bersih <b style="color:#14213d">${rp(c.net)}</b></span>`:''}</div>
+ ${c.status!='OK'&&c.status!='DIFF'&&c.message?`<div class="nt">${E(c.message)}</div>`:''}${(c.checks||[]).map(k=>`<div class="nt" style="color:${k.diff?'#b91c1c':'#15803d'}">${E(k.label)}: ringkasan bank ${rp(k.bank)} · baris ${rp(k.rows)}${k.diff?' · selisih '+rp(k.diff):' ✓'}</div>`).join('')}</div>`}
+(function(){const B0=billExtra;billExtra=function(r){let h=B0.apply(this,arguments);try{const c=r&&r.recon;if(!c)return h;const tp=document.createElement('div');tp.innerHTML=h;const card=[...tp.querySelectorAll('.cd')].find(e=>/^\s*Rekonsiliasi tagihan/.test(e.textContent));if(!card)return h;card.outerHTML=rcCard15(c);return tp.innerHTML}catch(e){return h}}})();
+
+/* ---------- DN-261104-135144-370: tombol lepas bukti = tong sampah (beda dari tutup) ---------- */
+(function(){const V0=itVH;itVH=function(){return V0.apply(this,arguments).replace(/(data-tip="Lepas bukti ini"[^>]*>)<svg[\s\S]*?<\/svg>/,(m,a)=>a+ic('trash',13))}})();
+(function(){const P0=tfPv9;tfPv9=function(){P0.apply(this,arguments);document.querySelectorAll('#tf9pv .tp13 .tb button[data-tip="Lepas foto"]').forEach(b=>{b.innerHTML=ic('trash',13);b.style.color='#b91c1c'})}})();
+
+/* ---------- DN-261104-135232-716: teks hasil OCR tampil di posisinya masing-masing pada foto ---------- */
+const OBX15={};
+async function ocrBox15(blob){await loadOCR();const bm=await createImageBitmap(blob),W=bm.width,H=bm.height,lg=Math.max(W,H);let sc=1;if(lg>2200)sc=2200/lg;else if(W<1100)sc=Math.min(2.5,1100/W);
+ const c=document.createElement('canvas');c.width=Math.round(W*sc);c.height=Math.round(H*sc);const x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingQuality='high';x.drawImage(bm,0,0,c.width,c.height);
+ try{const d=x.getImageData(0,0,c.width,c.height),p=d.data;let lo=255,hi=0;for(let i=0;i<p.length;i+=64){const g=.299*p[i]+.587*p[i+1]+.114*p[i+2];if(g<lo)lo=g;if(g>hi)hi=g}const k=255/Math.max(60,hi-lo);for(let i=0;i<p.length;i+=4){let g=(.299*p[i]+.587*p[i+1]+.114*p[i+2]-lo)*k;g=g<0?0:g>255?255:g;p[i]=p[i+1]=p[i+2]=g}x.putImageData(d,0,0)}catch(e){}
+ const w=await tw14('ind+eng'),r=await w.recognize(c,{},{text:true,blocks:true}),dd=(r&&r.data)||{};let L=(dd.lines||[]).slice();if(!L.length&&dd.blocks)dd.blocks.forEach(b=>(b.paragraphs||[]).forEach(p=>(p.lines||[]).forEach(l=>L.push(l))));
+ return {W:c.width,H:c.height,lines:L.filter(l=>l&&l.bbox&&String(l.text||'').trim().length).map(l=>({t:String(l.text).replace(/\s+/g,' ').trim(),b:l.bbox}))}}
+async function itPos15(){const o=itT()&&itT().itm,f=o&&o.files[ITV.j],box=$('#it_vb');if(!f||!box)return;const old=box.querySelector('.ol15');if(old){const w=old.parentNode;old.remove();return}
+ const im=box.querySelector('img.i11');if(!im)return itTxt0_15();let wr=im.parentNode;if(!wr.classList.contains('ow15')){wr=document.createElement('span');wr.className='ow15';im.before(wr);wr.appendChild(im)}
+ const ly=document.createElement('div');ly.className='ol15';ly.innerHTML=`<div class="ld"><i></i>Membaca posisi teks…</div>`;wr.appendChild(ly);
+ try{if(!OBX15[f.id]){const fo=await fGet(f);OBX15[f.id]=await ocrBox15(fo)}const B=OBX15[f.id];if(!ly.isConnected)return;
+  ly.innerHTML=`<div class="tg"><button type="button" onclick="this.closest('.ol15').classList.toggle('hide')" data-tip="Sembunyikan / tampilkan teks (arahkan kursor untuk melihat)">Foto</button><button type="button" onclick="this.closest('.ol15').remove();itTxt0_15()">Daftar</button><button type="button" onclick="this.closest('.ol15').remove()">${ic('x11',10)}</button></div>`+(B.lines.length?B.lines.map(l=>{const b=l.b;return `<span class="w" style="left:${(b.x0/B.W*100).toFixed(3)}%;top:${(b.y0/B.H*100).toFixed(3)}%;width:${((b.x1-b.x0)/B.W*100).toFixed(3)}%;height:${((b.y1-b.y0)/B.H*100).toFixed(3)}%" data-h="${((b.y1-b.y0)/B.H).toFixed(5)}">${E(l.t)}</span>`}).join(''):'<div class="ld">Tidak ada teks terbaca</div>');
+  const fit=()=>{const h=im.clientHeight;ly.querySelectorAll('.w').forEach(s=>{s.style.fontSize=Math.max(7,Math.min(28,+s.dataset.h*h*.78))+'px'})};fit();if(window.ResizeObserver){const ro=new ResizeObserver(()=>{if(!ly.isConnected)return ro.disconnect();fit()});ro.observe(im)}}
+ catch(e){ly.innerHTML=`<div class="ld" style="color:#b91c1c">${E(e.message)}</div>`}}
+const itTxt0_15=itTxt14;
+itTxt14=function(){const o=itT()&&itT().itm,f=o&&o.files[ITV.j],box=$('#it_vb');if(f&&box&&box.querySelector('img.i11')&&!box.querySelector('.ot14'))return itPos15();return itTxt0_15.apply(this,arguments)};
+document.addEventListener('click',e=>{const w=e.target.closest&&e.target.closest('.ol15 .w');if(!w)return;e.stopPropagation();if(String(getSelection()||'').trim())return;try{navigator.clipboard.writeText(w.textContent).then(()=>{w.classList.add('cp');setTimeout(()=>w.classList.remove('cp'),900);toast('Disalin: '+w.textContent.slice(0,40))})}catch(x){}},true);
+(function(){const V0=itVH;itVH=function(){return V0.apply(this,arguments).replace('data-tip="Teks bukti — klik baris untuk salin"','data-tip="Teks bukti di posisinya pada foto — klik teks untuk salin"')}})();
+
+/* ---------- DN-261105-155831-497: Konfirmasi Pembayaran — banyak bukti, nominal tiap bukti dibaca (lokal → AI), total & sisa tagihan ---------- */
+const PIMG15=['image/png','image/jpeg','image/webp','application/pdf'];
+async function prAI15(t){if(String(t||'').replace(/\s/g,'').length<15)return {};try{const a=await call('api_aiProof',[{text:String(t).slice(0,4000)}]);return (a&&a.data&&!a.amount?a.data:a)||{}}catch(e){return {}}}
+function pm15R(){const P=FM&&FM.pay,el=$('#pm15b');if(!P||!el)return;const X=P.more15||[],a1=Math.round(pn(($('#f_pa')||{}).value)||0),tot=a1+X.reduce((s,x)=>s+(Math.round(+x.amt)||0),0),rest=Math.round(P.rest||0),left=rest-tot;
+ el.innerHTML=X.map((x,j)=>`<div class="pm15r${x.busy?' busy':''}"><span class="n">${j+2}</span><span class="f">${x.url?`<img src="${x.url}" alt="">`:ic('file',15)}</span><div class="m"><b title="${E(x.file.name)}">${E(x.file.name)}</b><small>${x.busy?'membaca…':x.date?(x.src=='AI'?'AI · ':x.src=='MANUAL'?'':'terbaca · ')+fdd(x.date):'tanggal belum terbaca'}</small></div>
+  <input class="inp amt${x.ai?' aiv':''}" inputmode="numeric" value="${x.amt?fg(x.amt):''}" placeholder="nominal" oninput="mi(this)" onchange="FM.pay.more15[${j}].amt=Math.round(pn(this.value));FM.pay.more15[${j}].ai=0;pm15R()"><input type="date" class="inp" max="${TODAY()}" value="${E(x.date||'')}" onchange="FM.pay.more15[${j}].date=this.value;FM.pay.more15[${j}].src='MANUAL'"><button type="button" class="ib7" style="color:#b91c1c" data-tip="Lepas bukti ini" onclick="FM.pay.more15.splice(${j},1);pm15R()">${ic('trash',13)}</button></div>`).join('')+
+  `<div class="pm15t"><span>${X.length?`Bukti 1 ${rp(a1)}${X.map((x,j)=>` + Bukti ${j+2} ${rp(x.amt||0)}`).join('')}`:'Total dibayar'}</span><b>${rp(tot)}</b></div><div class="pm15t s"><span>Sisa tagihan ${rp(rest)} − total dibayar</span><b style="color:${left>0?'#b91c1c':left<0?'#b45309':'#15803d'}">${left<0?'lebih bayar '+rp(-left):left?'sisa '+rp(left):'Lunas ✓'}</b></div>`;
+ try{const p=[...document.querySelectorAll('#m .pz4 .lb')].find(e=>/Nominal/i.test(e.textContent));if(p)p.textContent=X.length?'Nominal bukti 1':'Nominal dibayar'}catch(e){}}
+async function pm15Add(F){const P=FM&&FM.pay;if(!P)return;F=[...(F||[])].filter(f=>PIMG15.includes(f.type));if(!F.length)return toast('Gunakan JPG / PNG / WebP / PDF');if(!P.file){await pset(F.shift())}
+ P.more15=P.more15||[];for(const f of F){if(P.more15.length>=7){toast('Maksimal 8 bukti sekali konfirmasi');break}const x={file:f,url:/^image\//.test(f.type)?URL.createObjectURL(f):'',busy:1,amt:0,date:''};P.more15.push(x);pm15Read(x)}pm15R()}
+async function pm15Read(x){const P=FM.pay;let t='';try{t=await itText(x.file)}catch(e){}x.ocr=t;let o={};try{o=pfLocal13(t)||{}}catch(e){}
+ x.amt=Math.round(+o.amount||0)||amtFind(t,0)||0;const d=(dateCands(t)||[]).filter(z=>z.kind=='transaction')[0];x.date=o.date||(d&&d.date)||'';x.src=x.date?'OCR':'';
+ if(!x.amt||!x.date){const a=await prAI15(t);if(!x.amt&&+a.amount){x.amt=Math.round(+a.amount);x.ai=1}if(!x.date&&/^\d{4}-\d{2}-\d{2}$/.test(a.date||'')){x.date=a.date;x.src='AI'}}
+ if(!x.date)x.date=($('#f_pd')||{}).value||'';x.busy=0;if(FM&&FM.pay===P)pm15R()}
+(function(){const B0=bp;bp=function(){const r=B0.apply(this,arguments);try{const P=FM&&FM.pay,e=$('#pz_e');if(P&&e&&!$('#pm15')){e.insertAdjacentHTML('beforebegin',`<div class="pm15" id="pm15"><div class="hd">${ic('receipt',12)} Bukti bayar lain ${tipI('Bayar tagihan ini dengan beberapa transfer? Lampirkan semua buktinya — nominal & tanggal tiap bukti dibaca otomatis (perangkat → AI), dijumlah, lalu dicatat sebagai pembayaran terpisah dengan buktinya masing-masing.')}<label class="bg2 sm" data-fz="pm15f">${ic('plus',11)} bukti<input id="pm15f" type="file" hidden multiple accept="image/png,image/jpeg,image/webp,application/pdf" onchange="pm15Add(this.files);this.value=''"></label></div><div id="pm15b"></div></div>`);
+ const a=$('#f_pa');if(a)a.addEventListener('input',()=>setTimeout(pm15R,0));pm15R()}}catch(e){}return r}})();
+/* nominal bukti 1 tidak terbaca lokal → AI (teks saja) */
+(function(){const P0=pset;pset=async function(f){const r=await P0.apply(this,arguments);try{const P=FM&&FM.pay;if(P&&P.file===f){const z=$('#pz_a');if(z&&!z.textContent.trim()&&P.ocr){z.innerHTML='<span class="mu">AI membaca nominal…</span>';const a=await prAI15(P.ocr);if(FM.pay===P&&+a.amount){$('#f_pa').value=fg(Math.round(+a.amount));$('#f_pa').classList.add('aiv');z.innerHTML=`<span style="color:var(--gn)">${ic('check',11)} Nominal dibaca AI ${rp(Math.round(+a.amount))}</span>${Math.round(+a.amount)!=Math.round(P.rest)?' · <span class="rd">beda dari sisa tagihan</span>':''}`;pbtn()}else if(FM.pay===P)z.innerHTML=''}pm15R()}}catch(e){}return r}})();
+window.addEventListener('drop',e=>{if(!$('#pm15'))return;const z=e.target.closest&&e.target.closest('#pz');if(!z)return;const F=[...((e.dataTransfer&&e.dataTransfer.files)||[])];if(F.length<2)return;e.preventDefault();e.stopImmediatePropagation();pm15Add(F)},true);
+(function(){const G0=pgo;pgo=async function(){const P=FM&&FM.pay,X=((P&&P.more15)||[]).filter(x=>x.file);if(X.some(x=>x.busy))return toast('Tunggu, bukti masih dibaca');
+ for(const [j,x] of X.entries()){if(!(x.amt>0))return toast('Isi nominal bukti '+(j+2));if(!/^\d{4}-\d{2}-\d{2}$/.test(x.date||''))return toast('Isi tanggal bukti '+(j+2))}
+ const sv=(($('#f_ps')||{}).value||':').split(':'),bid=P&&P.billId;await G0.apply(this,arguments);if(!X.length||$('#pz'))return; /* gagal → jendela tetap terbuka */
+ let ok=0;ld14(1,'Mencatat '+X.length+' bukti tambahan…');try{for(const x of X){try{const p=await fileB64(x.file),u=await call('api_uploadProof',[uuid(),{billId:bid,name:x.file.name,mime:p.mime,base64:p.b64}]),fid=u&&u.data&&u.data.fileId;if(!fid)throw new Error('unggah gagal');
+  const r=await call('api_confirmPayment',[uuid(),bid,{amount:Math.round(x.amt),date:x.date,dateSource:x.src||'MANUAL',extractedDate:x.src&&x.src!='MANUAL'?x.date:'',dateLabel:'',sourceType:sv[0]||'',sourceId:sv[1]||'',proof:{fileId:fid}}]);const b=S.bills.find(z=>z.ID==bid);if(b&&r.data&&r.data.bill)Object.assign(b,r.data.bill);ok++}catch(e){toast(x.file.name+': '+e.message)}}}finally{ld14(0)}
+ if(ok){toast((ok+1)+' pembayaran tercatat dengan buktinya');render();refreshSoon()}}})();
+
+/* ---------- status catatan developer (DN_DONE) — gelombang 1 ---------- */
+Object.assign(DN_DONE,Object.fromEntries([
+['DN-261105-160000-140','Tagihan › Upload Tagihan: tombol "Tidak ada tagihan" di tiap kartu yang belum diupload + "Konfirmasi untuk kartu lain…" (pilih kartu & bulan). Pengingat periode itu hilang di semua halaman.'],
+['DN-261105-155831-497','Tagihan › Konfirmasi Pembayaran: bisa melampirkan banyak bukti (+ bukti / seret beberapa file). Nominal & tanggal tiap bukti dibaca otomatis (perangkat → AI bila belum terbaca), dijumlah, sisa tagihan dihitung, lalu dicatat sebagai pembayaran terpisah dengan buktinya masing-masing. Nominal bukti 1 juga dibaca AI bila OCR gagal.'],
+['DN-261104-135232-716','Tagihan › penampil bukti (Rincian): tombol Teks menampilkan teks OCR tepat di posisinya pada foto; klik teks = salin, tombol Foto untuk menyembunyikan, tombol Daftar untuk tampilan lama.'],
+['DN-261104-135144-370','Tombol lepas bukti diganti ikon tong sampah (penampil Rincian & + Catat) agar tidak tertukar dengan tombol tutup.'],
+['DN-261103-201219-405','Tagihan › Rekonsiliasi: tampil sebagai hitungan + / − — merah = menambah tagihan, hijau = mengurangi, garis "= Seharusnya", "Total tagihan bank" dan baris selisih berwarna.'],
+['DN-261103-200953-434','Nama bank dikenali dari banyak kata kunci (Bank Rakyat Indonesia = Bank BRI = BRI = BRImo; Bank Central Asia = BCA; OCBC NISP = OCBC; digibank = DBS, dll.) — tidak lagi ditanyakan sebagai perubahan info kartu.'],
+['DN-261102-202401-732','Password PDF ditanyakan di jendela tengah layar dengan latar buram (+ Ingat password terenkripsi, Enter = buka, salah = goyang & ulangi).'],
+['DN-261102-201945-697','Tagihan › Verifikasi: bila AI gagal di awal, muncul bar kuning "AI belum berhasil membaca" + tombol Isi dengan AI (mode gratis → berbayar mengikuti Pengaturan).'],
+['DN-261102-201723-987','Baca AI lebih cepat: server menurunkan tingkat "berpikir" model Gemini untuk baca dokumen/JSON (otomatis kembali normal bila model menolak) + penghitung detik di loader.'],
+['DN-261102-201459-373','Upload Tagihan: kartu yang kamu pilih manual, tanggal cetak, jatuh tempo & nama nasabah yang kamu perbaiki dipelajari per kartu / pola nama file, lalu dipakai otomatis (ungu, kapsul "pola dipelajari").']
+].map(([k,v])=>[k,['kartuku-sb 2026.11.15',v]])));
 
 </script></body></html>
