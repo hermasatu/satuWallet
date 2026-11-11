@@ -275,7 +275,7 @@ table.rk-l td .inp.ti{border-color:transparent;background:transparent;padding:4p
 <script>
 /* ===== KONFIGURASI ===== */
 const API_URL = "https://vfryxascchrmfikjpoxd.supabase.co/functions/v1/hyper-service"; // Supabase Edge Function (versi KartuKu)
-const APP_VERSION = "kartuku-sb 2026.11.16"; // dipakai widget Catatan dev
+const APP_VERSION = "kartuku-sb 2026.11.17"; // dipakai widget Catatan dev
 const GCID = "GANTI_DENGAN_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // OAuth Web Client ID (sama dengan Script Property GOOGLE_CLIENT_ID)
 // Autentikasi: login email + password -> token sesi disimpan di localStorage (kunci "SESSION_TOKEN"). Tidak ada rahasia di file ini.
 
@@ -490,7 +490,7 @@ function srcOpts(sel,types){let h='';
  [['CASH','Dompet Tunai',a=>a.type=='CASH'],['ACCOUNT','Rekening / E-wallet',a=>a.type=='BANK'||a.type=='EWALLET'],['DEBIT','Kartu Debit',a=>a.type=='DEBIT']].forEach(([t,l,f])=>{if(!types.includes(t))return;
   const L=S.accounts.filter(a=>f(a)&&(a.status!='Nonaktif'||t+':'+a.id==sel));if(L.length)h+=`<optgroup label="${l}">${L.map(a=>`<option value="${t}:${a.id}" ${t+':'+a.id==sel?'selected':''}>${E(a.name)}${a.last4?' ••'+E(a.last4):''}</option>`).join('')}</optgroup>`});return h}
 function txRow(x,cl){const k=x.Kind||'EXPENSE',c=catOf(x.Category_ID),a=Number(x.Approx_IDR)||0,inc=k=='INCOME'||(k=='EXPENSE'&&a<0),notes=String(x.Notes||'').split('\n').filter(Boolean),dest=k=='TRANSFER'?(S.accounts.find(z=>z.id==x.Dest_Account_ID)||{}).name:'';
- return `<div class="cd p-3 flex justify-between gap-3" onclick="${cl||`tf('${x.ID}')`}"><div class="min-w-0 flex-1"><b class="text-sm block" style="word-break:break-word">${k=='EXPENSE'||k=='INCOME'?ci(c)+' ':''}${E(tName(x))}</b>${x.Label&&x.Merchant&&x.Label!=x.Merchant?`<div class="mu text-xs" style="word-break:break-word">${E(x.Merchant)}</div>`:''}${notes.map(n=>`<div class="mu text-xs">${E(n)}</div>`).join('')}<div class="mu text-xs">${fd(x.Date)} · ${E(srcName(x))}${dest?' → '+E(dest):''}${c.Name?' · '+E(c.Name):''}${x.Reimburse_Client?' · '+E(x.Reimburse_Client):''}</div><div class="mt-1 flex gap-1 flex-wrap">${KL[k]?`<span class="pill nw2">${KL[k]}</span>`:''}${x.Titip_Status?`<span class="pill ${x.Titip_Status=='Lunas'?'pg':'pa'}">Titip ${E(x.Titip_Person)} · ${x.Titip_Status}</span>`:''}${isR(x)?`<span class="pill ${x.Reimburse_Status=='Cair'?'pg':'pa'}" style="display:inline-flex;align-items:center;gap:3px">${ic('brief',11)}Reimburse · ${x.Reimburse_Status=='Cair'?'Sudah Cair':'Pending'}</span>`:''}${x.Credit_Type?`<span class="pill pg">${x.Credit_Type=='REFUND'?'Refund'+(x.Refund_Of?' tertaut':''):'Kredit'}</span>`:''}${tb(x.Needs_Review)?'<span class="pill pa">Perlu ditinjau</span>':''}${x.Reversal_Of?'<span class="pill pa">Pembatalan</span>':''}${x.Reversed_By?'<span class="pill pa">Dibatalkan</span>':''}${isI(x)?`<span class="pill nw2">Cicilan ${x.Installment_Current}/${x.Installment_Total}</span>`:''}${isSplit(x)?`<span class="pill nw2" style="display:inline-flex;align-items:center;gap:3px">${ic('split',11)}Split</span>`:''}${x.Bill_ID?`<span class="pill pg">Di tagihan</span>`:''}${x._p?'<span class="pill nw2">menyimpan…</span>':''}</div></div><div class="text-right whitespace-nowrap"><b style="${inc?'color:var(--gn)':''}">${k=='INCOME'?'+':''}${rp(a)}</b>${x.Original_Currency&&x.Original_Currency!='IDR'?`<div class="mu text-xs">${x.Original_Currency} ${Number(x.Amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>`:''}</div></div>`}
+ return `<div class="cd p-3 flex justify-between gap-3" onclick="${cl||`tf('${x.ID}')`}"><div class="min-w-0 flex-1"><b class="text-sm block" style="word-break:break-word">${k=='EXPENSE'||k=='INCOME'?ci(c)+' ':kIc17(x)+' '}${E(tName(x))}</b>${x.Label&&x.Merchant&&x.Label!=x.Merchant?`<div class="mu text-xs" style="word-break:break-word">${E(x.Merchant)}</div>`:''}${notes.map(n=>`<div class="mu text-xs">${E(n)}</div>`).join('')}<div class="mu text-xs">${fd(x.Date)} · ${E(srcName(x))}${dest?' → '+E(dest):''}${c.Name?' · '+E(c.Name):''}${x.Reimburse_Client?' · '+E(x.Reimburse_Client):''}</div><div class="mt-1 flex gap-1 flex-wrap">${KL[k]?`<span class="pill nw2">${KL[k]}</span>`:''}${x.Titip_Status?`<span class="pill ${x.Titip_Status=='Lunas'?'pg':'pa'}">Titip ${E(x.Titip_Person)} · ${x.Titip_Status}</span>`:''}${isR(x)?`<span class="pill ${x.Reimburse_Status=='Cair'?'pg':'pa'}" style="display:inline-flex;align-items:center;gap:3px">${ic('brief',11)}Reimburse · ${x.Reimburse_Status=='Cair'?'Sudah Cair':'Pending'}</span>`:''}${x.Credit_Type?`<span class="pill pg">${x.Credit_Type=='REFUND'?'Refund'+(x.Refund_Of?' tertaut':''):'Kredit'}</span>`:''}${tb(x.Needs_Review)?'<span class="pill pa">Perlu ditinjau</span>':''}${x.Reversal_Of?'<span class="pill pa">Pembatalan</span>':''}${x.Reversed_By?'<span class="pill pa">Dibatalkan</span>':''}${isI(x)?`<span class="pill nw2">Cicilan ${x.Installment_Current}/${x.Installment_Total}</span>`:''}${isSplit(x)?`<span class="pill nw2" style="display:inline-flex;align-items:center;gap:3px">${ic('split',11)}Split</span>`:''}${x.Bill_ID?`<span class="pill pg">Di tagihan</span>`:''}${x._p?'<span class="pill nw2">menyimpan…</span>':''}</div></div><div class="text-right whitespace-nowrap"><b style="${inc?'color:var(--gn)':''}">${k=='INCOME'?'+':''}${rp(a)}</b>${x.Original_Currency&&x.Original_Currency!='IDR'?`<div class="mu text-xs">${x.Original_Currency} ${Number(x.Amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>`:''}</div></div>`}
 function tv(){const np=S.tx.filter(isPend).length,nt=S.tx.filter(x=>x.Titip_Status=='Pending').length;return `<h2 class="font-extrabold text-xl mb-3">Transaksi</h2><div class="grid grid-cols-2 gap-2 mb-3"><input class="inp col-span-2" placeholder="Cari keterangan / ref / klien" value="${E(Q.q)}" oninput="Q.q=this.value;tl()"><select class="inp" onchange="Q.s=this.value;tl()"><option value="">Semua sumber dana</option>${srcOpts(Q.s,['CC','CASH','ACCOUNT','DEBIT'])}</select><select class="inp" onchange="Q.k=this.value;tl()"><option value="">Semua kategori</option>${S.cats.map(c=>`<option value="${c.ID}" ${Q.k==c.ID?'selected':''}>${E(c.Name)}</option>`).join('')}</select></div><div class="mb-3"><button class="chip ${Q.r?'on':''}" onclick="Q.r=!Q.r;go('t')">${ic('brief',14)} Perlu Reimburse · ${np}</button><button class="chip ${Q.t?'on':''}" onclick="Q.t=!Q.t;go('t')">${ic('hand',14)} Titip Bayar · ${nt}</button></div><div id="tl">${tlist()}</div><button class="bg2 w-full mt-3" onclick="oldTx()">Muat transaksi lebih lama</button>`}
 function tlist(){const q=Q.q.toLowerCase(),r=S.tx.filter(x=>(!Q.s||(x.Source_Type||'CC')+':'+(x.Source_ID||x.Card_ID)==Q.s||(Q.s.split(':')[1]==x.Dest_Account_ID))&&(!Q.k||x.Category_ID==Q.k)&&(!Q.r||isPend(x))&&(!Q.t||x.Titip_Status=='Pending')&&(!q||(x.Merchant+' '+(x.Reimburse_Client||'')+' '+(x.Titip_Person||'')+' '+(x.Ref_No||'')+' '+(x.Label||'')+' '+(x.Notes||'')).toLowerCase().includes(q))).sort((a,b)=>a.Date<b.Date?1:-1);
  const ex=r.filter(x=>(x.Kind||'EXPENSE')=='EXPENSE').reduce((s,x)=>s+(Number(x.Approx_IDR)||0),0);
@@ -528,8 +528,7 @@ function tf(id,pre){
  ${kd=='WITHDRAW'||kd=='TRANSFER'?`<p class="lb">${kd=='WITHDRAW'?'Masuk ke dompet tunai':'Rekening / dompet tujuan'}</p><select id="f_da" class="inp">${dests.map(a=>`<option value="${a.id}" ${a.id==x.Dest_Account_ID?'selected':''}>${E(a.name)}${a.type=='LIABILITY'?' (bayar hutang)':a.type=='ASSET'?' (aset)':''}</option>`).join('')}</select>${id?'':amtF('Biaya admin (opsional, dicatat sebagai pengeluaran)','f_fee','')}`:''}
  ${ex?`<div class="op flex items-center justify-between gap-3" style="margin-top:.9rem"><div><b class="flex items-center gap-2">${ic('brief',16)} Transaksi Reimburse?</b><div class="mu text-xs">Tidak dihitung sebagai pengeluaran pribadi</div></div><input type="checkbox" id="f_rb" class="sw" ${isR(x)?'checked':''} onchange="$('#f_rf2').style.display=this.checked?'block':'none'"></div>
  <div id="f_rf2" style="display:${isR(x)?'block':'none'}">${fld('Nama Perusahaan / Klien (opsional)','f_co',x.Reimburse_Client||'','text','placeholder="mis. PT Maju Jaya"')}<p class="lb">Status</p><div class="sg" id="f_sg">${[['Pending','Pending'],['Cair','Sudah Cair']].map(([v,l])=>`<button type="button" class="${v==FM.st?'on':''}" onclick="ss('${v}')">${l}</button>`).join('')}</div></div>
- <div class="op flex items-center justify-between gap-3"><div><b class="flex items-center gap-2">${ic('repeat',16)} Transaksi Cicilan?</b><div class="mu text-xs">Kartu kredit: lacak cicilan ke-N dari M</div></div><input type="checkbox" id="f_ib" class="sw" ${isI(x)?'checked':''} onchange="$('#f_if').style.display=this.checked?'grid':'none'"></div>
- <div id="f_if" class="grid grid-cols-2 gap-2" style="display:${isI(x)?'grid':'none'}"><div>${fld('Cicilan ke','f_ic',x.Installment_Current||'','text','inputmode="numeric"')}</div><div>${fld('Dari total','f_it',x.Installment_Total||'','text','inputmode="numeric"')}</div></div>`:''}
+ <input type="checkbox" id="f_ib" hidden ${isI(x)?'checked':''}><input type="hidden" id="f_ic" value="${E(String(x.Installment_Current||''))}"><input type="hidden" id="f_it" value="${E(String(x.Installment_Total||''))}">`:''}
  <div class="flex gap-2 pt-4">${id?`<button class="bg2 rd" onclick="tdel('${id}')" aria-label="Hapus">${ic('trash',18)}</button>`:''}<button class="bg2" style="flex:1" onclick="cm()">Batal</button><button class="bt" style="flex:2" onclick="ts('${id||''}')">Simpan</button></div>`);
  fe_();kshow(x.Category_ID);if(!id)setTimeout(()=>{const e=$('#f_m');e&&e.focus()},450);
  if(ex&&!id){FM.so=pre&&pre.Split_Of||'';['#f_s','#f_d'].forEach(q=>{const e=$(q);e&&e.addEventListener('change',soUpd)});const a=$('#f_a');a&&a.addEventListener('input',soUpd);soUpd()}}
@@ -2951,7 +2950,7 @@ function memoMiss(x){if(isConf(x)||!x.Card_ID||(x.Source_Type&&x.Source_Type!='C
 (function(){const F=tFilt;tFilt=function(){const L=F.apply(this,arguments);return Q.tb=='all'?L:L.filter(x=>(Q.tb=='memo')!=isConf(x))}})();
 let TXO=null;function txTg(id){TXO=TXO==id?null:id;tl()}
 function txC(x){const k=x.Kind||'EXPENSE',c=catOf(x.Category_ID),a=Number(x.Approx_IDR)||0,inc=k=='INCOME'||(k=='EXPENSE'&&a<0),ch=chTx(x),op=TXO==x.ID,conf=isConf(x),miss=memoMiss(x);
- const meta=[`<span>${fdd(x.Date)}</span>`,`<span>${E(srcName(x))}</span>`,k=='EXPENSE'||k=='INCOME'?`<span>${E(c.Name||'tanpa kategori')}</span>`:`<span>${KL[k]||''}</span>`,
+ const meta=[`<span>${fdd(x.Date)}</span>`,`<span>${E(srcName(x))}</span>`,k=='EXPENSE'||k=='INCOME'?`<span>${ci(c)} ${E(c.Name||'tanpa kategori')}</span>`:`<span>${kIc17(x)} ${KL[k]||''}</span>`,
   ch?`<span class="chx" onclick="chPick(event,'t','${x.ID}')">${chPill(ch,!x.Channel)}</span>`:'',!conf&&Q.tb!='memo'?'<span class="tag am">memo</span>':'',miss?'<span class="tag rd">tak ada di tagihan</span>':'',
   isR(x)?`<span class="tag ${x.Reimburse_Status=='Cair'?'gn':'am'}">reimburse</span>`:'',x.Titip_Status?`<span class="tag ${x.Titip_Status=='Lunas'?'gn':'am'}">titip</span>`:'',x.Credit_Type?'<span class="tag gn">refund</span>':'',tb(x.Needs_Review)?'<span class="tag am">tinjau</span>':'',x.Location&&locF(x.Location)?'<span class="tag rd">luar negeri</span>':''].filter(Boolean).join('');
  const fx=x.Original_Currency&&x.Original_Currency!='IDR'?`<small>${x.Original_Currency} ${Number(x.Amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</small>`:'';
@@ -5017,7 +5016,7 @@ tv=function(){Q.tb='all';const g=rgGet('t'),A=txF7(),L=Q.k?A.filter(x=>x.Categor
   const st=ms?`<span class="sx7 bad" data-tip="Memo: tidak ditemukan di tagihan — cek nominal / tanggal">${ic('alert',13)}</span>`:cf?`<span class="sx7 ok" data-tip="Terkonfirmasi (${x.Bill_ID?'tagihan kartu':x.Import_Key?'impor / CSV':'otomatis'})">${ic('check',13)}</span>`:`<span class="sx7 me" data-tip="Memo — dicatat manual, belum dicocokkan">${ic('pen',12)}</span>`;
   const dh=Q.so=='new'||Q.so=='old'||!Q.so?(x.Date!=last?(last=x.Date,`<tr class="dh7"><td colspan="7">${fdd(x.Date)}</td></tr>`):''):'';
   return dh+`<tr class="r" onclick="txOpen7('${x.ID}')"><td class="s7">${st}</td><td class="dt hm">${fdd(x.Date)}</td><td><div class="nm">${E(tName(x))}</div>${nt?`<div class="nt">${E(String(nt).slice(0,140))}</div>`:''}</td>
-   <td class="hm">${payM7(x)}</td><td class="hm">${k=='EXPENSE'||k=='INCOME'?`<span class="kt">${ci(c)}${E(c.Name||'—')}</span>`:`<span class="kt mu7">${E(KL[k]||k)}</span>`}${x.Purpose?` <span class="mu7">· ${E(ppName(x.Purpose))}</span>`:''}</td>
+   <td class="hm">${payM7(x)}</td><td class="hm">${k=='EXPENSE'||k=='INCOME'?`<span class="kt">${ci(c)}${E(c.Name||'—')}</span>`:`<span class="kt mu7">${kIc17(x)}${E(KL[k]||k)}</span>`}${x.Purpose?` <span class="mu7">· ${E(ppName(x.Purpose))}</span>`:''}</td>
    <td class="num db">${d=='db'?rp(v):''}</td><td class="num cr">${d=='cr'?rp(v):''}</td></tr>`}).join('');
  return `<div class="h7"><h2 class="font-extrabold text-xl">Transaksi</h2><button class="bt text-sm inline-flex items-center gap-1" onclick="fabSheet()">${ic('plus',14)} Catat</button></div>
  ${rgBar('t')}
@@ -9100,5 +9099,69 @@ Object.assign(DN_DONE,Object.fromEntries([
 ['DN-261105-220320-397','Kelola › Kartu: ±90 bank Indonesia + kata kunci (BCA = Bank Central Asia, dll.) jadi satu nama baku, tidak dobel; logo bank tampil di kotak isian (juga saat mengetik sebagian).'],
 ['DN-261107-123843-164','Catatan Developer › foto: penampil & potong diperbaiki (lihat DN-261105-220937-125); deteksi potong otomatis lebih ketat (orientasi foto HP, area terlalu kecil diabaikan). Contoh foto belum terlampir — kirim bila masih ada kasus.']
 ].map(([k,v])=>[k,['kartuku-sb 2026.11.16',v]])));
+
+
+
+/* =====================================================================
+   kartuku-sb 2026.11.17 — 5 catatan developer 7–9 Nov 2026
+   CSS css1117 · fungsi berakhiran 17 · blok ini dimuat paling akhir
+   ===================================================================== */
+(function(){const st=document.createElement('style');st.id='css1117';st.textContent=`
+.sh2 .gh{padding:.7rem 0 .9rem!important;margin:-.5rem 0 0;cursor:grab;touch-action:none;user-select:none}
+.sh2 .gh .grab{transition:width .15s,background .15s}
+.sh2 .gh:hover .grab,.sh2 .gh.drag17 .grab{width:64px!important;background:#94a3b8!important}
+.sh2 .gh.arm17 .grab{background:#b91c1c!important;width:80px!important}
+.sh2.nd17{animation:nd17 .32s ease}.sh2.nd17 .gh .grab{background:#1d4ed8!important;width:72px!important}
+@keyframes nd17{0%{transform:translateY(0)}35%{transform:translateY(10px)}70%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+.kt .cic,.tt7 .kt .cic{color:inherit;opacity:.85}
+`;document.head.appendChild(st)})();
+
+/* ---------- DN-261108-163110-807: popup tidak mudah tertutup ----------
+   Tutup HANYA dengan menarik garis di sisi atas cukup jauh (≥30% tinggi popup, 140–220px) — tidak ada lagi tutup karena
+   geser isi popup atau sentakan cepat. Ketuk latar: di HP tidak menutup; di desktop hanya menutup bila belum ada isian berubah. */
+dg=function(sh){const h=sh.querySelector('.gh'),ov=sh.parentNode;if(!h||!ov)return;h.title='Tarik ke bawah untuk menutup';
+ let y0=0,dy=0,on=0;const lim=()=>Math.min(220,Math.max(140,sh.getBoundingClientRect().height*.3));
+ const move=y=>{const L=lim();dy=Math.max(0,y-y0);const v=dy<L?dy:L+(dy-L)*.3;sh.style.transform=`translateY(${v}px)`;ov.style.opacity=Math.max(.4,1-dy/(L*2.4));h.classList.toggle('arm17',dy>=L)};
+ const end=()=>{if(!on)return;on=0;const ok=dy>=lim();h.classList.remove('arm17','drag17');sh.style.transition='';sh.style.transform='';ov.style.opacity='';dy=0;if(ok)cm()};
+ h.onpointerdown=e=>{if(e.button>0)return;e.preventDefault();on=1;y0=e.clientY;dy=0;h.classList.add('drag17');sh.style.transition='none';try{h.setPointerCapture(e.pointerId)}catch(x){}};
+ h.onpointermove=e=>{if(on)move(e.clientY)};h.onpointerup=h.onpointercancel=h.onlostpointercapture=end;
+ const dirty=()=>{sh.dataset.dirty17='1'};sh.addEventListener('input',dirty,true);sh.addEventListener('change',dirty,true)};
+let DOWN17=null,NDT17=0;
+function nudge17(sh){if(!sh)return;sh.classList.remove('nd17');void sh.offsetWidth;sh.classList.add('nd17');setTimeout(()=>sh.classList.remove('nd17'),400);
+ if(Date.now()-NDT17>4000){NDT17=Date.now();toast('Tarik garis di atas ke bawah, atau tekan Batal, untuk menutup')}}
+document.addEventListener('pointerdown',e=>{DOWN17=e.target},true);
+document.addEventListener('click',e=>{const ov=e.target;if(!(ov instanceof Element)||!ov.matches('#m > .ov'))return;const sh=ov.querySelector('.sh2');
+ const coarse=matchMedia('(pointer:coarse)').matches;if(DOWN17!==ov||coarse||(sh&&sh.dataset.dirty17)){e.stopPropagation();e.preventDefault();nudge17(sh)}},true);
+
+/* ---------- DN-261109-201329-903: toggle "Transaksi Cicilan?" dihapus dari form catat (cicilan tetap dikelola di Tagihan) ---------- */
+
+/* ---------- DN-261109-170206-274: semua kategori / jenis punya ikon (Bayar tagihan, Transfer, Tarik tunai, Koreksi saldo) ---------- */
+function kIc17(x){const k=(x&&x.Kind)||'EXPENSE',n=k=='CC_PAYMENT'?'card':k=='TRANSFER'?(x.Is_Withdraw===true||x.Is_Withdraw==='TRUE'?'wallet':'move'):k=='ADJUST'?'scale':'tag';return `<span class="cic">${ic(P[n]?n:'tag',15)}</span>`}
+
+/* ---------- DN-261109-165725-842: kapsul "Kemarin" (Beranda & Transaksi) ---------- */
+(function(){const C0=rgCalc;rgCalc=function(p){if(p=='yd'){const y=shD(TODAY(),-1);return [y,y]}return C0.apply(this,arguments)}})();
+(function(){const B0=rgBar;rgBar=function(k){let h=B0.apply(this,arguments);const g=RG7[k]||{};
+ return h.replace(/(<button[^>]*onclick="rgSet\('([^']+)','d'\)"[^>]*>Hari ini<\/button>)/,(m,b,kk)=>`${b}<button type="button" class="${g.p=='yd'?'on':''}" onclick="rgSet('${kk}','yd')">Kemarin</button>`)}})();
+
+/* ---------- DN-261107-201424-119: di tanggal yang sama, yang terbaru di paling atas ----------
+   Urutan dalam 1 tanggal: jam transaksi (dari struk / isian jam) bila ada; tanpa jam = urutan input (yang terakhir diinput di atas).
+   _seq = urutan input dari server (2026.11.17); transaksi baru yang belum punya _seq dianggap paling akhir. */
+const SEQ17={},SQA17={};let SQN17=0;
+function tm17(t){let o=t&&t.Items;if(!o)return '';if(typeof o=='string'){if(o.indexOf('time')<0)return '';try{o=JSON.parse(o)}catch(e){return ''}}const m=String((o&&o.time)||'').match(/(\d{1,2})[:.](\d{2})/);return m&&+m[1]<24?String(+m[1]).padStart(2,'0')+':'+m[2]:''}
+function seq17(t){if(t._seq!=null&&t._seq!==''){SEQ17[t.ID]=+t._seq;return +t._seq}if(SEQ17[t.ID]!=null)return SEQ17[t.ID];
+ const v=(t.Action_ID&&SQA17[t.Action_ID])||1e12+(++SQN17);SEQ17[t.ID]=v;if(t.Action_ID)SQA17[t.Action_ID]=v;return v}
+function daySort17(L,asc){(S.tx||[]).forEach(t=>{if(t&&t._seq!=null&&t._seq!=='')SEQ17[t.ID]=+t._seq});const out=[];let i=0;
+ while(i<L.length){let j=i+1;while(j<L.length&&L[j].Date==L[i].Date)j++;
+  if(j-i>1){const G=L.slice(i,j).map(t=>({t,s:seq17(t),m:tm17(t)})).sort((a,b)=>a.s-b.s);let cur='';G.forEach(g=>{if(g.m)cur=g.m;g.k=g.m||cur});
+   G.sort((a,b)=>a.k<b.k?-1:a.k>b.k?1:a.s-b.s);if(!asc)G.reverse();G.forEach(g=>out.push(g.t))}else out.push(L[i]);i=j}return out}
+(function(){const F0=txF7;txF7=function(){const L=F0.apply(this,arguments);if(Q.so=='big')return L;try{return daySort17(L,Q.so=='old')}catch(e){return L}}})();
+
+Object.assign(DN_DONE,Object.fromEntries([
+['DN-261109-201329-903','Beranda › Catat transaksi: toggle "Transaksi Cicilan?" dihapus. Data cicilan transaksi lama tetap tersimpan saat diedit; cicilan dikelola dari Tagihan.'],
+['DN-261108-163110-807','Semua popup: hanya tertutup bila garis di sisi atas ditarik cukup jauh (garis memerah = lepas untuk menutup). Geser isi popup / sentakan / ketuk latar di HP tidak lagi menutup; di desktop ketuk latar tidak menutup bila ada isian yang sudah diubah.'],
+['DN-261109-170206-274','Transaksi: semua kategori & jenis punya ikon — Bayar tagihan (kartu), Transfer, Tarik tunai, Koreksi saldo — di tabel & daftar.'],
+['DN-261109-165725-842','Transaksi & Beranda: kapsul "Kemarin" setelah "Hari ini" (dibanding hari sebelumnya).'],
+['DN-261107-201424-119','Transaksi: di tanggal yang sama yang terbaru di paling atas — pakai jam transaksi bila ada, tanpa jam = urutan input (input terakhir di atas). "Terlama" membalik urutan ini. Wajib deploy ulang Edge Function.']
+].map(([k,v])=>[k,['kartuku-sb 2026.11.17',v]])));
 
 </script></body></html>
