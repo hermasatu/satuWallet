@@ -280,7 +280,7 @@ table.rk-l td .inp.ti{border-color:transparent;background:transparent;padding:4p
 <script>
 /* ===== KONFIGURASI ===== */
 const API_URL = "https://vfryxascchrmfikjpoxd.supabase.co/functions/v1/hyper-service"; // Supabase Edge Function (versi KartuKu)
-const APP_VERSION = "kartuku-sb 2026.11.22"; // dipakai widget Catatan dev
+const APP_VERSION = "kartuku-sb 2026.11.23"; // dipakai widget Catatan dev
 const GCID = "GANTI_DENGAN_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // OAuth Web Client ID (sama dengan Script Property GOOGLE_CLIENT_ID)
 // Autentikasi: login email + password -> token sesi disimpan di localStorage (kunci "SESSION_TOKEN"). Tidak ada rahasia di file ini.
 
@@ -10757,5 +10757,365 @@ Object.assign(DN_DONE,Object.fromEntries([
 ].map(([k,v])=>[k,['kartuku-sb 2026.11.22',v]])));
 /* saldo akun miles dari baca screenshot terbaru ikut dihitung di total */
 (function(){const V0=rwView21;rwView21=function(){return V0.apply(this,arguments).map(o=>{if(!o.loy)return o;const a=loyOf21(o.ids[0])||{};if(a.bal!=null&&(!o.lt.per||String(a.asOf||'').slice(0,7)>=o.lt.per)){o.lt={...o.lt,val:a.bal,per:String(a.asOf||'').slice(0,7)||o.lt.per,src:'screenshot'};o.empty=false}return o})}})();
+
+
+/* =====================================================================
+   kartuku-sb 2026.11.23 — 15 catatan developer 17 Nov 2026 · CSS css1123 · fungsi berakhiran 23
+   Tagihan: DN-261117-122743-660 kategori ML · DN-261117-122133-229 & DN-261117-121151-974 tata letak baris (foto kiri, warna) ·
+            DN-261117-121223-275 dropdown bisa dicari · DN-261117-120932-580 sorot PDF bergeser · DN-261117-024220-108 & DN-261117-024213-296 kotak bisa dikecilkan ·
+            DN-261117-022926-230 foto di kiri nama transaksi
+   Transaksi: DN-261117-120413-370 zoom di tempat · DN-261117-120332-348 kurs asing di detail · DN-261117-024020-343 ID deskriptif ·
+            DN-261117-023948-704 tombol ID otomatis · DN-261117-023717-247 rincian & detil disatukan
+   SnK: DN-261117-115828-889 riwayat obrolan + pilih konteks · Kelola › Kartu: DN-261117-101133-469 cari, urut, filter
+   ===================================================================== */
+(function(){const st=document.createElement('style');st.id='css1123';st.textContent=`
+/* ---- baris tagihan terbuka: foto kiri, blok berwarna (229 · 974) ---- */
+.vx-e.lr-e{background:#FCFBF8}
+.vx-e .dts{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}.vx-e .dts .dlk{background:#EEF3FF;border-color:#D9E2FB;color:#33427A}
+.vx-e .e4.l23{display:grid!important;grid-template-columns:168px minmax(0,1fr) minmax(0,1fr)!important;grid-template-areas:"ph mid r";gap:10px!important;align-items:stretch}
+.vx-e .e4.l23>.ph23{grid-area:ph;display:flex}.vx-e .e4.l23>.c-mid{grid-area:mid}.vx-e .e4.l23>.c-r{grid-area:r}.vx-e .e4.l23>.aib14{grid-column:2/-1;justify-self:end}
+@media(max-width:1180px){.vx-e .e4.l23{grid-template-columns:150px minmax(0,1fr)!important;grid-template-areas:"ph mid" "ph r"}}
+@media(max-width:560px){.vx-e .e4.l23{grid-template-columns:1fr!important;grid-template-areas:"ph" "mid" "r"}.vx-e .e4.l23>.ph23 .thb{min-height:120px!important;aspect-ratio:auto!important}.vx-e .e4.l23>.aib14{grid-column:1}}
+.vx-e .ph23 .thb{width:100%!important;height:auto!important;min-height:210px;aspect-ratio:3/4;border:2px dashed #9ED6CF!important;border-radius:14px!important;background:linear-gradient(160deg,#F1FAF8,#FFFDF7)!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#0B6B65!important;cursor:pointer;position:relative;overflow:hidden;font-size:12px;text-align:center;padding:8px}
+.vx-e .ph23 .thb:hover,.vx-e .ph23 .thb.dz-on{border-color:#159B91!important;background:#E6F6F3!important}
+.vx-e .ph23 .thb>span:not(.n):not(.ocr){font-weight:700}.vx-e .ph23 .thb small{color:#5B8C86;font-weight:500;line-height:1.35}
+.vx-e .ph23 .thb.has{border-style:solid!important;border-color:#D6EAE5!important;background:#fff!important;padding:0}.vx-e .ph23 .thb.has img{width:100%;height:100%;object-fit:cover}
+.vx-e .c-mid{background:#F1FAF8;border:1px solid #D6EAE5;border-left:4px solid #159B91;border-radius:12px;padding:10px 12px}
+.vx-e .c-r{background:#FFF8EC;border:1px solid #F3E2C2;border-left:4px solid #FF922E;border-radius:12px;padding:10px 12px;display:grid;gap:8px;align-content:start}
+.vx-e .c-mid .lbx,.vx-e .c-r .lbx,.vx-e .c-r .lb{font-size:10.5px;letter-spacing:.06em;font-weight:800;text-transform:uppercase}
+.vx-e .c-mid .lbx{color:#0B6B65}.vx-e .c-r .lbx,.vx-e .c-r .lb{color:#9A5B00}
+.vx-e .amt-b{font-size:1.35rem!important;font-weight:800!important;color:#06393B;background:#fff!important}
+html body .vx-e .ntw textarea.nta,html body .vx-e .ntw textarea,html body .vx-e .ntw input{text-align:left!important;background:#fff}
+.vx-e .its{background:#fff;border-radius:10px}
+.vx-e .vx-f{background:linear-gradient(90deg,#F6FBFA,#FFFBF3);border-top:1px solid #EEE7D8;border-radius:0 0 12px 12px;margin:10px -10px -10px;padding:8px 10px}
+.vx-e .vx-f .bt{background:#064E50}.vx-e .vx-f .ai-b{background:#FFF4DA;color:#7A5A00;border:1px solid #F3E2A6}
+.vx-e .raw11,.vx-e [class*="raw1"]{background:#F5F7FA;border-color:#E3E8EF}
+/* saran kategori ML (660) */
+.ml23{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.ml23 button{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:650;border:1px solid #E7D3AE;background:#fff;color:#5C3D00;border-radius:999px;padding:3px 9px}
+.ml23 button:hover{border-color:#FF922E;background:#FFF1DE}.ml23 button i{font-style:normal;font-weight:800;color:#B76E00}
+.ml23 .t{font-size:10.5px;color:#9A7B4A;align-self:center}
+.cp .ml23b,.ml23b{font-size:9.5px;font-weight:800;background:#FFE7C2;color:#8A5200;border-radius:6px;padding:0 4px;margin-left:3px}
+/* ---- dropdown bisa dicari (275) ---- */
+.ss23{position:fixed;z-index:2147483100;background:#fff;border:1px solid var(--bd);border-radius:12px;box-shadow:0 18px 50px rgba(6,40,41,.22);display:flex;flex-direction:column;overflow:hidden;min-width:220px}
+.ss23 input{border:0;border-bottom:1px solid var(--bd);padding:10px 12px;font-size:.92rem;outline:0}
+.ss23 .ls{overflow:auto;padding:4px}
+.ss23 .g{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--mu);padding:8px 10px 3px}
+.ss23 .o{padding:7px 10px;border-radius:8px;font-size:.88rem;cursor:pointer;display:flex;gap:8px;align-items:center}
+.ss23 .o.k{background:#E9F6F3}.ss23 .o.s{font-weight:750;color:#064E50}.ss23 .o.s::after{content:'✓';margin-left:auto;color:#159B91}.ss23 .o.d{opacity:.45;pointer-events:none}
+.ss23 .o mark{background:#FFE7A8;color:inherit;border-radius:3px;padding:0 1px}.ss23 .e{padding:14px;color:var(--mu);font-size:.85rem;text-align:center}
+@media(max-width:640px){.ss23{left:8px!important;right:8px!important;width:auto!important;bottom:8px!important;top:auto!important;max-height:70vh!important}}
+/* ---- PDF: sorotan bergeser halus (580) ---- */
+.kk-hl{transition:top .38s cubic-bezier(.2,.8,.2,1),height .38s cubic-bezier(.2,.8,.2,1),opacity .2s}
+/* ---- kotak bisa dikecilkan (296 · 108) ---- */
+.cl23{margin-left:auto;flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--mu);background:transparent;border:1px solid transparent}
+.cl23:hover{background:#fff;border-color:var(--bd);color:var(--pr)}
+.gl19.c23>:not(.hd){display:none!important}.gl19.c23 .hd{margin:0}.gl19.c23 .cl23 svg,.imb7.c23 .cl23 svg{transform:rotate(-90deg)}
+.imb7{display:flex;align-items:center;gap:8px}.imb7.c23{display:inline-flex!important;width:auto!important;padding:4px 8px!important;gap:6px}.imb7.c23>span{display:none}.imb7.c23>button:not(.cl23){display:none}.imb7.c23 .n23{display:inline!important}
+.imb7 .n23{display:none;font-weight:800;font-size:.8rem}
+/* ---- foto bukti di kiri nama (230) ---- */
+#bv_tx .r .n.ph23{display:grid!important;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center}
+#bv_tx .r .n.ph23 .rc22{margin:0;width:34px;height:34px}
+/* ---- lightbox zoom di tempat (370) ---- */
+#lb16 .st.z23{overflow:auto;align-items:flex-start;justify-content:flex-start;cursor:zoom-out}
+#lb16 .st.z23 img{max-width:none!important;max-height:none!important;width:min(220%,2200px)}
+#lb16 .st.z23 .pdft12{width:min(200%,1800px)!important;max-height:none!important}
+#lb16 .st img,#lb16 .st .pdft12{cursor:zoom-in}
+#lb16 .zt23{position:absolute;top:14px;right:16px;display:flex;gap:6px}#lb16 .zt23 button{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;border:0}
+/* ---- transaksi: kurs asing di detail (348) ---- */
+.fx23{border:1px solid #D6EAE5;background:#F6FBFA;border-radius:12px;padding:8px 10px;margin:8px 0;font-size:.82rem;display:grid;gap:6px}
+.fx23 .rw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.fx23 select,.fx23 input{height:32px;border:1px solid var(--bd);border-radius:8px;padding:0 8px;font-size:.85rem;background:#fff}
+.fx23 input{width:120px;text-align:right}.fx23 b,.fx23 button,.fx23 #fx23i>span{display:inline-flex;align-items:center;gap:4px}.fx23 summary{display:flex;gap:5px;align-items:center}.fx23 .ok{color:#0B6B65}.fx23 .am{color:#9A4A00}
+/* ---- ID otomatis (704 · 343) ---- */
+.gid23{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:.8rem;font-weight:700;border:1px dashed #9ED6CF;color:#0B6B65;background:#F1FAF8;border-radius:999px;padding:4px 10px}
+.gid23:hover{background:#E3F4F1}
+/* ---- rincian & detil transaksi satu kartu (247) ---- */
+.un23{border:1px solid #D6EAE5;border-radius:14px;background:#fff;overflow:hidden;margin-top:10px}
+.un23>.h{display:flex;align-items:center;gap:8px;padding:8px 12px;background:linear-gradient(90deg,#F1FAF8,#FFFBF3);font-weight:800;font-size:.86rem;color:#06393B;border-bottom:1px solid #E6EFEC}
+.un23>.h small{font-weight:600;color:var(--mu)}
+.un23 .s23{padding:8px 12px}.un23 .s23+.s23{border-top:1px dashed #E6E2D8}
+.un23 .s23>.t{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.un23 .s23.a>.t{color:#0B6B65}.un23 .s23.b>.t{color:#9A5B00}
+.un23 .ct9,.un23 .dt14{border:0!important;margin:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}
+.un23 .ct9>h5,.un23 .dt14>.dt14h{display:none!important}
+#dt22f{display:none}
+/* ---- SnK: riwayat obrolan + konteks (889) ---- */
+.ch21[data-tw23]{display:grid;grid-template-columns:250px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto}
+.ch21[data-tw23]>.sb23{grid-row:1/5;grid-column:1;border-right:1px solid #E3EFEC;background:#FAFCFB;display:flex;flex-direction:column;min-height:0;max-height:640px}
+.ch21[data-tw23]>:not(.sb23){grid-column:2}
+.sb23 .tp{padding:10px;display:grid;gap:6px;border-bottom:1px solid #EEF3F2}
+.sb23 .tp input{height:34px;border:1px solid var(--bd);border-radius:10px;padding:0 10px;font-size:.85rem;background:#fff}
+.sb23 .nw{height:34px;border-radius:10px;background:var(--pr);color:#fff;font-weight:700;font-size:.85rem;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.sb23 .tl{overflow:auto;padding:6px;display:grid;gap:2px;align-content:start}
+.sb23 .ti{display:grid;gap:2px;text-align:left;padding:7px 9px;border-radius:10px;font-size:.84rem;color:var(--ink2);position:relative}
+.sb23 .ti:hover{background:#EEF6F4}.sb23 .ti.on{background:#E3F4F1;color:#06393B}
+.sb23 .ti b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:18px}.sb23 .ti small{color:var(--mu);font-size:.74rem;display:flex;gap:6px;align-items:center}
+.sb23 .ti .del{position:absolute;right:6px;top:6px;opacity:0;color:var(--mu)}.sb23 .ti:hover .del{opacity:1}
+.cx23{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:750;border-radius:999px;padding:1px 8px;white-space:nowrap}
+.cx23.GEN{background:#EEF0FF;color:#3949AB}.cx23.TOP{background:#FFF1DE;color:#8A5200}.cx23.CAT{background:#FFF1DE;color:#8A5200}.cx23.CARD{background:#E3F4F1;color:#0B6B65}
+.pk23{padding:12px;display:grid;gap:8px}
+.pk23 h4{font-weight:800;color:#06393B}.pk23 input{height:38px;border:1.5px solid var(--bd);border-radius:12px;padding:0 12px;font-size:.92rem}
+.pk23 .gr{display:flex;flex-wrap:wrap;gap:6px}.pk23 .gt{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin-top:4px}
+.pk23 .gr button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--bd);background:#fff;border-radius:999px;padding:5px 11px;font-size:.84rem}
+.pk23 .gr button:hover{border-color:var(--ac);background:#F1FAF8}
+.ch21 .hd .fc23{display:inline-flex;align-items:center;gap:4px}
+.sbt23{display:none}
+@media(max-width:760px){.ch21[data-tw23]{grid-template-columns:1fr}.ch21[data-tw23]>.sb23{display:none;grid-row:auto;grid-column:1;max-height:320px;border-right:0;border-bottom:1px solid #E3EFEC}.ch21[data-tw23][data-sbo]>.sb23{display:flex}.ch21[data-tw23]>:not(.sb23){grid-column:1}.sbt23{display:inline-flex}}
+/* ---- Kelola › Kartu: cari, urut, filter (469) ---- */
+.kf23{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 10px;position:sticky;top:0;z-index:5;background:var(--bg,#F5F0E8);padding:6px 0}
+.kf23 .q{flex:1 1 220px;display:flex;align-items:center;gap:6px;height:38px;border:1.5px solid var(--bd);border-radius:12px;padding:0 10px;background:#fff}
+.kf23 .q input{border:0;outline:0;flex:1;font-size:.92rem;background:transparent}
+.kf23 select{height:38px;border:1px solid var(--bd);border-radius:12px;padding:0 8px;background:#fff;font-size:.85rem}
+.kf23 .ch{height:32px;border:1px solid var(--bd);border-radius:999px;padding:0 11px;font-size:.8rem;background:#fff}.kf23 .ch.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.kf23 .n{font-size:.8rem;color:var(--mu)}
+`;document.head.appendChild(st)})();
+if(!P.hist)P.hist='<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>';
+if(!P.zoomin)P.zoomin='<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/>';
+if(!P.zoomout)P.zoomout='<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8 11h6"/>';
+if(!P.chevd)P.chevd='<path d="m6 9 6 6 6-6"/>';
+const nrm23=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+/* =====================================================================
+   DN-261117-122743-660 — KATEGORI DENGAN MACHINE LEARNING (Naive Bayes multi-fitur, dilatih dari seluruh riwayat transaksimu + koreksimu)
+   Fitur: merchant & merchant ternormalisasi, nama transaksi, catatan, barang di struk, lokasi, channel, akun, kartu, jenis baris,
+   rentang nominal, hari & tanggal, mata uang. Bobot terbaru > lama. Koreksi di layar langsung dipelajari (tanpa server).
+   ===================================================================== */
+const ML23={k:'',m:null,ex:(()=>{try{return JSON.parse(localStorage.getItem('kk_ml23')||'[]')}catch(e){return []}})()};
+const STOP23=new Set('the and dan di ke dari pt tbk cv indonesia idn jakarta id com www co jkt kota kab jl jln no ltd inc store toko official shop'.split(' '));
+const tk23=s=>nrm23(s).replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>=3&&!/^\d+$/.test(w)&&!STOP23.has(w)).slice(0,24);
+function feat23(o){const F=[],add=(p,arr,w)=>arr.forEach(x=>F.push([p+x,w]));const m=nrm23(o.m).replace(/[^a-z0-9]+/g,' ').trim();
+ if(m)F.push(['M:'+m.split(' ').filter(w=>w.length>1).slice(0,3).join(' '),3]);add('m:',tk23(o.m),2);add('l:',tk23(o.lb),1.6);add('n:',tk23(o.nt),1.1);add('i:',tk23(o.it),1.4);add('o:',tk23(o.lc),.8);
+ if(o.ch)F.push(['c:'+o.ch,.8]);if(o.pp)F.push(['p:'+o.pp,1]);if(o.src)F.push(['s:'+o.src,.6]);if(o.tt)F.push(['t:'+o.tt,.6]);if(o.cur&&o.cur!='IDR')F.push(['x:'+o.cur,.9]);
+ const a=Math.abs(+o.a||0);if(a)F.push(['a:'+Math.round(Math.log2(a/1000+1)),.7]);if(o.dt){const d=new Date(o.dt);if(!isNaN(d)){F.push(['w:'+d.getDay(),.35]);F.push(['d:'+Math.min(3,Math.floor((d.getDate()-1)/8)),.25])}}return F}
+const txF23=t=>{const it=itJ22(t.Items)||{};return {m:[t.Merchant,t.Merchant_Norm].filter(Boolean).join(' '),lb:t.Label,nt:t.Notes,it:[(it.lines||[]).map(l=>[l.shop,l.desc].join(' ')).join(' '),(it.det||[]).map(d=>d.n).join(' ')].join(' '),lc:t.Location,ch:t.Channel,pp:t.Purpose,src:t.Card_ID||t.Source_ID,tt:t.Tx_Type,a:t.Approx_IDR,dt:t.Date,cur:t.Original_Currency}};
+const rowF23=r=>{const o=r.itm||{};return {m:r.m,lb:r.lb,nt:r.nt,it:[(o.lines||[]).map(l=>[l.shop,l.desc].join(' ')).join(' '),(o.det||[]).map(d=>d.n).join(' ')].join(' '),lc:r.lc,ch:r.ch,pp:r.pp,src:R&&R.c,tt:r.t,a:r.a,dt:r.dt,cur:o.cur}};
+function mlModel23(){const T=(S.tx||[]).filter(t=>t.Category_ID&&(t.Kind||'EXPENSE')=='EXPENSE'),key=T.length+'|'+ML23.ex.length+'|'+(S.cats||[]).length;if(ML23.k===key&&ML23.m)return ML23.m;
+ const now=Date.now(),C={},FC={},V=new Set();let N=0;const learn=(F,k,w)=>{if(!catOf(k).ID)return;C[k]=(C[k]||0)+w;N+=w;const f=FC[k]=FC[k]||{t:0};F.forEach(([x,fw])=>{f[x]=(f[x]||0)+w*fw;f.t+=w*fw;V.add(x)})};
+ T.forEach(t=>{const age=Math.max(0,(now-new Date(t.Date||0).getTime())/864e5),w=age<120?1:age<365?.7:.45;learn(feat23(txF23(t)),t.Category_ID,w)});
+ ML23.ex.forEach(e=>learn(feat23(e.f),e.k,2.5));ML23.m={C,FC,N,V:V.size||1,n:T.length};ML23.k=key;return ML23.m}
+function mlPredict23(o,n){const M=mlModel23();if(!M.N)return [];const F=feat23(o),ks=Object.keys(M.C),sc=ks.map(k=>{const f=M.FC[k];let s=Math.log(M.C[k]/M.N),why=[];
+  F.forEach(([x,w])=>{const c=f[x]||0,p=Math.log((c+.1)/(f.t+.1*M.V));s+=w*p;if(c>0&&w>=1)why.push([x,c])});return {k,s,why:why.sort((a,b)=>b[1]-a[1]).slice(0,3).map(z=>z[0].replace(/^[a-zA-Z]:/,''))}}).sort((a,b)=>b.s-a.s);
+ const mx=sc[0].s,Z=sc.reduce((a,x)=>a+Math.exp(x.s-mx),0);return sc.slice(0,n||3).map(x=>({k:x.k,p:Math.exp(x.s-mx)/Z,why:x.why}))}
+function mlLearn23(r,k){if(!r||!k)return;ML23.ex.push({f:rowF23(r),k,at:Date.now()});ML23.ex=ML23.ex.slice(-400);try{localStorage.setItem('kk_ml23',JSON.stringify(ML23.ex))}catch(e){}ML23.k=''}
+/* pilihan kategori manual = contoh latihan baru */
+(function(){const U0=ue;ue=function(id,f,v){const r=R&&R.rows&&R.rows.find(x=>x.id==id);const o=U0.apply(this,arguments);try{if(f=='k'&&v&&r&&r.kMan)mlLearn23(r,v)}catch(e){}return o}})();
+/* isi otomatis bila sangat yakin (≥80% & ada ≥3 contoh); sisanya jadi saran yang bisa diklik */
+function mlAuto23(){if(!R||!R.rows||R.st!='prev')return 0;let n=0;R.rows.forEach(r=>{if(!needCat(r)||r.sp||r.k||r.kMan)return;const P=mlPredict23(rowF23(r),1)[0];if(P&&P.p>=.8&&P.why.length){r.k=P.k;r.kSrc='pola';r.ml23=Math.round(P.p*100);n++}});return n}
+(function(){const T0=tblH;tblH=function(){try{if(R&&!R.ml23done){R.ml23done=1;const n=mlAuto23();if(n)setTimeout(()=>toast(n+' kategori diisi dari pola riwayatmu (≥80% yakin) — cek tanda "pola"'),400)}}catch(e){}return T0.apply(this,arguments)}})();
+(function(){const V0=vrow;vrow=function(r){let h=V0.apply(this,arguments);if(r.kSrc=='pola'&&r.k)h=h.replace(/(<span class="cp cp-k"[^>]*>[\s\S]*?)(<\/span>)/,`$1<span class="ml23b" data-tip="Diisi dari pola riwayatmu (${r.ml23||''}% yakin)">pola</span>$2`);return h}})();
+function mlChips23(r){if(!needCat(r)||r.sp)return '';const L=mlPredict23(rowF23(r),4).filter(x=>x.k!=r.k&&x.p>=.04).slice(0,3);if(!L.length)return '';
+ return `<div class="ml23"><span class="t" data-tip="Machine learning dari ${mlModel23().n} transaksimu + koreksi terbaru">${ic('sparkle',11)} saran</span>${L.map(x=>{const c=catOf(x.k);return `<button type="button" data-ml23="${r.id}|${x.k}" data-tip="${E(x.why.length?'Mirip: '+x.why.join(', '):'Dari pola umum')}">${ci(c)}${E(c.Name||'?')} <i>${Math.round(x.p*100)}%</i></button>`}).join('')}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-ml23]');if(!b)return;e.stopPropagation();const [id,k]=b.dataset.ml23.split('|'),r=R&&R.rows.find(x=>x.id==id);if(!r)return;r.kMan=1;r.kSrc='dipilih';r.aiQ=0;ue(+id,'k',k)},true);
+
+/* =====================================================================
+   DN-261117-122133-229 + DN-261117-121151-974 — baris terbuka: foto/bukti besar di kiri (klik · Ctrl+V · seret), blok berwarna, lebih ringkas
+   ===================================================================== */
+(function(){const V0=vEdit;vEdit=function(r){let h=V0.apply(this,arguments);try{const tp=document.createElement('div');tp.innerHTML=h;const e4=tp.querySelector('.e4');if(e4){e4.classList.add('l23');e4.removeAttribute('style');
+  const th=e4.querySelector('.thb');if(th){const w=th.closest('.e4>div');if(w)w.classList.add('ph23');if(!th.classList.contains('has')){const sp=th.querySelector('span');if(sp)sp.innerHTML='Foto struk / bukti<br><small>klik · Ctrl+V · seret ke sini</small>'}}
+  const cr=e4.querySelector('.c-r');if(cr&&needCat(r)&&!r.sp){const k=[...cr.querySelectorAll('.lbx')].find(x=>/Kategori/.test(x.textContent));const box=k&&k.parentNode;if(box)box.insertAdjacentHTML('beforeend',mlChips23(r))}}
+  h=tp.innerHTML}catch(e){}return h}})();
+
+/* =====================================================================
+   DN-261117-121223-275 — SEMUA dropdown bisa dicari dengan mengetik (nama, grup, kata kunci / metadata)
+   ===================================================================== */
+const SYN23={makan:'makan minum food dining restoran kafe cafe kopi resto kuliner',minum:'kopi coffee cafe teh',belanja:'shopping shopee tokopedia lazada blibli marketplace online',transport:'grab gojek taksi ojek tol parkir bensin',bensin:'bbm spbu pertamina shell bp fuel',tagihan:'pln listrik air pdam internet wifi pulsa telkom indihome',iklan:'ads marketing promosi shopee ads meta google ads',kesehatan:'dokter obat apotek klinik rumah sakit',hiburan:'film bioskop netflix spotify game',pendidikan:'kursus sekolah belajar buku',travel:'hotel pesawat tiket traveloka airline miles',pribadi:'personal',bisnis:'business usaha waterground roastery'};
+const meta23=t=>{const n=nrm23(t);return n+' '+Object.entries(SYN23).filter(([k])=>n.includes(k)).map(([,v])=>v).join(' ')};
+let SS23=null;
+function ssOpen23(sel){ssClose23();const opts=[];[...sel.children].forEach(ch=>{if(ch.tagName=='OPTGROUP')[...ch.children].forEach(o=>opts.push({o,g:ch.label}));else if(ch.tagName=='OPTION')opts.push({o:ch,g:''})});
+ const box=document.createElement('div');box.className='ss23';box.setAttribute('role','listbox');box.innerHTML=`<input type="search" placeholder="Ketik untuk mencari…" aria-label="Cari pilihan"><div class="ls"></div>`;document.body.appendChild(box);
+ SS23={sel,box,opts,k:-1,L:[]};const inp=box.querySelector('input');ssList23('');inp.addEventListener('input',()=>ssList23(inp.value));
+ inp.addEventListener('keydown',e=>{if(e.key=='ArrowDown'||e.key=='ArrowUp'){e.preventDefault();SS23.k=Math.max(0,Math.min(SS23.L.length-1,SS23.k+(e.key=='ArrowDown'?1:-1)));ssHi23()}else if(e.key=='Enter'){e.preventDefault();const x=SS23.L[SS23.k<0?0:SS23.k];if(x)ssPick23(x.o)}else if(e.key=='Escape'){e.preventDefault();ssClose23();sel.focus()}else if(e.key=='Tab')ssClose23()});
+ setTimeout(()=>inp.focus(),0)}
+function ssList23(q){const S2=SS23;if(!S2)return;const w=nrm23(q).split(/\s+/).filter(Boolean);S2.L=S2.opts.filter(({o,g})=>!w.length||w.every(t=>meta23(o.textContent+' '+g+' '+(o.title||'')+' '+Object.values(o.dataset).join(' ')+' '+o.value).includes(t)));
+ const hl=s=>{let h=E(s);w.forEach(t=>{if(t.length<2)return;h=h.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>')});return h};let g0=null;
+ S2.box.querySelector('.ls').innerHTML=S2.L.map((x,i)=>{const gh=x.g!==g0&&x.g?`<div class="g">${E(x.g)}</div>`:'';g0=x.g;return gh+`<div class="o${x.o.selected?' s':''}${x.o.disabled?' d':''}" data-i="${i}">${hl(x.o.textContent)}</div>`}).join('')||'<div class="e">Tidak ada yang cocok</div>';
+ S2.k=w.length?0:S2.L.findIndex(x=>x.o.selected);ssPos23();ssHi23()}
+function ssPos23(){const S2=SS23;if(!S2||innerWidth<=640)return;const rc=S2.sel.getBoundingClientRect(),W=Math.max(rc.width,260),box=S2.box;box.style.width=W+'px';box.style.maxHeight=Math.min(380,innerHeight-24)+'px';box.style.left=Math.max(8,Math.min(rc.left,innerWidth-W-8))+'px';
+ if(S2.up==null){const below=innerHeight-rc.bottom-12,above=rc.top-12;S2.up=below<Math.min(300,box.scrollHeight)&&above>below}const H=Math.min(box.scrollHeight,S2.up?rc.top-12:innerHeight-rc.bottom-12,380);box.style.maxHeight=H+'px';box.style.top=(S2.up?rc.top-4-H:rc.bottom+4)+'px'}
+function ssHi23(){const S2=SS23;if(!S2)return;S2.box.querySelectorAll('.o').forEach(el=>el.classList.toggle('k',+el.dataset.i===S2.k));const k=S2.box.querySelector('.o.k');if(k)k.scrollIntoView({block:'nearest'})}
+function ssPick23(o){const s=SS23&&SS23.sel;if(!s)return;ssClose23();if(s.value!==o.value){s.value=o.value;s.dispatchEvent(new Event('input',{bubbles:true}));s.dispatchEvent(new Event('change',{bubbles:true}))}s.focus()}
+function ssClose23(){if(SS23){SS23.box.remove();SS23=null}}
+const ssOk23=s=>s&&s.tagName=='SELECT'&&!s.multiple&&!(s.size>1)&&!s.disabled&&!s.dataset.ns23&&s.options.length>=6&&!s.closest('.ss23');
+document.addEventListener('mousedown',e=>{const s=e.target;if(SS23&&!e.target.closest('.ss23')&&s!==SS23.sel)ssClose23();if(!ssOk23(s)||e.button)return;e.preventDefault();s.focus();ssOpen23(s)},true);
+document.addEventListener('click',e=>{const o=e.target.closest&&e.target.closest('.ss23 .o');if(o&&SS23){const x=SS23.L[+o.dataset.i];if(x)ssPick23(x.o)}});
+document.addEventListener('keydown',e=>{const s=e.target;if(!ssOk23(s)||SS23)return;if(e.key.length==1&&!e.ctrlKey&&!e.metaKey&&!e.altKey||e.key=='Enter'||(e.key==' ')||(e.altKey&&e.key=='ArrowDown')){e.preventDefault();ssOpen23(s);if(e.key.length==1&&e.key!=' ')setTimeout(()=>{const i=SS23&&SS23.box.querySelector('input');if(i){i.value=e.key;ssList23(e.key)}},0)}},true);
+addEventListener('resize',ssClose23);document.addEventListener('scroll',e=>{if(SS23&&!(e.target&&e.target.closest&&e.target.closest('.ss23')))ssClose23()},true);
+
+/* =====================================================================
+   DN-261117-120932-580 — pindah baris: PDF tidak lompat ke atas; sorotan kuning bergeser halus, gulir hanya bila perlu
+   ===================================================================== */
+hlApply=function(tries){if(!R||!R.hl||!R.viewerEl)return;const {id,pg}=R.hl,r=R.rows.find(x=>x.id==id);if(!r)return;const d=R.viewerEl.querySelector(`.pgv[data-p="${pg}"]`);if(!d)return;
+ const spans=[...d.querySelectorAll('.textLayer span')];if(!spans.length){if((tries||0)<20)setTimeout(()=>hlApply((tries||0)+1),250);return}
+ const v=amtVars(r.a),toks=(String(r.m||'').toUpperCase().match(/[A-Z]{3,}/g)||[]).slice(0,3),dr=d.getBoundingClientRect(),rect=s=>s.getBoundingClientRect();
+ const hits=spans.filter(s=>{const t=(s.textContent||'').replace(/\s/g,'');return v.some(x=>t.includes(x))});if(!hits.length){hlClear();return}
+ const line=s=>{const a=rect(s);return spans.filter(z=>{const b=rect(z);return Math.abs((b.top+b.bottom)/2-(a.top+a.bottom)/2)<Math.max(4,a.height*.6)})};
+ const score=s=>{const L=line(s).map(z=>(z.textContent||'').toUpperCase()).join(' ');return toks.filter(t=>L.includes(t)).length};
+ const used=R.rows.filter(x=>x.id!=id&&x.pg==pg&&Math.round(x.a)==Math.round(r.a)).length;const ranked=hits.map(s=>({s,c:score(s)})).sort((a,b)=>b.c-a.c);const pick=(ranked[0].c>0?ranked[0]:ranked[Math.min(used,ranked.length-1)]).s;
+ const L=line(pick),top=Math.min(...L.map(z=>rect(z).top))-dr.top-3,bot=Math.max(...L.map(z=>rect(z).bottom))-dr.top+3;
+ let b=d.querySelector('.kk-hl');document.querySelectorAll('.kk-hl').forEach(x=>{if(x!==b)x.remove()});
+ if(!b){b=document.createElement('div');b.className='kk-hl';b.style.opacity='0';b.style.top=top+'px';b.style.height=Math.max(10,bot-top)+'px';d.appendChild(b);requestAnimationFrame(()=>{b.style.opacity='1'})}else{b.style.top=top+'px';b.style.height=Math.max(10,bot-top)+'px'}
+ const el=R.viewerEl,y0=d.offsetTop+top,y1=d.offsetTop+bot,pad=el.clientHeight*.18;if(y0<el.scrollTop+pad||y1>el.scrollTop+el.clientHeight-pad)el.scrollTo({top:Math.max(0,y0-el.clientHeight*.35),behavior:'smooth'})};
+pdfHL=function(id){if(!R||!R.o||R.o.kind!='pdf'||!R.viewerEl)return;const r=R.rows.find(x=>x.id==id);if(!r)return hlClear();const pg=rowPage(r);if(!pg)return hlClear();if(!r.pg)r.pg=pg;R.hl={id,pg};
+ const d=R.viewerEl.querySelector(`.pgv[data-p="${pg}"]`),ready=d&&d.querySelector('.textLayer span');if(ready)return hlApply(0);
+ /* halaman belum tergambar: langsung ke halaman itu (tanpa lewat atas), lalu sorot */if(d){const el=R.viewerEl;if(d.offsetTop<el.scrollTop||d.offsetTop>el.scrollTop+el.clientHeight)el.scrollTo({top:Math.max(0,d.offsetTop-4),behavior:'smooth'})}setTimeout(()=>hlApply(0),160)};
+
+/* =====================================================================
+   DN-261117-024213-296 + DN-261117-024220-108 — kotak "Target kartu" & info impor bisa dikecilkan (diingat di perangkat)
+   ===================================================================== */
+const COL23=(()=>{try{return JSON.parse(localStorage.getItem('kk_col23')||'{}')}catch(e){return {}}})();
+const colKey23=el=>el.classList.contains('gl19')?'gl19:'+tab:'imb7:'+nrm23((el.querySelector('span')||el).textContent).replace(/[0-9.,]+/g,'#').slice(0,60);
+function colDeco23(root){(root||document).querySelectorAll('.gl19,.imb7').forEach(el=>{if(el.dataset.c23)return;el.dataset.c23=1;const k=colKey23(el),host=el.classList.contains('gl19')?el.querySelector('.hd'):el;if(!host)return;
+ if(el.classList.contains('imb7')){const sp=el.querySelector('span'),n=(el.querySelector('span b')||{}).textContent||((sp&&sp.textContent||'').match(/\d[\d.,]*/)||[''])[0];const sv=el.querySelector(':scope>svg');const tag=`<b class="n23" data-tip="${E(sp?sp.textContent:'')}">${E(n)}</b>`;if(sv)sv.insertAdjacentHTML('afterend',tag);else el.insertAdjacentHTML('afterbegin',tag)}
+ host.insertAdjacentHTML('beforeend',`<button type="button" class="cl23" data-cl23="${E(k)}" aria-label="Kecilkan / besarkan" data-tip="Kecilkan / besarkan">${ic('chevd',14)}</button>`);if(COL23[k])el.classList.add('c23')})}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-cl23]');if(!b)return;e.stopPropagation();e.preventDefault();const el=b.closest('.gl19,.imb7'),k=b.dataset.cl23;const on=!el.classList.contains('c23');el.classList.toggle('c23',on);if(on)COL23[k]=1;else delete COL23[k];try{localStorage.setItem('kk_col23',JSON.stringify(COL23))}catch(x){}},true);
+new MutationObserver(()=>{if(document.querySelector('.gl19:not([data-c23]),.imb7:not([data-c23])'))colDeco23()}).observe(document.body,{childList:true,subtree:true});
+
+/* =====================================================================
+   DN-261117-022926-230 — foto bukti di kiri kolom nama transaksi (nominal tetap sejajar)
+   ===================================================================== */
+rcFill22=function(box){const host=box.closest('[data-id]'),id=host&&host.dataset.id,c=id&&BVC7[id];if(!c||!c.r)return;const T=(c.r.transactions||[]).slice().sort((x,y)=>String(x.Date).localeCompare(String(y.Date)));
+ [...box.querySelectorAll(':scope>.r')].forEach((row,i)=>{if(row.querySelector('.rc22'))return;const t=T[i];if(!t)return;const F=txFiles22(t);if(!F.length)return;const n=row.querySelector('.n');if(!n)return;
+  const w=document.createElement('div');w.style.minWidth='0';while(n.firstChild)w.appendChild(n.firstChild);n.classList.add('ph23');n.insertAdjacentHTML('afterbegin',`<button type="button" class="rc22" data-rc22="${E(t.ID)}" data-tip="Lihat bukti / struk">${ic('image',15)}${F.length>1?`<b>${F.length}</b>`:''}</button>`);n.appendChild(w);
+  const b=n.querySelector('.rc22');thuUrl(F[0]).then(u=>{if(u&&b){b.style.backgroundImage=`url("${u}")`;const s=b.querySelector('svg');if(s)s.style.opacity=0}}).catch(()=>{})})};
+
+/* =====================================================================
+   DN-261117-120413-370 — zoom bukti di jendela yang sama (tidak membuka jendela baru)
+   ===================================================================== */
+document.addEventListener('click',e=>{const lb=e.target.closest&&e.target.closest('#lb16');if(!lb)return;const z=e.target.closest('[data-z23]');const st=lb.querySelector('.st');
+ if(z){e.stopPropagation();e.preventDefault();if(z.dataset.z23=='in')st.classList.add('z23');else st.classList.remove('z23');return}
+ const t=e.target.closest('.st img,.st .pdft12');if(t){e.stopPropagation();e.preventDefault();const on=!st.classList.contains('z23');st.classList.toggle('z23',on);if(on){const r=st.getBoundingClientRect();setTimeout(()=>{st.scrollLeft=(st.scrollWidth-r.width)*Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));st.scrollTop=(st.scrollHeight-r.height)*Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))},0)}}},true);
+(function(){const R0=lbR16;lbR16=function(){const r=R0.apply(this,arguments);const d=document.getElementById('lb16');if(d&&!d.querySelector('.zt23'))d.insertAdjacentHTML('beforeend',`<div class="zt23"><button type="button" data-z23="in" aria-label="Perbesar" data-tip="Perbesar (atau klik gambar)">${ic('zoomin',18)}</button><button type="button" data-z23="out" aria-label="Perkecil">${ic('zoomout',18)}</button></div>`);return r}})();
+
+/* =====================================================================
+   DN-261117-120332-348 — detail transaksi: logika kurs asing (struk / invoice mata uang asing, Rupiah akurat dari tagihan)
+   ===================================================================== */
+function fxBox23(x){const it=itJ22(x.Items)||{},idr=Math.abs(+x.Approx_IDR||0);let cu=x.Original_Currency&&x.Original_Currency!='IDR'?x.Original_Currency:(it.cur||it.detCur||'');let am=cu&&x.Original_Currency==cu?Math.abs(+x.Amount||0):(it.totF||0);
+ const dtc=(it.dt||[]).find(d=>/mata uang/i.test(d.k));if(!cu&&dtc&&/^[A-Z]{3}$/.test(dtc.v))cu=dtc.v;const files=(it.files||[]).length||x.Proof_File_ID;
+ if(!cu&&!files)return '';const act=cu&&am?idr/am:0,linked=!!x.Bill_ID;
+ const inner=`<div class="rw"><b>${ic('globe',13)} Mata uang asli</b><select id="fx23c">${cuOpt22(cu||'IDR')}</select><input id="fx23a" inputmode="decimal" placeholder="nominal asli" value="${am?f2_22(am,cu||'USD'):''}" oninput="mi(this,2)"><button class="bg2 sm" onclick="fxSave23('${E(x.ID)}')">Simpan</button>${files?`<button class="bg2 sm" onclick="fxAI23('${E(x.ID)}')" data-tip="Baca mata uang & total dari bukti / invoice terlampir">${ic('ai',12)} Baca dari bukti</button>`:''}</div>
+ <div id="fx23i">${cu&&cu!='IDR'&&am?`<span class="ok">${ic('check',11)} ${linked?'Rupiah akurat dari tagihan':'Rupiah tercatat'} ${rp(idr)} = ${E(cu)} ${f2_22(am,cu)} · kurs ${linked?'aktual':'tercatat'} 1 ${E(cu)} = Rp ${(Math.round(act*100)/100).toLocaleString('en-US')}</span> <span class="mu7" id="fx23m"></span>`:`<span class="mu7">Isi mata uang & nominal aslinya bila struk / invoice bukan Rupiah — kurs ${linked?'aktual dihitung dari Rupiah di tagihan':'perkiraan diambil otomatis'}.</span>`}</div>`;
+ return cu&&cu!='IDR'?`<div class="fx23" data-fx23="${E(x.ID)}">${inner}</div>`:`<details class="fx23" data-fx23="${E(x.ID)}"><summary class="mu7" style="cursor:pointer">${ic('globe',12)} Struk / invoice dalam mata uang asing?</summary>${inner}</details>`}
+async function fxMkt23(cu,act){try{const m=await fx9(cu);const el=$('#fx23m');if(el&&m&&act){const dp=(act/m-1)*100;el.innerHTML=`· pasar ${(Math.round(m*100)/100).toLocaleString('en-US')} (${dp>0?'+':''}${dp.toFixed(1)}%${Math.abs(dp)>3?' — biaya konversi / markup':''})`}}catch(e){}}
+(function(){const O0=txOpen7;txOpen7=function(id){const r=O0.apply(this,arguments);try{const x=S.tx.find(t=>t.ID==id);if(!x||!['EXPENSE','INCOME'].includes(x.Kind||'EXPENSE'))return r;const h=fxBox23(x);if(!h)return r;const a=document.querySelector('#m .td9 .amt');if(a){a.insertAdjacentHTML('afterend',h);const it=itJ22(x.Items)||{},cu=x.Original_Currency!='IDR'?x.Original_Currency:(it.cur||''),am=x.Original_Currency!='IDR'?Math.abs(+x.Amount||0):it.totF;if(cu&&am)fxMkt23(cu,Math.abs(+x.Approx_IDR)/am)}}catch(e){}return r}})();
+async function fxAI23(id){const x=S.tx.find(t=>t.ID==id);if(!x)return;const it=itJ22(x.Items)||{},F=(it.files||[]).slice();if(x.Proof_File_ID&&!F.some(f=>f.id==x.Proof_File_ID))F.unshift({id:x.Proof_File_ID,name:'bukti'});if(!F.length)return;
+ const i=$('#fx23i');if(i)i.innerHTML='<span class="mu7">AI membaca bukti…</span>';try{let txt='';for(const f of F.slice(0,3)){txt+='\n'+await itText(await fGet(f))}const a=await call('api_aiItems',[{text:maskPan(txt).slice(0,20000),amount:Math.abs(+x.Approx_IDR||0),merchant:x.Merchant}]);
+  const cu=a.cur&&a.cur!='IDR'?a.cur:'',am=a.totalF||a.total;if(!cu){if(i)i.innerHTML='<span class="mu7">Bukti tertulis dalam Rupiah — tidak ada kurs asing.</span>';return}const s=$('#fx23c');if(s)s.value=cu;const n=$('#fx23a');if(n)n.value=f2_22(am,cu);
+  if(i){const act=Math.abs(+x.Approx_IDR)/am;i.innerHTML=`<span class="am">${ic('sparkle',11)} Terbaca ${E(cu)} ${f2_22(am,cu)} → kurs ${x.Bill_ID?'aktual':''} 1 ${E(cu)} = Rp ${(Math.round(act*100)/100).toLocaleString('en-US')} — tekan Simpan</span> <span class="mu7" id="fx23m"></span>`;fxMkt23(cu,act)}}catch(e){if(i)i.innerHTML=`<span class="rd">${E(e.message)}</span>`}}
+async function fxSave23(id){const x=S.tx.find(t=>t.ID==id);if(!x)return;const cu=($('#fx23c')||{}).value||'IDR',am=pn(($('#fx23a')||{}).value||'');const idr=Math.abs(+x.Approx_IDR||0),sg=(+x.Approx_IDR<0||+x.Amount<0)?-1:1;
+ const up=cu=='IDR'||!am?{Original_Currency:'IDR',Amount:sg*idr,Exchange_Rate:1}:{Original_Currency:cu,Amount:sg*am,Exchange_Rate:idr/am};
+ try{const r=await call('api_saveTransaction',[uuid(),{...x,...up}]);if(r.data&&r.data.transaction)Object.assign(x,r.data.transaction);else Object.assign(x,up);toast(cu=='IDR'?'Kembali ke Rupiah':'Kurs '+cu+' disimpan — Rupiah tetap '+rp(idr));cm();txOpen7(id)}catch(e){toast(e.message)}}
+
+/* =====================================================================
+   DN-261117-023948-704 + DN-261117-024020-343 — ID transaksi: tombol "Buat ID otomatis" muncul saat kosong (tanpa centang), ID deskriptif
+   Format: MERCHANT-YYMMDD-SUMBER-NOMINAL (mis. ZUSCOFFEE-PURI-261101-BCA3333-45K)
+   ===================================================================== */
+function descId23(){const v=i=>(($('#'+i)||{}).value||'').trim();const m=nrm23(v('f_m')).replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>1&&!STOP23.has(w)).slice(0,2).map(w=>w.slice(0,10).toUpperCase());
+ const d=(v('f_d')||TODAY()).slice(2,10).replace(/-/g,''),tm=v('f_tm9').replace(':','').slice(0,4);const s=$('#f_s'),so=s&&s.value&&!/^[?]?$/.test(s.value)?((s.options[s.selectedIndex]||{}).textContent||'').replace(/^kosong.*$/i,''):'';const c=S.cards.find(x=>s&&x.ID==s.value);
+ const src=c?(String(cardBank(c)||c.Name).replace(/[^A-Za-z]/g,'').slice(0,5).toUpperCase()+(c.Last4||'')):so?so.replace(/[^A-Za-z0-9]/g,'').slice(0,8).toUpperCase():'';
+ const cu=($('#f_cu9')||{}).value||'IDR',a=pn(v('f_a')),amt=a?(cu!='IDR'?cu+String(Math.round(a*100)/100).replace('.','_'):a>=1e6?(Math.round(a/1e5)/10+'JT').replace('.','_'):a>=1e3?Math.round(a/1e3)+'K':String(Math.round(a))):'';
+ const k=(catOf(($('#f_k')||{}).value).Name||'').replace(/[^A-Za-z]/g,'').slice(0,4).toUpperCase();
+ return [m.join('')||'TRX',d+(tm?tm:''),src,k,amt].filter(Boolean).join('-').slice(0,48)}
+function gidSync23(){const rf=$('#f_rf');if(!rf)return;let b=$('#gid23');const nr=$('#f_nr9');if(nr){const l=nr.closest('label');if(l&&l.style.display!='none')l.style.display='none'}
+ if(!b){rf.insertAdjacentHTML('afterend',`<button type="button" id="gid23" class="gid23" data-tip="Tidak ada nomor di struk (warung / tunai)? Buat ID deskriptif dari merchant, tanggal, sumber dana, kategori & nominal">${ic('sparkle',12)} Buat ID otomatis</button>`);b=$('#gid23')}
+ if(!rf.dataset.g23){rf.dataset.g23=1;rf.addEventListener('input',gidSync23)}if(rf.nextElementSibling!==b)rf.after(b);const hide=String(rf.value).trim()?'none':'';if(b.style.display!==hide)b.style.display=hide}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#gid23');if(!b)return;const rf=$('#f_rf');if(!rf)return;rf.value=descId23();rf.classList.remove('bad15');rf.classList.add('aiv');if(FM&&FM.tf9)FM.tf9.noRef=true;rf.dispatchEvent(new Event('input',{bubbles:true}));rf.dispatchEvent(new Event('change',{bubbles:true}));gidSync23()});
+new MutationObserver(()=>{if($('#f_rf'))gidSync23()}).observe(document.body,{childList:true,subtree:true});
+/* simpan tanpa ID: arahkan ke tombol (bukan centang) */
+(function(){const S0=ts;ts=async function(id){try{if(FM&&FM.tf9&&(FM.k=='EXPENSE'||FM.k=='INCOME')){const rf=$('#f_rf');if(rf&&!String(rf.value).trim()&&!FM.tf9.noRef){rf.focus();rf.classList.add('bad15');const b=$('#gid23');if(b){b.style.display='';b.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:420,iterations:2})}return toast('Isi No. ID dari struk — atau tekan "Buat ID otomatis"')}if(rf&&!String(rf.value).trim()&&FM.tf9.noRef)rf.value=descId23()}}catch(e){}return S0.apply(this,arguments)}})();
+
+/* =====================================================================
+   DN-261117-023717-247 — "Rincian belanja" + "Detil transaksi" (+ detail barang AI) disatukan dalam satu kartu
+   ===================================================================== */
+function unify23(){const ct=$('#tf9ct'),dt=$('#dt14t');if(!ct||!dt||ct.closest('.un23'))return;const w=document.createElement('div');w.className='un23';
+ w.innerHTML=`<div class="h">${ic('receipt',14)} Rincian transaksi <small>diisi AI · bisa diubah</small></div><div class="s23 a"><div class="t">Barang &amp; biaya</div></div><div class="s23 b"><div class="t">Detil (No. pesanan, kurs, dll.)</div></div>`;
+ ct.parentNode.insertBefore(w,ct);w.querySelector('.s23.a').appendChild(ct);w.querySelector('.s23.b').appendChild(dt);const btn=ct.querySelector('h5 button');if(btn)w.querySelector('.h').appendChild(btn)}
+new MutationObserver(()=>{if($('#tf9ct')&&!$('#tf9ct').closest('.un23'))unify23()}).observe(document.body,{childList:true,subtree:true});
+
+/* =====================================================================
+   DN-261117-115828-889 — Konsultasi BOO: riwayat obrolan di kiri (bisa dicari & diklik) + pilih konteks dulu (topik / kategori / kartu)
+   Disimpan di perangkat (localStorage kk_th23). Konteks dikirim ke BOO agar jawaban tidak generik.
+   ===================================================================== */
+const TOP23=[['Dining','makan restoran kafe kopi kuliner'],['Travel & hotel','pesawat hotel tiket traveloka miles luar negeri'],['Belanja online','shopee tokopedia lazada marketplace'],['Groceries','supermarket indomaret alfamart'],['Bensin','spbu pertamina shell'],['Tagihan & utilitas','pln listrik internet pulsa'],['Cicilan 0%','cicilan installment gadget'],['Miles & poin','miles poin garudamiles krisflyer'],['Kartu baru','welcome bonus pengajuan kartu'],['Transaksi luar negeri','kurs fx mata uang asing']];
+const TH23=(()=>{let o=null;try{o=JSON.parse(localStorage.getItem('kk_th23')||'null')}catch(e){}if(!o||!Array.isArray(o.L))o={L:[],cur:''};
+ if(!o.L.length){let old=[];try{old=JSON.parse(localStorage.getItem('kk_ch21_SNK')||'[]')}catch(e){}if(old.length){const t={id:'t'+Date.now().toString(36),title:(old.find(m=>m.r=='u')||{}).t||'Obrolan sebelumnya',cx:{t:'GEN',v:'',l:'Umum'},msgs:old,at:Date.now()};o.L.push(t);o.cur=t.id}}return o})();
+TH23.q='';TH23.pick=!TH23.cur;TH23.pq='';
+const thCur23=()=>TH23.L.find(t=>t.id==TH23.cur);
+function thKeep23(){try{localStorage.setItem('kk_th23',JSON.stringify({L:TH23.L.slice(0,60).map(t=>({...t,msgs:t.msgs.slice(-60)})),cur:TH23.cur}))}catch(e){}}
+function thBind23(){const C=chS21('SNK'),t=thCur23();C.msgs=t?t.msgs:[];C.th=t?t.id:''}
+thBind23();
+/* simpan obrolan aktif ke utas */
+(function(){const K0=chKeep21;chKeep21=function(pg){if(pg!='SNK')return K0.apply(this,arguments);const C=chS21('SNK');let t=thCur23();
+ if(!t&&C.msgs.length){t={id:'t'+Date.now().toString(36),title:'',cx:TH23.cx||{t:'GEN',v:'',l:'Umum'},msgs:C.msgs,at:Date.now()};TH23.L.unshift(t);TH23.cur=t.id;TH23.pick=false}
+ if(t){t.msgs=C.msgs;t.at=Date.now();if(!t.title){const u=C.msgs.find(m=>m.r=='u');if(u)t.title=u.t.slice(0,60)}TH23.L.sort((a,b)=>b.at-a.at)}thKeep23()}})();
+/* fokus obrolan dikirim ke BOO */
+(function(){const X0=ctxSnk21;ctxSnk21=function(){const t=thCur23(),cx=(t&&t.cx)||TH23.cx||{t:'GEN'};let f='';
+ if(cx.t=='CARD'){const c=S.cards.find(z=>z.ID==cx.v);if(c){const x=cctxOf(c)||{};f=`FOKUS OBROLAN (dipilih pengguna): KARTU ${c.Name} ••${c.Last4||''} (${[cardBank(c),c.Network,c.Tier].filter(Boolean).join(' ')}). Jawab khusus tentang kartu ini: manfaat, syarat, promo, iuran, poin/miles, kapan sebaiknya dipakai, dan bandingkan dengan kartu lain bila relevan.\nDATA KARTU INI: ${JSON.stringify({profile:x.profile,rules:(x.rules||[]).slice(0,12),promoX:(x.promoX||[]).slice(0,12),fees:x.fees,promos:x.promos}).slice(0,5000)}\n\n`}}
+ else if(cx.t=='CAT'||cx.t=='TOP')f=`FOKUS OBROLAN (dipilih pengguna): ${cx.t=='CAT'?'KATEGORI':'TOPIK'} "${cx.l}". Jawab khusus untuk konteks ini (kartu milik vs belum punya, promo, cashback, poin) — jangan generik.\n\n`;
+ return (f+X0.apply(this,arguments)).slice(0,17000)}})();
+/* tampilan: sidebar riwayat + pemilih konteks */
+function sbH23(){const q=nrm23(TH23.q),L=TH23.L.filter(t=>!q||nrm23(t.title+' '+(t.cx&&t.cx.l)+' '+t.msgs.map(m=>m.t).join(' ')).includes(q));const ago=ms=>{const d=(Date.now()-ms)/6e4;return d<60?Math.max(1,Math.round(d))+' mnt':d<1440?Math.round(d/60)+' jam':Math.round(d/1440)+' hr'};
+ return `<div class="sb23"><div class="tp"><button type="button" class="nw" data-th23="new">${ic('plus',14)} Obrolan baru</button><input type="search" data-thq23 placeholder="Cari obrolan…" value="${E(TH23.q)}"></div>
+ <div class="tl">${L.map(t=>`<button type="button" class="ti${t.id==TH23.cur&&!TH23.pick?' on':''}" data-th23="${t.id}"><b>${E(t.title||'Obrolan baru')}</b><small><span class="cx23 ${(t.cx||{}).t||'GEN'}">${E((t.cx||{}).l||'Umum')}</span>${ago(t.at)}</small><span class="del" data-thd23="${t.id}" data-tip="Hapus obrolan">${ic('x',12)}</span></button>`).join('')||'<p class="mu7" style="padding:10px">Belum ada obrolan.</p>'}</div></div>`}
+function pkH23(){const q=nrm23(TH23.pq),m=s=>!q||nrm23(s).includes(q)||q.split(/\s+/).every(w=>meta23(s).includes(w));const cats=(S.cats||[]).filter(c=>(c.Kind||'Pengeluaran')!='Pemasukan'&&m(c.Name+' '+(c.Parent_Name||''))).slice(0,24),tops=TOP23.filter(([l,s])=>m(l+' '+s)),cards=S.cards.filter(c=>c.Status=='Aktif'&&m([c.Name,cardBank(c),c.Last4,c.Network,c.Tier].join(' ')));
+ return `<div class="pk23"><h4>Mulai obrolan — pilih konteksnya dulu</h4><input type="search" data-pq23 placeholder="Cari konteks: dining, travel, BCA, 1234…" value="${E(TH23.pq)}">
+ <div class="gt">Umum</div><div class="gr"><button type="button" data-cx23="GEN||Umum">${ic('sparkle',13)} Umum</button></div>
+ ${tops.length?`<div class="gt">Topik</div><div class="gr">${tops.map(([l])=>`<button type="button" data-cx23="TOP|${E(l)}|${E(l)}">${E(l)}</button>`).join('')}</div>`:''}
+ ${cards.length?`<div class="gt">Kartu kreditmu</div><div class="gr">${cards.map(c=>`<button type="button" data-cx23="CARD|${c.ID}|${E(c.Name+' ••'+(c.Last4||''))}">${bLogo15(cardBank(c),c.Name,18)} ${E(c.Name)} <span class="mu7">••${E(c.Last4||'')}</span></button>`).join('')}</div>`:''}
+ ${cats.length?`<div class="gt">Kategori belanjamu</div><div class="gr">${cats.map(c=>`<button type="button" data-cx23="CAT|${c.ID}|${E(c.Name)}">${ci(c)} ${E(c.Name)}</button>`).join('')}</div>`:''}</div>`}
+(function(){const H0=chH21;chH21=function(pg){let h=H0.apply(this,arguments);if(pg!='SNK')return h;const t=thCur23(),cx=(t&&t.cx)||TH23.cx;
+ h=h.replace('<div class="ch21" data-pg="SNK">',`<div class="ch21" data-pg="SNK" data-tw23="1"${TH23.sbo?' data-sbo="1"':''}>`+sbH23());
+ h=h.replace(/<b>Konsultasi kartu dengan BOO<\/b><span class="mu7">[^<]*<\/span>/,`<button type="button" class="sbt23 bg2 sm" data-sbt23="1">${ic('hist',13)} Riwayat</button><b>${E((t&&t.title)||'Konsultasi kartu dengan BOO')}</b>${cx?`<span class="fc23"><span class="cx23 ${cx.t}">${E(cx.l)}</span><button type="button" class="mu7" data-th23="new" data-tip="Ganti konteks (mulai obrolan baru)" style="font-size:.75rem;text-decoration:underline">ganti</button></span>`:''}`);
+ if(TH23.pick&&!(t&&t.msgs.length)){h=h.replace(/<div class="ls">[\s\S]*?<\/div>(<div class="sg21">|<form)/,(m0,nx)=>`<div class="ls" style="display:block">${pkH23()}</div>`+nx)}
+ return h}})();
+function thRf23(){chRf21('SNK')}
+document.addEventListener('click',e=>{const d=e.target.closest&&e.target.closest('[data-thd23]');if(d){e.stopPropagation();const id=d.dataset.thd23;TH23.L=TH23.L.filter(t=>t.id!=id);if(TH23.cur==id){TH23.cur='';TH23.pick=true}thBind23();thKeep23();thRf23();return}
+ const b=e.target.closest&&e.target.closest('[data-th23]');if(b){const v=b.dataset.th23;if(v=='new'){TH23.cur='';TH23.pick=true;TH23.cx=null;TH23.pq=''}else{TH23.cur=v;TH23.pick=false;TH23.cx=(thCur23()||{}).cx}TH23.L=TH23.L.filter(t=>t.msgs.length||t.id==TH23.cur);TH23.sbo=false;thBind23();thKeep23();thRf23();return}
+ const c=e.target.closest&&e.target.closest('[data-cx23]');if(c){const [t,v,l]=c.dataset.cx23.split('|');TH23.cx={t,v,l};const th={id:'t'+Date.now().toString(36),title:'',cx:TH23.cx,msgs:[],at:Date.now()};TH23.L.unshift(th);TH23.cur=th.id;TH23.pick=false;thBind23();thKeep23();
+  SUG21.SNK=t=='CARD'?['Kapan sebaiknya kupakai kartu ini?','Promo apa yang sedang berlaku?','Berapa iuran & cara bebas iuran?']:t=='GEN'?['Kartu terbaik untuk bayar PLN?','Promo kopi akhir pekan ini?','Kartu apa yang perlu kuambil untuk travel?']:['Kartu terbaik untuk '+l+'?','Promo '+l+' yang berlaku minggu ini?','Kartu baru apa yang paling untung untuk '+l+'?'];
+  thRf23();setTimeout(()=>{const ta=document.querySelector('textarea[data-t21="SNK"]');if(ta)ta.focus()},30);return}
+ const s=e.target.closest&&e.target.closest('[data-sbt23]');if(s){TH23.sbo=!TH23.sbo;const el=document.querySelector('.ch21[data-pg="SNK"]');if(el){if(TH23.sbo)el.setAttribute('data-sbo','1');else el.removeAttribute('data-sbo')}}});
+document.addEventListener('input',e=>{const t=e.target;if(t&&t.matches&&t.matches('[data-thq23]')){TH23.q=t.value;const sb=t.closest('.sb23'),tl=sb&&sb.querySelector('.tl');if(tl){const w=document.createElement('div');w.innerHTML=sbH23();tl.replaceWith(w.querySelector('.tl'))}}
+ else if(t&&t.matches&&t.matches('[data-pq23]')){TH23.pq=t.value;const p=t.closest('.pk23');if(p){const w=document.createElement('div');w.innerHTML=pkH23();[...p.children].forEach((c,i)=>{if(i>1)c.remove()});[...w.firstElementChild.children].slice(2).forEach(c=>p.appendChild(c))}}});
+/* mulai mengetik tanpa memilih konteks = Umum */
+(function(){const S0=chSend21;chSend21=async function(pg,text){if(pg=='SNK'&&!thCur23()){TH23.cx=TH23.cx||{t:'GEN',v:'',l:'Umum'};TH23.pick=false}return S0.apply(this,arguments)}})();
+
+/* =====================================================================
+   DN-261117-101133-469 — Kelola › Kartu Kredit: kotak cari (metadata), urutkan & filter
+   ===================================================================== */
+const KF23={q:'',st:'',net:'',so:'bank'};
+const kMeta23=c=>{const x=cctxOf(c)||{},pf=x.profile||{};return nrm23([c.Name,cardBank(c),c.Last4,c.Network,c.Tier,c.Card_Type,c.Holder_Masked,c.Status,'limit '+c.Credit_Limit,(pf.bestFor||[]).join(' '),(pf.benefits||[]).join(' '),pf.role].join(' '))};
+function kfApply23(){const v=$('#v');if(!v||tab!='m'||G!='c')return;const L=[...v.querySelectorAll('.kc3')];let shown=0;const q=nrm23(KF23.q).split(/\s+/).filter(Boolean);
+ const key=c=>KF23.so=='limit'?-(+c.Credit_Limit||0):KF23.so=='name'?nrm23(c.Name):KF23.so=='due'?(+c.Due_Date||99):KF23.so=='stmt'?(+c.Statement_Date||99):KF23.so=='fee'?-(+c.Annual_Fee||0):0;
+ const groups=new Map();L.forEach(el=>{const c=S.cards.find(x=>x.ID==el.dataset.cid);if(!c)return;const ok=(!q.length||q.every(w=>kMeta23(c).includes(w)))&&(!KF23.st||(KF23.st=='on')==(c.Status=='Aktif'))&&(!KF23.net||nrm23(c.Network).includes(KF23.net));el.style.display=ok?'':'none';if(ok)shown++;
+  const g=el.parentNode;if(!groups.has(g))groups.set(g,[]);groups.get(g).push({el,c})});
+ if(KF23.so!='bank')groups.forEach(arr=>{arr.sort((a,b)=>{const x=key(a.c),y=key(b.c);return x<y?-1:x>y?1:0});const first=arr[0]&&arr[0].el.previousElementSibling;let anchor=null;arr.forEach(({el})=>{if(!anchor){anchor=el}else{anchor.after(el);anchor=el}})});
+ v.querySelectorAll('.kk-g').forEach(h=>{let n=h.nextElementSibling,any=false;while(n&&!n.classList.contains('kk-g')){if(n.classList.contains('kc3')&&n.style.display!='none')any=true;n=n.nextElementSibling}h.style.display=any?'':'none'});
+ const nEl=$('#kf23n');if(nEl)nEl.textContent=(q.length||KF23.st||KF23.net)?shown+' dari '+S.cards.length+' kartu':S.cards.length+' kartu'}
+function kfH23(){const nets=[...new Set(S.cards.map(c=>c.Network).filter(Boolean))];const ch=(k,v,l)=>`<button type="button" class="ch${KF23[k]==v?' on':''}" data-kf23="${k}|${v}">${l}</button>`;
+ return `<div class="kf23"><label class="q">${ic('search',15)}<input type="search" id="kf23q" placeholder="Cari kartu: nama, bank, 4 digit, jaringan, tier, manfaat…" value="${E(KF23.q)}"></label>
+ <select id="kf23s" data-ns23="1" aria-label="Urutkan"><option value="bank" ${KF23.so=='bank'?'selected':''}>Urut: per bank</option><option value="name" ${KF23.so=='name'?'selected':''}>Nama A–Z</option><option value="limit" ${KF23.so=='limit'?'selected':''}>Limit terbesar</option><option value="due" ${KF23.so=='due'?'selected':''}>Jatuh tempo paling awal</option><option value="stmt" ${KF23.so=='stmt'?'selected':''}>Tanggal cetak paling awal</option><option value="fee" ${KF23.so=='fee'?'selected':''}>Iuran terbesar</option></select>
+ ${ch('st','','Semua')}${ch('st','on','Aktif')}${ch('st','off','Nonaktif')}${nets.length>1?nets.map(n=>ch('net',nrm23(n),E(n))).join(''):''}<span class="n" id="kf23n"></span></div>`}
+(function(){const R0=render;render=function(){const r=R0.apply(this,arguments);try{if(tab=='m'&&G=='c'){const v=$('#v');if(v&&!v.querySelector('.kf23')){const b=v.querySelector('button.bt[onclick="cf()"]');if(b)b.insertAdjacentHTML('afterend',kfH23())}setTimeout(kfApply23,0)}}catch(e){}return r}})();
+document.addEventListener('input',e=>{if(e.target&&e.target.id=='kf23q'){KF23.q=e.target.value;kfApply23()}});
+document.addEventListener('change',e=>{if(e.target&&e.target.id=='kf23s'){KF23.so=e.target.value;render()}});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-kf23]');if(!b)return;const [k,v]=b.dataset.kf23.split('|');KF23[k]=KF23[k]==v&&v?'':v;b.parentNode.querySelectorAll(`[data-kf23^="${k}|"]`).forEach(z=>z.classList.toggle('on',z.dataset.kf23.split('|')[1]==KF23[k]));kfApply23()});
+
+Object.assign(DN_DONE,Object.fromEntries([
+['DN-261117-122743-660','Tagihan › verifikasi: kategori dengan machine learning (Naive Bayes) dari seluruh riwayat transaksimu + koreksi terbaru — memakai merchant, nama, catatan, barang di struk, lokasi, channel, akun, kartu, jenis, rentang nominal, hari & tanggal, mata uang. Yakin ≥80% → terisi otomatis (tanda "pola"); selain itu 3 saran berpersentase di bawah Kategori. Setiap pilihanmu langsung jadi bahan belajar.'],
+['DN-261117-122133-229','Tagihan › verifikasi: baris terbuka disusun ulang — foto bukti kiri, Nominal & catatan (hijau), Akun · Kategori · Channel (oranye), tanggal (biru), tombol bawah berwarna; catatan rata kiri.'],
+['DN-261117-121223-275','Semua dropdown di aplikasi bisa dicari dengan mengetik (nama, grup, kata kunci mis. "kopi" → Makan & Minum); keyboard ↑↓ Enter Esc; di HP muncul dari bawah.'],
+['DN-261117-121151-974','Tagihan › verifikasi: kotak foto bukti besar di kiri — klik pilih file, Ctrl+V, atau seret; tampilan & warna per blok dibedakan.'],
+['DN-261117-120932-580','Tagihan › verifikasi: pindah baris tidak lagi melompat ke atas PDF — sorotan kuning bergeser halus (animasi CSS), PDF hanya digulir bila baris di luar layar.'],
+['DN-261117-024220-108','Tagihan: kotak "N transaksi kartu belum masuk tagihan" (dan kotak info sejenis) bisa dikecilkan jadi chip angka; diingat di perangkat.'],
+['DN-261117-024213-296','Tagihan & Beranda: kotak "Target kartu belum tercapai" bisa dikecilkan ke judulnya saja; diingat di perangkat.'],
+['DN-261117-022926-230','Tagihan › detail › transaksi: foto bukti di kiri nama transaksi, nominal tetap sejajar di kanan.'],
+['DN-261117-120413-370','Transaksi › bukti: klik gambar / PDF = zoom di layar yang sama (klik lagi untuk kecilkan) + tombol perbesar/perkecil; tidak membuka jendela baru.'],
+['DN-261117-120332-348','Transaksi › detail: kotak Mata uang asli — pilih mata uang & nominal asli atau "Baca dari bukti" (AI), Rupiah tetap dari tagihan, kurs aktual + selisih dengan kurs pasar; disimpan ke transaksi.'],
+['DN-261117-024020-343','Transaksi › Catat: ID otomatis deskriptif MERCHANT-TANGGALJAM-SUMBER-KATEGORI-NOMINAL (mis. ZUSCOFFEE-2611011430-BCA3333-MAKA-45K).'],
+['DN-261117-023948-704','Transaksi › Catat: centang diganti tombol "Buat ID otomatis" yang muncul hanya saat No. ID kosong.'],
+['DN-261117-023717-247','Transaksi › Catat: "Rincian belanja" dan "Detil transaksi" disatukan dalam satu kartu "Rincian transaksi" (Barang & biaya · Detil).'],
+['DN-261117-115828-889','SnK › Konsultasi BOO: riwayat obrolan di kiri (cari & klik seperti LLM), "Obrolan baru" dengan pemilih konteks (Umum, topik mis. Dining/Travel, kartu tertentu, kategori belanjamu) yang bisa dicari; konteks dikirim ke BOO dan tampil di judul obrolan.'],
+['DN-261117-101133-469','Kelola › Kartu Kredit: kotak cari (nama, bank, 4 digit, jaringan, tier, manfaat), urutkan (bank, nama, limit, jatuh tempo, tanggal cetak, iuran) dan filter Aktif/Nonaktif & jaringan.']
+].map(([k,v])=>[k,['kartuku-sb 2026.11.23',v]])));
 
 </script></body></html>
