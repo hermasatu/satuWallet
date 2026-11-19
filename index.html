@@ -280,7 +280,7 @@ table.rk-l td .inp.ti{border-color:transparent;background:transparent;padding:4p
 <script>
 /* ===== KONFIGURASI ===== */
 const API_URL = "https://vfryxascchrmfikjpoxd.supabase.co/functions/v1/hyper-service"; // Supabase Edge Function (versi KartuKu)
-const APP_VERSION = "kartuku-sb 2026.11.24"; // dipakai widget Catatan dev
+const APP_VERSION = "kartuku-sb 2026.11.25"; // dipakai widget Catatan dev
 const GCID = "GANTI_DENGAN_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // OAuth Web Client ID (sama dengan Script Property GOOGLE_CLIENT_ID)
 // Autentikasi: login email + password -> token sesi disimpan di localStorage (kunci "SESSION_TOKEN"). Tidak ada rahasia di file ini.
 
@@ -1024,7 +1024,7 @@ async function pvM(){if(!R||!R.c||!R.rows)return;await sgM();const ok=R.rows.fil
  try{const r=await call('api_previewMatch',[{mode:'CC',cardId:R.c,tolerance:3,rows:ok.map(pRow)}]);if(!R||tok!=R.pvTok)return;
   (r.reconcile.results||[]).forEach(z=>{const x=ok[z.index];if(!x)return;x.mt={st:z.status,txs:z.txs||[]};const t=z.txs||[];
    if(t.length&&(!x.lb||x.lbAuto)){x.lb=t.map(tName).join(' + ');x.lbAuto=1}if(t.length==1&&!x.mk&&t[0].Category_ID){x.k=t[0].Category_ID}if(t.length&&x.sp)delete x.sp});
-  vlistRf();cnt();const sm=r.reconcile.summary,e=$('#pvs');if(e)e.innerHTML=`<span class="pill pg">${sm.matched} cocok catatan manual</span> <span class="pill nw2">${sm.duplicate} sudah tersimpan</span> <span class="pill pa">${sm.missing} baru</span>`}
+  vlistRf();cnt();const sm=r.reconcile.summary,e=$('#pvs');if(e)e.innerHTML=`<span class="pill pg">${sm.matched} cocok catatan manual</span> <span class="pill nw2">${sm.duplicate} sudah tersimpan</span> <span class="pill pa">${sm.missing} baru</span>${sm.moved?` <span class="pill pg" data-tip="Catatan manual yang salah pilih kartu / rekening dipindah ke kartu tagihan ini (lembar tagihan = acuan)">${sm.moved} kartu/rekening dikoreksi</span>`:''}`}
  catch(e){const x=$('#pvs');if(x)x.textContent='Pratinjau pencocokan gagal: '+e.message}}
 function pvSoon(){clearTimeout(pvT);pvT=setTimeout(pvM,900)}
 function warnH(){const i=R.info,sel=S.cards.find(c=>c.ID==R.c);let h='';
@@ -11435,17 +11435,17 @@ const rkCol24=p=>akTop18(p)||(p?'Lainnya':'');
 function rkMonths24(){const s=new Set([ymNow(),ymAdd(ymNow(),-1)].concat(RK.periods||[]));(S.bills||[]).forEach(b=>{const p=String(b.Print_Date||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(p))s.add(p)});return [...s].filter(Boolean).sort().reverse().slice(0,18)}
 function rkDef24(){const T=ymNow();return (S.bills||[]).some(b=>String(b.Print_Date||'').slice(0,7)==T)?T:ymAdd(T,-1)}
 function rkGo24(m){if(!m)return;if(Object.keys(RK24.ch).length&&!confirm('Ada perubahan akun yang belum disimpan. Pindah bulan dan buang perubahan?'))return;RK24.m=m;RK24.ld=m;RK24.ch={};RK24.sel.clear();RK24.card='';RK.unbilled=false;RK.f.cards=[];RK.f.cat='';RK.f.pg='';rkLoad(m,m)}
-function rkTx24(){return rkTx().filter(t=>live7(t)&&!isPayRow(t)&&(t.Kind||'EXPENSE')=='EXPENSE'&&(!RK24.card||t.Card_ID==RK24.card))}
+function rkTx24(){return rkTx().filter(t=>t.Bill_ID&&live7(t)&&!isPayRow(t)&&(t.Kind||'EXPENSE')=='EXPENSE'&&(!RK24.card||t.Card_ID==RK24.card))}
 (function(){const V0=rkv;rkv=function(){pgSync();if(!RK24.m)RK24.m=RK.from&&RK.from==RK.to?RK.from:rkDef24();const m=RK24.m;
  if(RK24.ld!=m&&!RK.loading){RK24.ld=m;RK.unbilled=false;RK.data=null;setTimeout(()=>rkLoad(m,m),0);return spin('Memuat tagihan '+perL(m)+'…')}
  if(!RK.data)return RK.err?`<div class="sec7 rd">${E(RK.err)} <button class="bg2 sm" onclick="rkLoad('${m}','${m}')">Coba lagi</button></div>`:spin('Memuat tagihan '+perL(m)+'…');
  let old='';try{const tp=document.createElement('div');tp.innerHTML=V0.apply(this,arguments);tp.querySelectorAll('.ak15').forEach(x=>x.remove());old=tp.innerHTML}catch(e){}
  const bills=rkBills(),T=rkTx24(),q=nrm23(RK24.q),Ms=rkMonths24(),i=Ms.indexOf(m),tot=sum7(bills,b=>+b.Statement_Amount||0),nCh=Object.keys(RK24.ch).length;
- const cols=[['','Belum ada akun','alert']].concat(AK18),G={};cols.forEach(([k])=>G[k]={v:0,n:0,L:[]});T.forEach(t=>{const p=rkPP24(t),k=rkCol24(p),g=G[k]||G.Lainnya;g.v+=amtOf(t);g.n++;if(!q||nrm23([tName(t),t.Merchant,kn(t.Category_ID),cn(t.Card_ID),p,fg(Math.abs(amtOf(t)))].join(' ')).includes(q))g.L.push(t)});
+ const cols=AK18.concat([['','Belum ada akun','alert']]),G={};cols.forEach(([k])=>G[k]={v:0,n:0,L:[]});T.forEach(t=>{const p=rkPP24(t),k=rkCol24(p),g=G[k]||G.Lainnya;g.v+=amtOf(t);g.n++;if(!q||nrm23([tName(t),t.Merchant,kn(t.Category_ID),cn(t.Card_ID),p,fg(Math.abs(amtOf(t)))].join(' ')).includes(q))g.L.push(t)});
  const caps=rkCards(),capH=caps.map(c=>{const cc=S.cards.find(x=>x.ID==c.id),n=T.filter(t=>t.Card_ID==c.id).length;return `<button type="button" class="${RK24.card==c.id?'on':''}" onclick="RK24.card=RK24.card=='${c.id}'?'':'${c.id}';render()" data-tip="${E(cc?cardLbl(cc):'')}">${cc?bLogo15(cardBank(cc),cc.Name,18):ic('card',14)}${E(cc?cc.Name:cn(c.id))} <small>••${E((cc||{}).Last4||'')} · ${rp(sum7(c.bills,b=>+b.Statement_Amount||0))}</small></button>`}).join('');
  const card=t=>{const p=rkPP24(t),top=rkCol24(p),a=amtOf(t),sl=RK24.sel.has(t.ID),dr=Object.prototype.hasOwnProperty.call(RK24.ch,t.ID),cc=S.cards.find(x=>x.ID==t.Card_ID);
-  return `<div class="kc24${sl?' sl':''}${dr?' dr':''}" data-id="${E(t.ID)}" data-tip="${dr?'Diubah — belum disimpan':''}"><span class="gp24" data-tip="Seret ke kolom akun lain">${ic('grip24',14)}</span><input type="checkbox" data-sl24="${E(t.ID)}" ${sl?'checked':''} aria-label="Pilih"><div class="n"><div class="t"><b>${E(tName(t))}</b><span class="a${a<0?' cr':''}">${rp(a)}</span></div><small><span>${fdd(t.Date)}</span><span>${E(kn(t.Category_ID)||'—')}</span><span>${cc?'••'+E(cc.Last4||''):''}</span>${top?`<span class="sb24${p&&p!=top?'':' add'}" data-sb24="${E(t.ID)}" data-tip="Sub-akun">${p&&p!=top?E(akShort14?akShort14(p,top):p):'+ sub'}</span>`:''}</small></div><button type="button" class="mv24" data-mv24="${E(t.ID)}" aria-label="Pindah akun">${ic('swp24',14)}</button></div>`};
- const colH=([k,l,icn])=>{const g=G[k];return `<section class="col24${k?'':' no'}" data-top="${E(k)}"><div class="ch"><span class="d" style="background:${AKC24[k]||'#94a3b8'}"></span><b>${ic(icn,13)} ${E(l)}<small>${g.n} transaksi${g.L.length&&g.L.some(t=>!RK24.sel.has(t.ID))?` · <button type="button" class="sa" data-sa24="${E(k)}">pilih semua</button>`:''}</small></b><span class="v">${rp(g.v)}</span></div><div class="ls">${g.L.map(card).join('')||`<div class="e">${k?'Seret transaksi ke sini':'Semua transaksi sudah punya akun ✓'}</div>`}</div></section>`};
+  return `<div class="kc24${sl?' sl':''}${dr?' dr':''}" data-id="${E(t.ID)}" data-tip="${dr?'Diubah — belum disimpan':''}"><div class="n"><div class="t"><b>${E(tName(t))}</b><span class="a${a<0?' cr':''}">${rp(a)}</span></div><small><span>${fdd(t.Date)}</span><span>${E(kn(t.Category_ID)||'—')}</span><span>${cc?'••'+E(cc.Last4||''):''}</span>${top?`<span class="sb24${p&&p!=top?'':' add'}" data-sb24="${E(t.ID)}" data-tip="Sub-akun">${p&&p!=top?E(akShort14?akShort14(p,top):p):'+ sub'}</span>`:''}</small></div></div>`};
+ const colH=([k,l,icn])=>{const g=G[k];return `${k?'':`<section class="col24 nw25" data-top="__new" data-tip="Seret transaksi ke sini untuk membuat akun baru"><button type="button" class="nb25" onclick="akNewM25()">${ic('plus',16)}<b>Akun baru</b><small>klik, atau seret transaksi ke sini</small></button></section>`}<section class="col24${k?'':' no'}" data-top="${E(k)}"><div class="ch"><span class="d" style="background:${AKC24[k]||'#94a3b8'}"></span><b>${ic(icn,13)} ${E(l)}${k?`<button type="button" class="rn25" data-rn25="${E(k)}" aria-label="Ganti nama" data-tip="Ganti nama akun">${ic('pen',11)}</button>`:''}<small>${g.n} transaksi${g.L.length&&g.L.some(t=>!RK24.sel.has(t.ID))?` · <button type="button" class="sa" data-sa24="${E(k)}">pilih semua</button>`:''}</small></b><span class="v">${rp(g.v)}</span></div><div class="ls">${g.L.map(card).join('')||`<div class="e">${k?'Seret transaksi ke sini':'Semua transaksi sudah punya akun ✓'}</div>`}</div></section>`};
  const sumAk=AK18.filter(([k])=>G[k].n).map(([k,l])=>`<div><small>${E(l)}</small><b style="color:${AKC24[k]}">${rp(G[k].v)}</b></div>`).join('');
  return `<div class="rk24"><div class="mh"><h2 class="font-extrabold text-xl">Rekap Tagihan</h2><div class="mn"><button class="ar" onclick="rkGo24('${Ms[i+1]||''}')" ${Ms[i+1]?'':'disabled'} aria-label="Bulan sebelumnya">${ic('chL16',16)}</button><select class="inp" style="width:auto" onchange="rkGo24(this.value)" data-ns23="1" data-tip="Bulan tagihan terbit (tanggal cetak)">${Ms.map(p=>`<option value="${p}" ${p==m?'selected':''}>${perL(p)}</option>`).join('')}</select><button class="ar" onclick="rkGo24('${i>0?Ms[i-1]:''}')" ${i>0?'':'disabled'} aria-label="Bulan berikutnya">${ic('chR16',16)}</button>
   <button class="ib7" onclick="upT()" data-tip="Upload tagihan">${ic('upload',15)}</button><button class="ib7" onclick="rkXlsx()" data-tip="Unduh Excel">${ic('dn2',15)}</button><button class="ib7" onclick="RK.data=null;rkLoad('${m}','${m}')" data-tip="Muat ulang">${ic('repeat',15)}</button></div></div>
@@ -11453,13 +11453,13 @@ function rkTx24(){return rkTx().filter(t=>live7(t)&&!isPayRow(t)&&(t.Kind||'EXPE
  ${RK.err?`<div class="sec7 rd">${E(RK.err)}</div>`:''}
  <div class="kp"><div><small>Tagihan terbit ${E(perL(m))}</small><b>${rp(tot)}</b><div class="mu7">${bills.length} tagihan · ${T.length} transaksi</div></div>${G[''].n?`<div style="border-color:#F6D58E;background:#FFFBEB"><small>Belum ada akun</small><b style="color:#B45309">${rp(G[''].v)}</b><div class="mu7">${G[''].n} transaksi</div></div>`:''}${sumAk}</div>
  ${capH?`<div class="cc">${capH}</div>`:''}
- <div class="tb"><input class="inp" placeholder="Cari transaksi, kategori, kartu, nominal…" value="${E(RK24.q)}" oninput="RK24.q=this.value;clearTimeout(window.__rq24);window.__rq24=setTimeout(()=>{render();const e=document.querySelector('.rk24 .tb .inp');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}},220)">${RK24.sel.size?`<span class="mu7">${RK24.sel.size} dipilih · seret salah satunya untuk memindah semua</span><button class="bg2 sm" onclick="rkMvMenu24(this,[...RK24.sel])">${ic('swp24',13)} Pindah ke…</button><button class="bg2 sm" onclick="RK24.sel.clear();render()">Batal pilih</button>`:`<span class="mu7">${tipI('Seret ⋮⋮ ke kolom akun lain (di HP: tombol ⇄). Klik transaksi untuk melihat detail. Perubahan disimpan sekali dengan tombol Simpan.')}</span>`}</div>
+ <div class="tb"><input class="inp" placeholder="Cari transaksi, kategori, kartu, nominal…" value="${E(RK24.q)}" oninput="RK24.q=this.value;clearTimeout(window.__rq24);window.__rq24=setTimeout(()=>{render();const e=document.querySelector('.rk24 .tb .inp');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}},220)">${RK24.sel.size?`<span class="mu7">${RK24.sel.size} dipilih · seret salah satunya untuk memindah semua</span><button class="bg2 sm" onclick="rkMvMenu24(this,[...RK24.sel])">${ic('swp24',13)} Pindah ke…</button><button class="bg2 sm" onclick="RK24.sel.clear();render()">Batal pilih</button>`:`<span class="mu7">${tipI('Tahan & geser kartu transaksi ke kolom akun lain (di HP: tekan lama lalu geser). Klik = detail. Ctrl/Shift + klik = pilih banyak. Perubahan disimpan sekali dengan tombol Simpan.')}</span>`}</div>
  <div class="bd24">${cols.map(colH).join('')}</div>
  ${nCh?`<div class="db24"><span>${nCh} transaksi pindah akun · belum disimpan</span><button class="c" onclick="RK24.ch={};render()">Batal</button><button class="s" onclick="rkSave24(this)">Simpan</button></div>`:''}
  ${old?`<details class="old24"><summary>${ic('table',14)} Rincian per kartu, kategori & tabel transaksi</summary><div>${old}</div></details>`:''}</div>`}})();
-function rkMove24(ids,top){let n=0;ids.forEach(id=>{const t=S.tx.find(x=>x.ID==id);if(!t)return;const cur=rkPP24(t);if(rkCol24(cur)==top)return;const nv=top;if(nv==(t.Purpose||''))delete RK24.ch[id];else RK24.ch[id]=nv;n++});RK24.sel.clear();if(n)render()}
+function rkMove24(ids,top){if(top=='__new')return akNewM25(n=>rkMove24(ids,n));let n=0;ids.forEach(id=>{const t=S.tx.find(x=>x.ID==id);if(!t)return;const cur=rkPP24(t);if(rkCol24(cur)==top)return;const nv=top;if(nv==(t.Purpose||''))delete RK24.ch[id];else RK24.ch[id]=nv;n++});RK24.sel.clear();if(n)render()}
 function rkSub24(id,v){const t=S.tx.find(x=>x.ID==id);if(!t)return;if(v==(t.Purpose||''))delete RK24.ch[id];else RK24.ch[id]=v;render()}
-function rkMvMenu24(anchor,ids){popMenu(anchor,'Pindah '+(ids.length>1?ids.length+' transaksi ':'')+'ke akun',[['','Belum ada akun']].concat(AK18.map(([v,l])=>[v,l])).map(([v,l])=>[v===''?'__none':v,`${'<span class="dot7" style="background:'+(AKC24[v]||'#94a3b8')+';display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px"></span>'}${E(l)}`]),'',v=>rkMove24(ids,v=='__none'?'':v))}
+function rkMvMenu24(anchor,ids){popMenu(anchor,'Pindah '+(ids.length>1?ids.length+' transaksi ':'')+'ke akun',AK18.map(([v,l])=>[v,l]).concat([['','Belum ada akun'],['__new','+ Akun baru…']]).map(([v,l])=>[v===''?'__none':v,`${'<span class="dot7" style="background:'+(AKC24[v]||'#94a3b8')+';display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px"></span>'}${E(l)}`]),'',v=>rkMove24(ids,v=='__none'?'':v))}
 function rkSubMenu24(anchor,id){const t=S.tx.find(x=>x.ID==id);if(!t)return;const p=rkPP24(t),top=rkCol24(p);if(!top)return;const subs=akSubs(top).filter(x=>!AK18.some(a=>a[0]==x));
  popMenu(anchor,'Sub-akun '+ppName(top),[[top,'— '+ppName(top)+' (tanpa sub) —']].concat(subs.map(s=>[s,s])).concat([['__add24','+ Tambah sub-akun…']]),p,v=>{if(v!='__add24')return rkSub24(id,v);
   mo2(`<h3 class="font-extrabold text-lg">Sub-akun baru · ${E(ppName(top))}</h3><input id="sb24n" class="inp mt-2" placeholder="mis. Toko Online, Klien A" maxlength="50" autocomplete="off" onkeydown="if(event.key=='Enter')$('#sb24k').click()"><div class="flex gap-2 pt-3"><button class="bg2" style="flex:1" onclick="cm2()">Batal</button><button class="bt" style="flex:2" id="sb24k">Tambah</button></div>`);
@@ -11472,14 +11472,21 @@ document.addEventListener('click',e=>{if(!e.target.closest||!e.target.closest('.
  const sl=e.target.closest('[data-sl24]');if(sl){e.stopPropagation();const id=sl.dataset.sl24;RK24.sel.has(id)?RK24.sel.delete(id):RK24.sel.add(id);render();return}
  const mv=e.target.closest('[data-mv24]');if(mv){e.stopPropagation();const id=mv.dataset.mv24;rkMvMenu24(mv,RK24.sel.has(id)?[...RK24.sel]:[id]);return}
  const sb=e.target.closest('[data-sb24]');if(sb){e.stopPropagation();rkSubMenu24(sb,sb.dataset.sb24);return}
- const c=e.target.closest('.kc24');if(c&&!e.target.closest('.gp24')){if(e.shiftKey||e.metaKey||e.ctrlKey){const id=c.dataset.id;RK24.sel.has(id)?RK24.sel.delete(id):RK24.sel.add(id);render();return}txOpen7(c.dataset.id)}});
-document.addEventListener('pointerdown',e=>{const g=e.target.closest&&e.target.closest('.rk24 .kc24 .gp24');if(!g||e.button)return;e.preventDefault();const id=g.closest('.kc24').dataset.id,ids=RK24.sel.has(id)?[...RK24.sel]:[id],t=S.tx.find(x=>x.ID==id);
- const gh=document.createElement('div');gh.className='gh24';gh.textContent=ids.length>1?'Pindah '+ids.length+' transaksi':tName(t||{})+' · '+rp(amtOf(t||{}));document.body.appendChild(gh);let over=null,raf=0,last=e;
- const place=ev=>{gh.style.left=(ev.clientX+14)+'px';gh.style.top=(ev.clientY+10)+'px';gh.style.display='none';const el=document.elementFromPoint(ev.clientX,ev.clientY);gh.style.display='';const col=el&&el.closest('.col24');if(over!==col){over&&over.classList.remove('ov24');over=col;col&&col.classList.add('ov24')}};
+ const rn=e.target.closest('[data-rn25]');if(rn){e.stopPropagation();akRenM25(rn.dataset.rn25);return}
+ const c=e.target.closest('.kc24');if(c&&Date.now()-(RK24.nc||0)>400){if(e.shiftKey||e.metaKey||e.ctrlKey){const id=c.dataset.id;RK24.sel.has(id)?RK24.sel.delete(id):RK24.sel.add(id);render();return}txOpen7(c.dataset.id)}});
+/* tahan & geser kartu (mouse: tekan lalu geser · HP: tekan lama lalu geser) — DN-261119-130545-151 */
+document.addEventListener('pointerdown',e=>{const c=e.target.closest&&e.target.closest('.rk24 .kc24');if(!c||e.button||e.target.closest('[data-sb24],button,a,input'))return;
+ const id=c.dataset.id,touch=e.pointerType!='mouse',x0=e.clientX,y0=e.clientY;let st=0,tm=0,last=e,over=null,gh=null,raf=0,ids=[id];
+ const place=ev=>{if(!gh)return;gh.style.left=(ev.clientX+14)+'px';gh.style.top=(ev.clientY+10)+'px';gh.style.display='none';const el=document.elementFromPoint(ev.clientX,ev.clientY);gh.style.display='';const col=el&&el.closest('.col24');if(over!==col){over&&over.classList.remove('ov24');over=col;col&&col.classList.add('ov24')}};
  const auto=()=>{const ev=last,bd=document.querySelector('.rk24 .bd24');if(ev.clientY<70)scrollBy(0,-14);else if(ev.clientY>innerHeight-70)scrollBy(0,14);if(bd){const r=bd.getBoundingClientRect();if(ev.clientX<r.left+50)bd.scrollLeft-=16;else if(ev.clientX>r.right-50)bd.scrollLeft+=16}raf=requestAnimationFrame(auto)};
- const mv=ev=>{last=ev;place(ev)};place(e);raf=requestAnimationFrame(auto);
- const up=()=>{cancelAnimationFrame(raf);removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);gh.remove();if(over){over.classList.remove('ov24');rkMove24(ids,over.dataset.top||'')}};
- addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up)},true);
+ const begin=()=>{st=1;ids=RK24.sel.has(id)?[...RK24.sel]:[id];const t=S.tx.find(x=>x.ID==id);c.classList.add('dg25');gh=document.createElement('div');gh.className='gh24';gh.textContent=ids.length>1?'Pindah '+ids.length+' transaksi':tName(t||{})+' · '+rp(amtOf(t||{}));document.body.appendChild(gh);place(last);raf=requestAnimationFrame(auto);try{touch&&navigator.vibrate&&navigator.vibrate(12)}catch(x){}};
+ const end=()=>{clearTimeout(tm);cancelAnimationFrame(raf);removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',cc);removeEventListener('touchmove',tmv);c.classList.remove('dg25');if(gh)gh.remove();if(over)over.classList.remove('ov24')};
+ const mv=ev=>{last=ev;const d=Math.hypot(ev.clientX-x0,ev.clientY-y0);if(!st){if(touch){if(d>8)end();return}if(d>5)begin();else return}place(ev)};
+ const tmv=ev=>{if(st)ev.preventDefault()};
+ const up=ev=>{const was=st,moved=Math.hypot(ev.clientX-x0,ev.clientY-y0)>8,tg=over;end();if(!was)return;RK24.nc=Date.now();if(tg&&tg.dataset.top!=null&&moved)rkMove24(ids,tg.dataset.top);else if(touch&&!moved)rkMvMenu24(c,ids)};
+ const cc=()=>end();if(touch)tm=setTimeout(begin,320);
+ addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',cc);addEventListener('touchmove',tmv,{passive:false})},true);
+document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.rk24 .kc24'))e.preventDefault()});
 addEventListener('beforeunload',e=>{if(Object.keys(RK24.ch).length){e.preventDefault();e.returnValue=''}});
 
 /* =====================================================================
@@ -11655,5 +11662,249 @@ Object.assign(DN_DONE,Object.fromEntries([
 ['DN-261118-144221-493','Tagihan: kotak "transaksi kartu belum masuk tagihan" yang dikecilkan benar-benar kecil (chip kartu ikut disembunyikan) dan tetap kecil setelah dibuka lagi.'],
 ['DN-261117-143634-371','Beranda › Catat dari struk: pembelajaran per format struk diperluas — baris nominal yang kamu pilih (mis. "TOTAL BAYAR" bukan "SUBTOTAL") ikut dipelajari & dipakai otomatis; judul form menampilkan "dipelajari N×" dengan rincian isian yang diisi dari pembelajaran.']
 ].map(([k,v])=>[k,['kartuku-sb 2026.11.24',v]])));
+
+/* =====================================================================
+   kartuku-sb 2026.11.25 — 16 catatan baru 19 Nov 2026 · CSS css1125 · fungsi berakhiran 25
+   (Rekap Tagihan: kartu/kolom/seret diubah langsung di blok 24.)
+   Beranda: DN-261119-151903-755 rapikan kategori (AI) · DN-261119-124055-843 panel Boo di kanan
+   SnK: DN-261119-131254-550 panel kartu = promo & rekomendasi
+   Rekap: DN-261119-130901-843 ganti nama / akun baru · DN-261119-130719-255 hanya transaksi terkonfirmasi tagihan · DN-261119-130545-151 tahan & geser · DN-261119-130120-950 "Belum ada akun" paling kanan
+   Transaksi: DN-261119-125823-159 kolom Akun pembayar + split · DN-261119-125727-673 kategori atas-bawah · DN-261119-125535-492 jendela struk besar
+   Tagihan: DN-261119-125332-427 ukuran diingat per pengguna · DN-261119-125137-416 pembagian debit · DN-261119-125019-126 kartu tagihan · DN-261119-124834-840 geser kolom beranimasi · DN-261119-124626-493 rekonsiliasi jadi ringkasan · DN-261119-124354-502 3 kolom penuh
+   ===================================================================== */
+(function(){const st=document.createElement('style');st.id='css1125';st.textContent=`
+/* Rekap */
+.rk24 .kc24{grid-template-columns:minmax(0,1fr)!important;padding:8px 10px!important;cursor:grab;-webkit-touch-callout:none;touch-action:pan-y}
+.rk24 .kc24:active{cursor:grabbing}.rk24 .kc24.dg25{opacity:.45;transform:scale(.98)}
+.rk24 .kc24 .n b{font-size:.86rem}.rk24 .kc24 .a{font-size:.88rem}
+.col24 .ch{display:grid!important;grid-template-columns:auto minmax(0,1fr);row-gap:2px;align-items:center}.col24 .ch .v{grid-column:2;font-size:1rem}.col24 .ch b{white-space:normal}
+.col24 .rn25{width:20px;height:20px;border-radius:6px;display:inline-grid;place-items:center;color:var(--mu);opacity:.55}
+.col24 .rn25:hover{opacity:1;background:#E2E8F0;color:#0f172a}
+.col24.nw25{background:transparent;border:1.5px dashed #CBD5E1;min-height:120px;justify-content:center}
+.col24.nw25 .nb25{display:grid;justify-items:center;gap:4px;padding:18px 10px;color:#475569;width:100%;height:100%}
+.col24.nw25 .nb25 small{font-size:.7rem;color:var(--mu)}
+.col24.nw25.ov24{border-color:#10b981;background:#ECFDF5}
+@media(min-width:761px){.bd24{grid-auto-columns:minmax(200px,1fr)}.col24.nw25{max-width:150px}}
+/* Transaksi */
+.tt7 .kc25{display:flex;flex-direction:column;gap:1px;line-height:1.25}.tt7 .kc25 small{font-size:.7rem;color:var(--mu);padding-left:22px}
+.tt7 .ak25{display:flex;flex-direction:column;line-height:1.25}.tt7 .ak25 b{font-size:.8rem;font-weight:750}.tt7 .ak25 small{font-size:.7rem;color:var(--mu)}
+.tt7 .sp25{display:inline-flex;align-items:center;gap:4px;margin-top:2px;font-size:.68rem;font-weight:750;color:#6d28d9;background:#F3E8FF;border-radius:999px;padding:0 8px}
+#m .sh2:has(.tf9g){width:min(96vw,1480px)!important;max-width:96vw!important;max-height:94vh!important}
+@media(max-width:760px){#m .sh2:has(.tf9g){width:100vw!important;max-width:100vw!important;max-height:100dvh!important;height:100dvh;border-radius:0!important}}
+.splP25{flex:1 1 9rem}
+/* Beranda: panel Boo */
+.hw25{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,25vw,380px);gap:16px;align-items:start}
+.hw25.c25{grid-template-columns:minmax(0,1fr) 48px}
+.hw25>.hmn25{min-width:0}
+.bo25{position:sticky;top:12px;height:calc(100vh - 24px);display:flex;flex-direction:column;min-width:0}
+.bo25 .bt25{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--bd);color:var(--mu)}
+.bo25 .bt25:hover{color:#0f172a;border-color:#94a3b8}
+.bo25 .ch21{margin:0!important;flex:1;display:flex;flex-direction:column;min-height:0}
+.bo25 .ch21>.ls{flex:1;max-height:none!important;min-height:0}.bo25 .ch21>form{margin-top:auto}.bo25 .ch21>:first-child{padding-right:44px}
+.hw25.c25 .bo25 .ch21{display:none}
+.bo25 .op25{display:none}
+.hw25.c25 .bo25 .op25{display:grid;justify-items:center;gap:8px;padding:12px 0;border:1px solid #D6EAE5;border-radius:16px;background:#fff;height:100%;align-content:start;cursor:pointer;color:#064E50;font-weight:800;font-size:.72rem}
+.hw25.c25 .bo25 .op25 span{writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.05em}
+.hw25.c25 .bo25 .bt25{display:none}
+/* rapikan kategori */
+.ct25 h4{font-weight:800;font-size:.86rem;margin:10px 0 6px;display:flex;align-items:center;gap:6px}
+.ct25 label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin-bottom:6px;cursor:pointer;font-size:.84rem}
+.ct25 label:hover{border-color:#94a3b8}.ct25 label small{display:block;color:var(--mu);font-size:.74rem;margin-top:2px}
+.ct25 label input{margin-top:3px;width:16px;height:16px;accent-color:#0f172a}
+.ct25 .ar{color:#0B6B65;font-weight:800}
+/* SnK panel kartu */
+.qv25{display:grid;gap:10px;margin-top:10px}
+.qv25 .qa25{display:flex;gap:6px;flex-wrap:wrap}
+.qv25 .qs25{border:1px solid #E3EEEA;border-radius:14px;padding:10px;background:#fff}
+.qv25 details.old24{margin-top:0}
+/* Tagihan: kartu tagihan */
+.bl.v7.b25{grid-template-columns:5px minmax(0,1fr)!important;padding:0!important;gap:0!important;align-items:stretch}
+.bl.v7.b25>.bc25{display:grid;gap:6px;padding:9px 11px;min-width:0}
+.bc25 .r1{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:10px;align-items:center}
+.bc25 .th .cfi{width:52px;border-radius:6px}
+.bc25 .nm{min-width:0}.bc25 .nm b{display:block;font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc25 .nm small{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--mu)}
+.bc25 .am{display:grid;justify-items:end;gap:3px}.bc25 .am b{font-size:14px;font-weight:800;white-space:nowrap}
+.bc25 .am .pl7{font-size:10.5px;padding:1px 7px}
+.bc25 .r2{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:11px;color:var(--mu)}.bc25 .r2 b{color:var(--fg);font-weight:700}
+.bc25 .pg25{display:block;height:4px;border-radius:4px;background:#EEF2F6;overflow:hidden}.bc25 .pg25 u{display:block;height:100%;background:#10b981;border-radius:4px}
+.bc25 .ac25{display:flex;gap:6px;justify-content:flex-end}.bc25 .ac25:empty{display:none}.bc25 .ac25 .bt{padding:4px 12px;font-size:12px}
+/* Tagihan: ringkasan rekonsiliasi */
+.rs25{border:1px solid var(--bd);border-left:4px solid var(--c,#d97706);border-radius:12px;padding:8px 10px;margin:8px 0;display:grid;gap:6px;background:#fff}
+.rs25 .hh25{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem}
+.rs25 .hh25 .st25{font-weight:800;color:var(--c)}.rs25 .hh25 .sp{flex:1}
+.rs25 .hh25 button{font-size:.74rem;font-weight:750;color:#0B6B65;text-decoration:underline}
+.rs25 .nm25{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.76rem;color:var(--mu)}.rs25 .nm25 b{color:var(--fg)}
+.rs25 .tg{display:inline-flex;border:1px solid var(--bd);border-radius:999px;overflow:hidden;width:max-content}
+.rs25 .tg button{font-size:.7rem;font-weight:750;padding:2px 10px;color:var(--mu)}.rs25 .tg button.on{background:#0f172a;color:#fff}
+.rs25 .bk{display:flex;flex-wrap:wrap;gap:4px}
+.rs25 .bk span{display:inline-flex;align-items:center;gap:4px;background:#F1F5F9;border-radius:999px;padding:1px 9px;font-size:.72rem}
+.rs25 .bk span b{font-weight:800}
+.rs25 .more{border-top:1px dashed var(--bd);padding-top:6px}
+.rc15 .rb25{grid-column:1/-1;font-size:.72rem;color:var(--mu);padding:0 0 4px 26px;line-height:1.4}
+/* Tagihan: 3 kolom penuh + geser beranimasi */
+.b3_24{height:var(--b3h,calc(100vh - 150px))!important;min-height:420px}
+.b3_24 .pt24{cursor:grab;touch-action:none}.b3_24.dgg25 .pt24{cursor:grabbing}
+.b3_24 .pn24{transition:box-shadow .15s}
+.b3_24 .pn24.dg25{position:relative;z-index:6;transition:none!important;box-shadow:0 18px 50px rgba(15,23,42,.28);opacity:.96}
+.b3_24.dgg25 .pn24:not(.dg25){filter:saturate(.9)}
+.b3_24.dgg25{user-select:none}
+`;document.head.appendChild(st)})();
+
+/* ---------- Preferensi tampilan per pengguna (DN-261119-125332-427): disimpan di server, ikut ke perangkat lain ---------- */
+const UIP25={ok:0,t:0,busy:0,keys:['kk_spl','kk_colw11','kk_col23','kk_b3_24','kk_b3o_24','kk_b3w_24','kk_bvpdf','kk_rail','kk_bo25','kk_rsm25']};
+function uipLoad25(){if(UIP25.ok||typeof loaded=='undefined'||!loaded||!S.settings)return;UIP25.ok=1;const P=S.settings.Ui_Prefs||{};UIP25.busy=1;
+ try{Object.keys(P).forEach(k=>{if(!UIP25.keys.includes(k))return;if(P[k]==null)localStorage.removeItem(k);else localStorage.setItem(k,String(P[k]))})}catch(e){}UIP25.busy=0;if(!Object.keys(P).length)uipSave25()}
+function uipSave25(){clearTimeout(UIP25.t);UIP25.t=setTimeout(async()=>{const o={};UIP25.keys.forEach(k=>{try{const v=localStorage.getItem(k);if(v!=null)o[k]=v}catch(e){}});
+ if(JSON.stringify(o)===JSON.stringify((S.settings||{}).Ui_Prefs||{}))return;try{await saveLists({uiPrefs:o})}catch(e){}},2500)}
+(function(){const sp=Storage.prototype.setItem,rm=Storage.prototype.removeItem;
+ Storage.prototype.setItem=function(k){sp.apply(this,arguments);try{if(this===window.localStorage&&UIP25.ok&&!UIP25.busy&&UIP25.keys.includes(k))uipSave25()}catch(e){}};
+ Storage.prototype.removeItem=function(k){rm.apply(this,arguments);try{if(this===window.localStorage&&UIP25.ok&&!UIP25.busy&&UIP25.keys.includes(k))uipSave25()}catch(e){}}})();
+
+/* ---------- Akun: label Pribadi/Bisnis, akun utama buatan (DN-261119-130901-843) ---------- */
+function akSync25(){if(!S||!S.settings)return;const L=S.settings.Ak_Labels||{},T=S.settings.Ak_Tops||[];AK18[0][1]=L.PERSONAL||'Pribadi';AK18[1][1]=L.BUSINESS||'Bisnis';
+ T.forEach(n=>{if(!AK18.some(a=>a[0]==n)&&cpurps().some(x=>x.name==n&&!x.parent))AK18.push([n,n,'tag'])});for(let i=AK18.length-1;i>=5;i--)if(!T.includes(AK18[i][0]))AK18.splice(i,1)}
+const akLbl25=v=>(AK18.find(a=>a[0]==v)||[])[1]||ppName(v);
+function akNewM25(then){mo2(`<h3 class="font-extrabold text-lg">Akun baru</h3><p class="mu7" style="margin:2px 0 8px">Akun = siapa yang menanggung transaksi (mis. Toko Online, Klien A, Keluarga).</p><input id="an25" class="inp" maxlength="40" placeholder="Nama akun" autocomplete="off" onkeydown="if(event.key=='Enter')$('#an25k').click()"><div class="flex gap-2 pt-3"><button class="bg2" style="flex:1" onclick="cm2()">Batal</button><button class="bt" style="flex:2" id="an25k">Buat akun</button></div>`);
+ setTimeout(()=>{const i=$('#an25');i&&i.focus()},50);$('#an25k').onclick=async()=>{const n=String(($('#an25')||{}).value||'').replace(/\s+/g,' ').trim();if(!n)return;
+  if(['pribadi','bisnis','personal','business'].includes(n.toLowerCase())||AK18.some(a=>a[1].toLowerCase()==n.toLowerCase()))return toast('Nama akun sudah ada');
+  const b=$('#an25k');b.disabled=true;b.textContent='Menyimpan…';try{const P0=cpurps(),ex=P0.find(x=>x.name.toLowerCase()==n.toLowerCase());if(ex&&ex.parent)throw new Error('“'+n+'” sudah dipakai sebagai sub-akun '+ppName(ex.parent));
+   await saveLists({purposes:ex?P0:P0.concat([{name:n,personal:false,parent:''}]),akTops:(S.settings.Ak_Tops||[]).concat([ex?ex.name:n])});akSync25();pgSync();cm2();toast('Akun “'+n+'” dibuat');if(typeof then=='function')then(ex?ex.name:n);else render()}catch(e){toast(e.message);b.disabled=false;b.textContent='Buat akun'}}}
+function akRenM25(v){const cur=akLbl25(v);mo2(`<h3 class="font-extrabold text-lg">Ganti nama akun</h3><input id="ar25" class="inp mt-2" maxlength="40" value="${E(cur)}" autocomplete="off" onkeydown="if(event.key=='Enter')$('#ar25k').click()"><p class="mu7" style="margin:6px 0 0">${['PERSONAL','BUSINESS'].includes(v)?'Nama tampilan di Rekap & pilihan akun.':'Semua transaksi & sub-akun ikut berganti nama.'}</p><div class="flex gap-2 pt-3"><button class="bg2" style="flex:1" onclick="cm2()">Batal</button><button class="bt" style="flex:2" id="ar25k">Simpan</button></div>`);
+ setTimeout(()=>{const i=$('#ar25');if(i){i.focus();i.select()}},50);$('#ar25k').onclick=async()=>{const n=String(($('#ar25')||{}).value||'').replace(/\s+/g,' ').trim();if(!n||n==cur)return cm2();const b=$('#ar25k');b.disabled=true;
+  try{if(['PERSONAL','BUSINESS'].includes(v)){await saveLists({akLabels:{...(S.settings.Ak_Labels||{}),[v]:n}})}
+   else{const r=await call('api_renamePurpose25',[uuid(),{from:v,to:n}]),d=r.data||{};if(d.settings)Object.assign(S.settings,d.settings);(S.tx||[]).forEach(t=>{if(t.Purpose==v)t.Purpose=n});Object.keys(RK24.ch).forEach(k=>{if(RK24.ch[k]==v)RK24.ch[k]=n});const a=AK18.find(x=>x[0]==v);if(a){a[0]=n;a[1]=n}if(Q.pp==v)Q.pp=n}
+   akSync25();pgSync();cm2();toast('Nama akun diganti');render()}catch(e){toast(e.message);b.disabled=false}}}
+(function(){const C0=call;call=function(action,payload){if(action=='api_rekap'&&tab=='r'&&RK24.m&&Array.isArray(payload)&&payload[0])payload[0].by='print';return C0.apply(this,arguments)}})();
+
+/* ---------- render: sinkron preferensi & akun, panel Boo, tinggi 3 kolom ---------- */
+(function(){const R0=render;render=function(){try{uipLoad25();akSync25()}catch(e){}const r=R0.apply(this,arguments);try{boPanel25();b3Fit25()}catch(e){console.warn(e)}return r}})();
+addEventListener('resize',()=>{clearTimeout(window.__rz25);window.__rz25=setTimeout(()=>{try{boPanel25();b3Fit25()}catch(e){}},120)});
+
+/* ---------- Beranda: Ngobrol dengan Boo di sisi kanan, bisa dilipat, default terbuka (DN-261119-124055-843) ---------- */
+function boPanel25(){if(tab!='h')return;const v=$('#v');if(!v)return;const ch=v.querySelector('.ch21[data-pg="HOME"]');if(!ch)return;let w=v.querySelector(':scope>.hw25');
+ if(innerWidth<1100){if(w){const m=w.querySelector('.hmn25');while(m.firstChild)v.insertBefore(m.firstChild,w);const hm=v.querySelector('.hm7')||v;hm.insertAdjacentElement('afterbegin',ch);w.remove()}return}
+ if(!w){w=document.createElement('div');w.className='hw25';const m=document.createElement('div');m.className='hmn25';while(v.firstChild)m.appendChild(v.firstChild);w.appendChild(m);
+  const a=document.createElement('aside');a.className='bo25';a.innerHTML=`<button type="button" class="bt25" data-bo25="1" aria-label="Lipat panel Boo" data-tip="Lipat panel Boo">${ic('chR16',14)}</button><div class="op25" data-bo25="0" data-tip="Buka Ngobrol dengan Boo">${ic('ai',18)}<span>Ngobrol dengan Boo</span></div>`;w.appendChild(a);v.appendChild(w)}
+ const a=w.querySelector('.bo25');if(ch.parentNode!==a)a.appendChild(ch);let c=false;try{c=localStorage.getItem('kk_bo25')=='1'}catch(e){}w.classList.toggle('c25',c);const ls=ch.querySelector('.ls');if(ls)ls.scrollTop=ls.scrollHeight}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-bo25]');if(!b)return;try{localStorage.setItem('kk_bo25',b.dataset.bo25)}catch(x){}boPanel25()});
+
+/* ---------- Transaksi: kolom Akun pembayar, kategori atas-bawah, split jelas (DN-261119-125823-159 · 125727-673) ---------- */
+let SG25={n:-1,m:new Map()};
+function splitGrp25(){const L=S.tx||[];if(SG25.n===L.length)return SG25.m;const G={};L.forEach(t=>{if(!live7(t))return;const ik=String(t.Import_Key||''),k=t.Split_From?'S'+t.Split_From:ik.includes('~')?'K'+ik.split('~')[0]:'';if(k)(G[k]=G[k]||[]).push(t)});
+ const m=new Map();Object.values(G).forEach(A=>{if(A.length<2)return;A.sort((a,b)=>(+(String(a.Import_Key||'').split('~')[1])||0)-(+(String(b.Import_Key||'').split('~')[1])||0)||String(a.ID).localeCompare(String(b.ID)));const tot=A.reduce((s,x)=>s+amt7(x),0);A.forEach((x,i)=>m.set(x.ID,{i:i+1,n:A.length,tot,bill:x.Bill_ID}))});SG25={n:L.length,m};return m}
+(function(){const T0=tv;tv=function(){let h=T0.apply(this,arguments);try{const tp=document.createElement('div');tp.innerHTML=h;const tb=tp.querySelector('table.tt7');if(!tb)return h;
+ const ths=[...tb.querySelectorAll('thead th')],ki=ths.findIndex(th=>th.textContent.trim()=='Kategori');if(ki<0)return h;ths[ki].insertAdjacentHTML('afterend','<th class="hm ap25">Akun pembayar</th>');
+ const byId=new Map((S.tx||[]).map(x=>[x.ID,x])),G=splitGrp25();
+ tb.querySelectorAll('tbody tr').forEach(tr=>{const m=(tr.getAttribute('onclick')||'').match(/txOpen7\('([^']+)'\)/);if(!m){const td=tr.querySelector('td[colspan]');if(td)td.colSpan=(+td.colSpan||1)+1;return}
+  const x=byId.get(m[1]),cell=tr.children[ki];if(!cell)return;[...cell.querySelectorAll(':scope>span.mu7')].filter(s=>/^·/.test(s.textContent.trim())).forEach(s=>s.remove());
+  const kt=cell.querySelector('.kt'),c=x&&catOf(x.Category_ID),sub=x&&x.Sub_Type&&!/^(Belanja|EXPENSE)$/i.test(x.Sub_Type)&&x.Sub_Type!=(c&&c.Name)?x.Sub_Type:'';
+  cell.innerHTML=`<div class="kc25">${kt?kt.outerHTML:''}${sub?`<small>${E(sub)}</small>`:''}</div>`;
+  const p=(x&&x.Purpose)||'',top=akTop18(p);cell.insertAdjacentHTML('afterend',`<td class="hm ap25">${p?`<div class="ak25"><b>${E(akLbl25(top||p))}</b>${top&&p!=top?`<small>${E(p)}</small>`:''}</div>`:'<span class="mu7">—</span>'}</td>`);
+  const g=x&&G.get(x.ID);if(g){const nm=tr.querySelector('.nm');if(nm)nm.insertAdjacentHTML('afterend',`<div><span class="sp25" data-tip="1 baris di lembar tagihan dipecah jadi ${g.n} transaksi (kategori / akun berbeda). Semua bagian dijumlah = nominal di tagihan, jadi tidak dihitung dobel.">${ic('split',10)} Bagian ${g.i}/${g.n} · 1 baris tagihan ${rp(g.tot)}</span></div>`)}});
+ tb.querySelectorAll('tfoot tr').forEach(tr=>{const td=tr.querySelector('td[colspan]');if(td)td.colSpan=(+td.colSpan||1)+1});
+ return tp.innerHTML}catch(e){console.warn(e);return h}}})();
+/* split: tiap bagian bisa punya akun sendiri */
+new MutationObserver(()=>{const L=document.getElementById('splL');if(!L||typeof FM=='undefined'||!FM||!FM.spl)return;const t=(S.tx||[]).find(x=>x.ID==FM.spl.id);
+ [...L.querySelectorAll(':scope>.vr')].forEach((vr,i)=>{const P=FM.spl.parts[i];if(!P)return;if(P.pp==null)P.pp=(t&&t.Purpose)||'';const v2=vr.querySelector('.vr2');if(!v2||v2.querySelector('.splP25'))return;
+  const O=[['','Akun…']].concat(AK18.flatMap(([v,l])=>[[v,l]].concat(akSubs(v).filter(s=>!AK18.some(a=>a[0]==s)).map(s=>[s,'  · '+s]))));
+  v2.insertAdjacentHTML('beforeend',`<select class="inp ti splP25" data-tip="Akun pembayar bagian ini" onchange="FM.spl.parts[${i}].pp=this.value">${O.map(([v,l])=>`<option value="${E(v)}" ${v==P.pp?'selected':''}>${E(l)}</option>`).join('')}</select>`)})}).observe(document.body,{childList:true,subtree:true});
+
+/* ---------- Kategori: dikelompokkan per jenis + rapikan dengan AI (DN-261119-151903-755) ---------- */
+const KG25={Pengeluaran:'Pengeluaran',Cashback:'Potong tagihan (cashback)',Titip:'Titip bayar (uang orang lain)',Pemasukan:'Pemasukan'};
+new MutationObserver(()=>{document.querySelectorAll('select#f_k:not([data-og25])').forEach(sel=>{sel.dataset.og25=1;const O=[...sel.options].filter(o=>o.parentNode===sel&&o.value&&o.value!='__new'&&o.value!='__add24'),by={};
+ O.forEach(o=>{const c=(S.cats||[]).find(x=>x.ID==o.value);const k=(c&&c.Kind)||'Pengeluaran';(by[k]=by[k]||[]).push(o)});if(Object.keys(by).length<2)return;const tail=[...sel.options].find(o=>o.value=='__new'||o.value=='__add24');
+ Object.keys(KG25).filter(k=>by[k]).forEach(k=>{const g=document.createElement('optgroup');g.label=KG25[k];by[k].forEach(o=>{o.textContent=o.textContent.replace(/\s*\((potong tagihan|titip bayar)\)\s*$/i,'');g.appendChild(o)});sel.insertBefore(g,tail||null)})})}).observe(document.body,{childList:true,subtree:true});
+(function(){const L0=ssList23;ssList23=function(q){L0.apply(this,arguments);try{if(!SS23||addKind24(SS23.sel)!='cat')return;SS23.box.querySelector('.ls').insertAdjacentHTML('beforeend',`<div class="o ad24o" data-ct25="1">${ic('ai',13)} Rapikan kategori dengan AI…</div>`);ssPos23()}catch(e){}}})();
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('.ss23 [data-ct25]');if(!a)return;e.stopPropagation();ssClose23();catTidy25()},true);
+(function(){const M0=catMgr;catMgr=function(){const r=M0.apply(this,arguments);try{const h=document.querySelector('#m2 h3');if(h&&!h.querySelector('.ct25b'))h.insertAdjacentHTML('beforeend',` <button type="button" class="bg2 sm ct25b" style="margin-left:8px;vertical-align:middle" onclick="catTidy25()">${ic('ai',13)} Rapikan dengan AI</button>`)}catch(e){}return r}})();
+let CT25=null;
+async function catTidy25(){mo2(`<div class="ct25"><h3 class="font-extrabold text-xl">Rapikan kategori</h3><p class="mu7">Boo memeriksa kategori dobel, kategori yang sebenarnya akun, nama & jenis yang kurang tepat…</p>${spin('Menganalisis kategori & transaksi…')}</div>`,'wd');
+ try{const r=await call('api_catTidy25',[{}]);CT25=r;const nm=id=>kn(id)||id,tot=(r.merges||[]).length+(r.moves||[]).length+(r.renames||[]).length+(r.kinds||[]).length;
+  if(!tot){mo2(`<div class="ct25"><h3 class="font-extrabold text-xl">Rapikan kategori</h3><p style="margin:10px 0">${ic('check',14)} Kategori sudah rapi — tidak ada yang dobel atau salah tempat.</p>${r.note?`<p class="mu7">${E(r.note)}</p>`:''}<button class="bt" style="width:100%" onclick="cm2()">Tutup</button></div>`);return}
+  const lb=(k,i,body,why)=>`<label><input type="checkbox" data-c25="${k}:${i}" checked><span>${body}${why?`<small>${E(why)}</small>`:''}</span></label>`;
+  mo2(`<div class="ct25"><h3 class="font-extrabold text-xl">Rapikan kategori</h3><p class="mu7">Centang yang mau diterapkan. Transaksi lama ikut dipindah — tidak ada yang hilang.</p>${r.note?`<p class="mu7" style="margin-top:4px">${E(r.note)}</p>`:''}
+  ${(r.merges||[]).length?`<h4>${ic('split',13)} Gabung kategori dobel</h4>${r.merges.map((m,i)=>lb('m',i,`${m.fromNames.map(E).join(', ')} <span class="ar">→</span> <b>${E(m.toName)}</b> <span class="mu7">· ${m.n} trx</span>`,m.why)).join('')}`:''}
+  ${(r.moves||[]).length?`<h4>${ic('users',13)} Sebenarnya akun, bukan kategori</h4>${r.moves.map((m,i)=>lb('v',i,`<b>${E(m.name)}</b> <span class="ar">→</span> ${m.toName?'kategori <b>'+E(m.toName)+'</b>':''}${m.toName&&m.purpose?' + ':''}${m.purpose?'akun <b>'+E(akLbl25(m.purpose))+'</b>':''} <span class="mu7">· ${m.n} trx</span>`,m.why)).join('')}`:''}
+  ${(r.renames||[]).length?`<h4>${ic('pen',13)} Ganti nama</h4>${r.renames.map((m,i)=>lb('r',i,`${E(m.old)} <span class="ar">→</span> <b>${E(m.name)}</b>`,m.why)).join('')}`:''}
+  ${(r.kinds||[]).length?`<h4>${ic('tag',13)} Perbaiki jenis</h4>${r.kinds.map((m,i)=>lb('k',i,`<b>${E(m.name)}</b> <span class="ar">→</span> ${E(KG25[m.kind]||m.kind)}`,m.why)).join('')}`:''}
+  <div class="flex gap-2 pt-3"><button class="bg2" style="flex:1" onclick="cm2()">Batal</button><button class="bt" style="flex:2" id="ct25k">Terapkan</button></div></div>`,'wd');
+  $('#ct25k').onclick=()=>catApply25()}catch(e){mo2(`<div class="ct25"><h3 class="font-extrabold text-xl">Rapikan kategori</h3><p class="rd" style="margin:10px 0">${E(e.message)}</p><button class="bg2" style="width:100%" onclick="cm2()">Tutup</button></div>`)}}
+async function catApply25(){const r=CT25;if(!r)return;const on=k=>[...document.querySelectorAll(`#m2 [data-c25^="${k}:"]`)].filter(x=>x.checked).map(x=>+x.dataset.c25.split(':')[1]);
+ const p={merges:on('m').map(i=>r.merges[i]).map(m=>({from:m.from,to:m.to})),moves:on('v').map(i=>r.moves[i]).map(m=>({id:m.id,to:m.to,purpose:m.purpose})),renames:on('r').map(i=>r.renames[i]).map(m=>({id:m.id,name:m.name})),kinds:on('k').map(i=>r.kinds[i]).map(m=>({id:m.id,kind:m.kind}))};
+ if(!p.merges.length&&!p.moves.length&&!p.renames.length&&!p.kinds.length)return cm2();const b=$('#ct25k');b.disabled=true;b.textContent='Menerapkan…';
+ try{const x=await call('api_catApply25',[uuid(),p]),d=x.data||{};if(d.categories)S.cats=d.categories;const M=d.map||{},PP=d.purpose||{};(S.tx||[]).forEach(t=>{if(PP[t.Category_ID])t.Purpose=PP[t.Category_ID];if(M[t.Category_ID])t.Category_ID=M[t.Category_ID]});
+  cm2();toast('Kategori dirapikan · '+(d.tx||0)+' transaksi diperbarui');render()}catch(e){toast(e.message);b.disabled=false;b.textContent='Terapkan'}}
+
+/* ---------- SnK: panel kartu = promo & rekomendasi seperti sisi kanan Konteks (DN-261119-131254-550) ---------- */
+(function(){const P0=snPanel7;snPanel7=function(c,ym){const h=P0.apply(this,arguments);try{if(!c)return h;const tp=document.createElement('div');tp.innerHTML=h;const sec=tp.querySelector('.sec7');if(!sec)return h;const hd=sec.querySelector('.sn7h');
+ const old=document.createElement('div');[...sec.childNodes].filter(x=>x!==hd).forEach(x=>old.appendChild(x));let sum='';try{sum=cxSum(c.ID)}catch(e){}
+ const hasCtx=hd&&/ctxM\(/.test(hd.innerHTML);sec.innerHTML='';if(hd)sec.appendChild(hd);
+ sec.insertAdjacentHTML('beforeend',`<div class="qv25"><div class="qa25">${hasCtx?'':`<button class="bt sm inline-flex items-center gap-1" onclick="ctxM('${c.ID}')">${ic('ai',13)} Konteks & sumber</button>`}<button class="bg2 sm inline-flex items-center gap-1" onclick="chSend21('SNK','Rangkum promo aktif, fungsi terbaik & saran pemakaian kartu '+${E(JSON.stringify(cardLbl(c)))}+' bulan ini')">${ic('ai',13)} Tanya Boo soal kartu ini</button></div>${pbH24(c)||`<div class="pb24"><h4>${ic('gift',13)} Promo kartu ini</h4><div class="mu7">Belum ada promo tersimpan — tekan Konteks & sumber, atau kirim PDF/link promo ke Boo.</div></div>`}${sum?`<div class="sum qs25">${sum}</div>`:''}<details class="old24"><summary>${ic('table',14)} Progres syarat bulan ini & catatan</summary><div class="od25"></div></details></div>`);
+ const od=sec.querySelector('.od25');while(old.firstChild)od.appendChild(old.firstChild);return tp.innerHTML}catch(e){return h}}})();
+
+/* ---------- Tagihan: kartu tagihan proporsional & deskriptif (DN-261119-125019-126) ---------- */
+(function(){const B0=bv;bv=function(){let h=B0.apply(this,arguments);if(R)return h;try{const tp=document.createElement('div');tp.innerHTML=h;
+ tp.querySelectorAll('.bl.v7').forEach(el=>{const id=((el.getAttribute('onclick')||'').match(/(?:bqSel|bdt)\('([^']+)'\)/)||[])[1],b=S.bills.find(x=>x.ID==id);if(!b)return;const c=S.cards.find(x=>x.ID==b.Card_ID);
+  const amt=+b.Statement_Amount||0,paid=+b.Paid_Amount||0,cr=amt<0,ok=cr||b.Payment_Status=='Paid',d=ok||!b.Due_Date?null:dueIn(b.Due_Date),rest=Math.max(0,amt-paid);
+  const pl=ok?['gn',cr?'Saldo kredit':'Lunas']:d==null?['am','Tempo ?']:d<0?['rd','Telat '+(-d)+' hr']:d==0?['rd','Hari ini']:[d<=3?'rd':d<=7?'am':'mu',d+' hari lagi'];
+  const bar=el.querySelector(':scope>i'),th=el.querySelector('.cfi'),f=el.querySelector('.bl-f'),acts=f?[...f.querySelectorAll('button')].map(x=>x.outerHTML).join(''):'';const pct=amt>0?Math.min(100,paid/amt*100):100;
+  el.classList.add('b25');el.innerHTML=`${bar?bar.outerHTML:'<i></i>'}<div class="bc25"><div class="r1"><div class="th">${th?th.outerHTML:''}</div><div class="nm"><b>${c?cardLblH(c.ID):'Kartu ?'}</b><small>${E(perL(b.Statement_Period))} · cetak ${fdd(b.Print_Date)}${b.Statement_Url?` ${ic('file',10)}`:''}</small></div><div class="am"><b>${cr?'−'+rp(-amt):rp(amt)}</b><span class="pl7 ${pl[0]}">${pl[1]}</span></div></div>
+   <div class="r2"><span>Jatuh tempo <b>${fdd(b.Due_Date)}</b></span><span>Min <b>${rp(b.Minimum_Payment)}</b></span><span>${ok?'Dibayar <b>'+rp(paid)+'</b>':'Sisa <b>'+rp(rest)+'</b>'}</span></div><i class="pg25" data-tip="Terbayar ${Math.round(pct)}%"><u style="width:${pct}%"></u></i>${acts&&!ok?`<div class="ac25">${acts}</div>`:''}</div>`});
+ return tp.innerHTML.replace(/ draggable="true" data-k=/g,' data-k=')}catch(e){console.warn(e);return h}}})();
+/* ---------- Tagihan: 3 kolom penuh sampai bawah (DN-261119-124354-502) ---------- */
+function b3Fit25(){const b=document.querySelector('.b3_24');if(!b)return;const top=b.getBoundingClientRect().top+scrollY;b.style.setProperty('--b3h',Math.max(420,innerHeight-top-10)+'px')}
+/* ---------- Tagihan: geser kolom dengan animasi seperti urutan foto produk (DN-261119-124834-840) ---------- */
+document.addEventListener('pointerdown',e=>{const h=e.target.closest&&e.target.closest('.b3_24 .pt24');if(!h||e.button||e.target.closest('button'))return;e.preventDefault();
+ const box=h.closest('.b3_24'),pane=h.closest('.pn24'),x0=e.clientX,H=[...box.querySelectorAll(':scope>.hd24')];let on=0,grab=0;const P=()=>[...box.querySelectorAll(':scope>.pn24')];
+ const mv=ev=>{if(!on){if(Math.abs(ev.clientX-x0)<6)return;on=1;grab=x0-pane.getBoundingClientRect().left;box.classList.add('dgg25');pane.classList.add('dg25')}
+  const others=P().filter(p=>p!==pane);let idx=0;others.forEach(p=>{const r=p.getBoundingClientRect();if(ev.clientX>r.left+r.width/2)idx++});
+  if(idx!==P().indexOf(pane)){const fr=new Map(others.map(p=>[p,p.getBoundingClientRect().left]));const L=others.slice();L.splice(idx,0,pane);L.forEach((p,i)=>{box.appendChild(p);if(i<H.length){H[i].dataset.i=i;box.appendChild(H[i])}});
+   others.forEach(p=>{const dx=fr.get(p)-p.getBoundingClientRect().left;if(!dx)return;p.style.transition='none';p.style.transform=`translateX(${dx}px)`;p.offsetWidth;p.style.transition='transform .24s cubic-bezier(.2,.8,.2,1)';p.style.transform=''})}
+  pane.style.transform='';const b0=pane.getBoundingClientRect().left;pane.style.transform=`translateX(${ev.clientX-grab-b0}px)`};
+ const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);if(!on)return;pane.classList.remove('dg25');box.classList.remove('dgg25');
+  pane.style.transition='transform .2s ease';pane.style.transform='';setTimeout(()=>{pane.style.transition=''},220);const o=P().map(p=>p.dataset.k);try{localStorage.setItem(B3O24,JSON.stringify(o))}catch(x){}
+  P().forEach((p,i)=>{const t=p.querySelector('.pt24');if(!t)return;t.querySelectorAll('[data-b3m]').forEach(x=>x.remove());const k=p.dataset.k;t.insertAdjacentHTML('beforeend',`${i>0?`<button type="button" data-b3m="${k}|-1" aria-label="Geser kiri">${ic('chL16',12)}</button>`:''}${i<2?`<button type="button" data-b3m="${k}|1" aria-label="Geser kanan">${ic('chR16',12)}</button>`:''}`)})};
+ addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up)},true);
+/* ---------- Tagihan: rekonsiliasi digabung jadi ringkasan singkat di detail (DN-261119-124626-493) + pembagian debit (DN-261119-125137-416) ---------- */
+function rsGrp25(T,m){const by={};T.filter(t=>(t.Kind||'EXPENSE')=='EXPENSE'&&live7(t)).forEach(t=>{const k=m=='a'?(akTop18(t.Purpose)?akLbl25(akTop18(t.Purpose)):(t.Purpose?ppName(t.Purpose):'Belum ada akun')):(kn(t.Category_ID)||'Tanpa kategori');by[k]=(by[k]||0)+amt7(t)});return Object.entries(by).sort((a,b)=>b[1]-a[1])}
+function rsMode25(){try{return localStorage.getItem('kk_rsm25')=='a'?'a':'k'}catch(e){return 'k'}}
+function rs25(id,el){const c=BVC7[id];if(!c||!el)return;const r=c.r||{},T=(r.transactions||[]).filter(t=>live7(t)),rc=r.recon||{},bv=el.querySelector('.bv7');if(!bv||bv.querySelector('.rs25'))return;
+ const n=v=>v==null||v===''?0:Math.abs(+v),col={OK:'#16a34a',DIFF:'#dc2626'}[rc.status]||'#d97706',ex=rc.expected==null?null:+rc.expected,tot=rc.total==null?null:+rc.total,df=ex==null||tot==null?null:Math.round(tot-ex);
+ const stl=rc.status=='OK'||df===0?`${ic('check',12)} Cocok dengan lembar bank`:df?`${ic('alert',12)} Selisih ${rp(Math.abs(df))}`:rc.status=='REVIEW'?'Perlu ditinjau':'Data rekonsiliasi kurang';
+ const conf=T.filter(t=>t.Bill_ID==id||isConf(t)).length,m=rsMode25(),G=rsGrp25(T,m);
+ const html=`<div class="rs25" style="--c:${col}"><div class="hh25"><span class="st25">${stl}</span><span class="mu7">${conf} transaksi terkonfirmasi lembar tagihan</span><span class="sp"></span><button type="button" data-rsx25="1">Rincian lengkap</button></div>
+  <div class="nm25"><span>Tagihan lalu <b>${rp(n(rc.previousBalance))}</b></span><span>Debit <b>${rp(n(rc.charges))}</b></span><span>Kredit/refund <b>${rp(n(rc.cashback)+n(rc.refunds)+n(rc.otherCredits))}</b></span><span>Pembayaran <b>${rp(n(rc.payments))}</b></span></div>
+  ${G.length?`<div class="tg"><button type="button" data-rsm25="k" class="${m=='k'?'on':''}">Per kategori</button><button type="button" data-rsm25="a" class="${m=='a'?'on':''}">Per akun</button></div><div class="bk">${G.slice(0,12).map(([k,v])=>`<span>${E(k)} <b>${rp(v)}</b></span>`).join('')}${G.length>12?`<span>+${G.length-12} lainnya</span>`:''}</div>`:''}<div class="more" hidden></div></div>`;
+ const pl=bv.querySelector(':scope>.pl');if(pl)pl.insertAdjacentHTML('afterend',html);else bv.insertAdjacentHTML('afterbegin',html);
+ const xb=el.querySelector('#bv_xb'),dx=el.querySelector('#bv_x'),more=bv.querySelector('.rs25 .more');if(xb&&more){more.appendChild(xb);if(dx)dx.remove()}
+ rsDebit25(el,T)}
+function rsDebit25(el,T){const row=[...el.querySelectorAll('.rc15 .r.p')].find(x=>/^Transaksi debit/.test((x.querySelector('span')||{}).textContent||''));if(!row||row.nextElementSibling&&row.nextElementSibling.classList.contains('rb25'))return;
+ const K=rsGrp25(T,'k'),A=rsGrp25(T,'a');if(K.length<2&&A.length<2)return;const f=L=>L.slice(0,8).map(([k,v])=>`${E(k)} ${rp(v)}`).join(' · ')+(L.length>8?' · …':'');
+ row.insertAdjacentHTML('afterend',`<div class="rb25">${K.length>1?`Per kategori: ${f(K)}`:''}${K.length>1&&A.length>1?'<br>':''}${A.length>1?`Per akun: ${f(A)}`:''}</div>`)}
+(function(){const V0=billView7;billView7=async function(id,el){const r=await V0.apply(this,arguments);try{rs25(id,el)}catch(e){console.warn(e)}return r}})();
+document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('[data-rsx25]');if(x){const m=x.closest('.rs25').querySelector('.more');m.hidden=!m.hidden;x.textContent=m.hidden?'Rincian lengkap':'Sembunyikan rincian';return}
+ const t=e.target.closest&&e.target.closest('[data-rsm25]');if(t){try{localStorage.setItem('kk_rsm25',t.dataset.rsm25)}catch(z){}const bv=t.closest('.bv7'),el=bv&&bv.parentNode,id=el&&el.dataset.bid24;if(!id)return;
+  const rs=bv.querySelector('.rs25'),more=rs.querySelector('.more'),hid=more.hidden,xb=more.querySelector('#bv_xb');if(xb)xb.remove();rs.remove();rs25(id,el);const m2=bv.querySelector('.rs25 .more');if(xb&&m2){m2.appendChild(xb);m2.hidden=hid;const b=bv.querySelector('[data-rsx25]');if(b)b.textContent=hid?'Rincian lengkap':'Sembunyikan rincian'}}});
+
+/* ---------- status catatan developer (DN_DONE) — 2026.11.25 ---------- */
+Object.assign(DN_DONE,Object.fromEntries([
+['DN-261119-151903-755','Pilih kategori kini dikelompokkan per jenis (Pengeluaran · Potong tagihan · Titip bayar). Tombol "Rapikan kategori dengan AI" (di dropdown kategori & Kelola kategori): Boo mengusulkan gabung kategori dobel, kategori yang sebenarnya akun (mis. Beli Stock Bisnis → kategori Stok + akun Bisnis), ganti nama & jenis; kamu centang lalu Terapkan — transaksi lama ikut dipindah.'],
+['DN-261119-124055-843','Beranda (layar ≥1100px): Ngobrol dengan Boo pindah ke panel kanan setinggi layar, bisa dilipat (default terbuka, diingat).'],
+['DN-261119-131254-550','SnK & Benefit › panel kartu: kini berisi papan promo berwarna + ringkasan syarat/manfaat/saran seperti sisi kanan Konteks, tombol Konteks & "Tanya Boo soal kartu ini"; progres syarat lama ada di bawah (bisa dibuka).'],
+['DN-261119-130901-843','Rekap Tagihan: ikon pensil di judul kolom = ganti nama akun (semua transaksi ikut); kolom "+ Akun baru" — klik atau seret transaksi ke sana untuk membuat akun baru.'],
+['DN-261119-130719-255','Lembar tagihan = acuan: saat upload tagihan, catatan manual yang salah pilih kartu/rekening (nominal sama, tanggal ±toleransi, merchant mirip) dipindah ke kartu tagihan itu (tanggal ikut tagihan, catatan "dikoreksi lembar tagihan"), bukan jadi dobel. Rekap Tagihan hanya menampilkan transaksi yang sudah terkonfirmasi lembar tagihan, per bulan tagihan TERBIT.'],
+['DN-261119-130545-151','Rekap Tagihan: kotak centang & tombol seret dihapus. Tahan klik lalu geser kartu ke kolom lain (HP: tekan lama lalu geser; tekan lama tanpa geser = menu pindah). Klik biasa = detail. Kartu memakai lebar penuh.'],
+['DN-261119-130120-950','Rekap Tagihan: kolom "Belum ada akun" dipindah ke paling kanan.'],
+['DN-261119-125823-159','Transaksi: kolom "Akun pembayar" di kanan Kategori (akun utama + sub-akun). Transaksi hasil split diberi label "Bagian 1/3 · 1 baris tagihan Rp …" agar jelas tidak dobel; saat split, tiap bagian bisa dipilih akunnya (server menyimpan akun per bagian).'],
+['DN-261119-125727-673','Transaksi: Kategori dan keterangan bawahnya ditampilkan atas–bawah; akun/sub-akun pindah ke kolom sendiri (atas–bawah).'],
+['DN-261119-125535-492','Jendela Catat dari struk (Teks OCR) diperbesar hingga ±96% layar; di HP layar penuh.'],
+['DN-261119-125332-427','Ukuran & urutan kolom (3 kolom, panel geser, lebar kolom tabel, panel lipat, panel Boo) disimpan per pengguna di server — ikut di perangkat lain.'],
+['DN-261119-125137-416','Tagihan › Rekonsiliasi: di bawah "Transaksi debit" tampil pembagian per kategori dan per akun bila lebih dari satu.'],
+['DN-261119-125019-126','Tagihan › daftar: kartu tagihan disusun ulang — foto kartu, nama, periode & tanggal cetak, nominal + status, jatuh tempo · minimum · sisa, bar terbayar, tombol bayar.'],
+['DN-261119-124834-840','Tagihan 3 kolom: tahan judul kolom lalu geser — kolom lain bergeser beranimasi sebelum dilepas (seperti urutan foto produk marketplace).'],
+['DN-261119-124626-493','Tagihan › detail: "Rekonsiliasi & detail" digabung jadi ringkasan singkat di atas (status cocok/selisih, jumlah transaksi terkonfirmasi, debit/kredit/pembayaran, pembagian per kategori/akun); rincian lengkap bisa dibuka di tempat.'],
+['DN-261119-124354-502','Tagihan 3 kolom: tinggi otomatis penuh sampai bawah layar (mengikuti ukuran jendela), isi tiap kolom bisa digulir.']
+].map(([k,v])=>[k,['kartuku-sb 2026.11.25',v]])));
 
 </script></body></html>
