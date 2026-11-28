@@ -1,5 +1,5 @@
 # KONTEKS PROJECT — booq.id · KartuKu (myWallet)
-_Lampirkan file ini setiap kali membuka chat Claude baru. Versi terakhir: **kartuku-sb 2026.11.25**._
+_Lampirkan file ini setiap kali membuka chat Claude baru. Versi terakhir: **kartuku-sb 2026.11.27**. Untuk pekerjaan Separation of Concerns lampirkan juga **SOC-BOOQ.md**._
 
 ## 1. Ringkasan
 - Pemilik: Hermawan (Waterground Coffee). Tidak paham coding → minta langkah sangat rinci & **file lengkap siap Replace-All**.
@@ -882,3 +882,138 @@ Catatan: 18 ID lain di file permintaan 19-Nov (240, 606, 921, 269, 728, 806, 438
 
 ### Catatan uji 2026.11.25
 Playwright 1400/1500 & 390: panel Boo lipat/buka & tersimpan ke server; kolom Akun pembayar; Rekap tahan-geser ke "+ Akun baru" → buat akun → ganti nama; ringkasan rekonsiliasi + per kategori/akun; geser kolom 3-kolom beranimasi tersimpan; tinggi penuh; SnK panel kartu; rapikan kategori (usulan → terapkan). Regresi t1/t6/t8/u1/u3/t24* lolos.
+
+
+## Rilis kartuku-sb 2026.11.26 (23 Nov 2026) — 36 catatan + persiapan SOC
+- File berubah: `index.html` (blok `fe26`, CSS `css1126`, fungsi berakhiran `26` + **edit langsung** di sumbernya: `b3on24`, `b3Fit25`, tombol 3 kolom dihapus, `upT9(cid,per)`, `vEdit` (tombol `ai26`, `dupH26`), `rawOf11`/`fpPick11` (bug `S.txAll`), `akTops`/`akSubs`/`akSync25`, widget Catatan Dev (`dnPick` banyak bagian, lampiran, `dnMd26`, `dnZip26`), validasi No. ID, kapsul channel Transaksi, papan Rekap (`rkv` 24: `.sp26`, kolom “+ Akun baru” setelah “Belum ada akun”, drag `rkPh26`), obrolan Beranda lama dimatikan, `APP_VERSION`) dan `booq_edge_function_SATU_FILE.ts` (**WAJIB deploy ulang**). Baru: **SOC-BOOQ.md**, folder `dev-tools/` (harness uji, tidak diunggah). SQL tidak perlu.
+- Backend: DevNotes kolom baru **`Files`** (di ujung) + `Element` s.d. 2.400 / `Element_Text` 1.200 karakter (beberapa bagian dipisah baris baru); `api_uploadFile` menerima `ref:'DEVNOTE'` untuk gambar/PDF/teks/CSV/JSON/ZIP/XLSX/DOCX/MP4/WebM; `api_chat21` peran HOME = asisten keuangan pribadi seluruh aplikasi + balasan `acts:[{label,go,q}]` (tombol buka halaman).
+- Tagihan: ruang kerja penuh layar (`html.tb9`/`html.tbR26` → `#v` = tinggi layar − header `--hd26`, panel bergulir sendiri, tanpa JS saat zoom), 3 kolom selalu (≥900px), daftar baris rata (`.gh9`/`.bl`), detail = transaksi selalu terbuka + nota subtotal/total (`rs26`, `.rk26`, `rsSub26`), upload dari 1 kartu → `.nb26`.
+- Verifikasi baris: `vAI26` (satu tombol AI), `dupInfo26/dupChip26/dupH26/dupUse26` (acuan `r.dup26={k,use:'row'|'old',tid,oid}`; `row` → catatan lama disamakan setelah `api_importStatement` sukses), data lembar tagihan di `.c-mid`.
+- ML: `Learn_Map.ml26` {merchant ternormalisasi → {k,n,w,pp,ch,at}} maks 400 (`ml26Build` sekali sehari, `ml26Put` tiap koreksi/simpan) memperkuat `mlPredict23`; `mlForm26` di form Catat.
+- OCR: `itText` membaca PDF scan (render → OCR per halaman, maks 4), teks/HTML/EML, Excel, HEIC; `ocrFile9` fallback ke `itText`; `ocrParse26` (toko, No. pesanan, tanggal/jam, barang qty×nama, biaya, total, ••4 digit); Rincian: AI gagal → `itLocal26`.
+- Transaksi: filter di judul tabel (`thF26`, popover `.hp26`, state tetap `Q.*`/`TQ7.st`; filter lama disembunyikan di desktop), pencarian prediktif `fz26/fzW26/lev26` + saran `sg26`, jendela Catat ±82% + `−` (`min26/unmin26`, kapsul `#mn26`) & `×` (`close26`), kartu “Hasil baca struk” `#ocr26` (`ocrCard26/ocrFill26`, merchant dari teks struk), No. ID opsional.
+- Semua jendela: panduan ukuran 82vw × 82vh (desktop).
+- BOO sidebar kanan semua halaman: `booMount26/booOpen26`, kunci `kk_boo26` (ikut Ui_Prefs), obrolan `APP` (riwayat HOME dipindah), di SnK = obrolan `SNK` (daftar riwayat `.sb23` disembunyikan, kotak di halaman = saring + tanya), konteks `ctxApp26` (halaman aktif + ringkasan), tombol `acts`.
+- Kelola Akun: geser bebas (pointer + FLIP `flip26`), simpan `saveLists({akunOrder})` → Settings `Akun_Order`, dipakai `akTops/akSubs/AK18`.
+- Rekap: `.sp26` kiri kelola akun (`.bd24` 2 kolom/baris) · kanan rincian (`.old26`), nama transaksi penuh, drag dengan placeholder `.kc24.ph26` + luncur.
+- Catatan Dev: `dnEls26/dnElsSet26` (Element dipisah `\n`), `dnAtt26` (klik/seret/Ctrl+V, unggah langsung), tombol “+ Lampiran (.zip)” (JSZip dari cdnjs).
+
+| ID | Menu › lokasi | Isi singkat |
+|---|---|---|
+| DN-261123-163342-561 | Tagihan › Upload (dari kartu) | hanya kartu yang diklik: tombol “Tidak ada tagihan di bulan ini” |
+| DN-261123-163308-750 | Tagihan | bukan kartu — penuh sampai bawah seperti Excel, ringan saat zoom |
+| DN-261120-122713-813 | Tagihan › Upload | “+ Konfirmasi untuk kartu lain…” → tombol sederhana |
+| DN-261120-122216-271 | Tagihan › Rincian & bukti · Catat | OCR PDF scan & format lain |
+| DN-261120-122019-458 | Tagihan › Rincian & bukti (HP) | layar penuh + isi dari OCR bila AI gagal |
+| DN-261120-121857-434 | Kelola Akun (popup) | geser urutan semua kartu akun |
+| DN-261120-121301-158 | Tagihan › verifikasi | pilih acuan bila No. pesanan sama |
+| DN-261120-121119-250 | Tagihan › verifikasi | info “terhubung” (bukan merah) |
+| DN-261120-120820-319 | Tagihan › verifikasi · Catat | metadata merchant tersimpan (ml26) |
+| DN-261120-120715-452 | Tagihan › verifikasi · Catat | kategori ML dari kata kunci, merchant, barang |
+| DN-261120-120608-776 | Tagihan › verifikasi | satu tombol “Isi dengan AI” di kaki panel |
+| DN-261120-120527-316 | Tagihan › Input Tagihan | penuh sampai bawah |
+| DN-261120-120422-327 | Tagihan › verifikasi | data lembar tagihan di dasar kartu tengah |
+| DN-261119-201501-529 | Tagihan | diringankan (lihat catatan uji) |
+| DN-261119-201133-189 | Tagihan | selalu 3 kolom |
+| DN-261119-200937-523 | Tagihan › detail | rekonsiliasi rata, tanpa lipatan |
+| DN-261119-200801-764 | Tagihan | 3 panel sama tinggi, penuh |
+| DN-261119-200708-709 | Tagihan | tinggi otomatis penuh (menggantikan tarik manual) |
+| DN-261119-200630-334 | Tagihan › detail | transaksi + subtotal/total seperti nota |
+| DN-261119-200445-664 | Tagihan | tanpa ruang kosong |
+| DN-261121-181509-848 | Beranda/Transaksi › Catat dari struk | rincian per barang |
+| DN-261119-204153-441 | BOO | asisten keuangan pribadi |
+| DN-261119-204129-505 | BOO | sidebar kanan hover + kunci, semua halaman |
+| DN-261120-124238-590 | Transaksi › tabel | filter di judul tabel; kapsul = ganti |
+| DN-261120-123822-779 | Transaksi › Catat | No. ID opsional |
+| DN-261119-202151-251 | Transaksi › Catat | − kecilkan / × tutup & hapus |
+| DN-261119-202056-836 | Semua jendela | ukuran ±82% layar |
+| DN-261119-201941-963 | Transaksi › cari | prediktif + saran |
+| DN-261119-200126-803 | Transaksi › Catat | kartu Hasil baca struk |
+| DN-261119-195940-131 | Transaksi › Catat | merchant dari teks struk |
+| DN-261119-205437-468 | Catatan Dev | banyak bagian + lampiran + .zip |
+| DN-261119-205353-780 | SnK | riwayat obrolan dihapus → sidebar BOO |
+| DN-261119-202834-607 | Rekap | nama transaksi lengkap |
+| DN-261119-202535-622 | Rekap | 2 bagian kiri/kanan |
+| DN-261119-202503-446 | Rekap | kolom akun lebar, 2 per baris |
+| DN-261119-202413-992 | Rekap · Kelola Akun | animasi geser & pratinjau tempat |
+
+### Catatan uji 2026.11.26
+Harness baru: backend asli (Edge Function) dijalankan di Node dengan DB memori + Playwright (Chromium) + Tesseract lokal; data uji 5 kartu, 58 tagihan, ±950 transaksi. Desktop 1400 & HP 390: semua halaman, form Catat (OCR struk PNG → toko/No./tanggal/total/kategori, − kecilkan & lanjutkan, × konfirmasi), PDF scan terbaca OCR (±2 dtk), Rincian HP terisi dari OCR saat AI tidak ada, filter judul tabel & cari “nko”, Rekap seret dengan placeholder → 1 perubahan, Kelola Akun geser Bisnis ke depan → `Akun_Order` tersimpan, Catatan Dev 2 bagian + lampiran tersimpan (`Files`), BOO hover/kunci/konteks. Tanpa error JavaScript. Render Tagihan ±60 ms (sama dengan 11.25) tetapi tanpa hitung ulang saat zoom & tanpa gulir halaman.
+- Belum diuji langsung: Gemini sungguhan (balasan `acts`), PDF tagihan asli bank, pg_cron.
+
+### Ide berikutnya
+- SOC Fase 1 (pisah file sumber + build 1 file) — lihat SOC-BOOQ.md §4.
+- BOO bisa menjalankan aksi ringan (mis. “tandai lunas”, “pindah akun”) dengan konfirmasi.
+
+## Rilis kartuku-sb 2026.11.27 (28 Nov 2026) — 49 catatan (permintaan-booq-20261128)
+- File berubah: `index.html` (blok `fe27` di ujung script + **edit langsung**: `dupFind18` (refKey27/sim27), `akSubs=p=>[]`, `catOpts` → `catSort27/catFull27`, form kategori `kf2` punya select **Induk** (`#k2_p`, kolom `Parent`), `tfFiles9` ditulis ulang **tanpa blokir** (entri sementara blob lokal → `X.up27=Promise.all`, `ocrQuick27`, `api_aiItems` → `fill27` efek ketik, `tfBusy27/aiWait27`), `cssPath` unik (`:nth-of-type`, 14 level) + sorotan pakai elemen asli `_n`, kartu Rekap `tNm27` + `rf27`), `booq_edge_function_SATU_FILE.ts`.
+- Backend (WAJIB deploy ulang): `Categories` kolom baru **`Parent`** (di ujung; `cleanCat_`, `api_saveCategory` mempertahankan Parent lama), `ROUTES_` jadi `let` + rute **`api_aiCat27`** (AI rapikan kategori: gabung yang mirip / jadikan sub-kategori), `api_loanPub` mengirim `method, limit, intOn, krate, itype, draws` (halaman link KRK).
+- Catat (Transaksi): penampil bukti tunggal `tfPv9`→`.pv27` (strip mini bisa digeser urutannya, PDF dirender `pdfImg27`, tombol Teks/OCR/Penuh untuk SEMUA jenis), unggahan `fUp` anti-dobel (`HU27` sidik isi file + `kk_up27` di localStorage, `shrink27`, coba ulang 3×), `callBackend` coba ulang otomatis 5xx/546 (aman karena actionId), kartu “Hasil baca struk” (`ocrCard26/ocrFill26` ditulis ulang) cermin dua arah dengan isian, panel kanan: isian di atas, hasil OCR/AI di bawah (`tfLay27`), kamera HP `cam27/camGo27`.
+- ML merchant: `Learn_Map.mr27` (per format struk: baris mana = merchant, dari koreksi pengguna); nama platform (Shopee/Tokopedia/…) dilewati (`PLAT27`).
+- **Satu kartu hasil baca** `rcH27(o)` dipakai: Rincian & bukti Tagihan (`itCard27`, editor dilipat `itEd27`, tabel “Detail pesanan” lama disembunyikan) dan Konfirmasi Pembayaran (`payCard27` → `payParse27` + `pfParse13` lokal/AI; klik nilai = fokus ke input `data-f27`). Penampil melayang `fView` dapat tombol OCR & Baca ulang.
+- Tagihan › verifikasi: hubungkan baris ke transaksi tercatat `link27/cand27/lkH27/txPick27`, otomatis `auto27` (1 kandidat persis → terhubung; beberapa catatan yang jumlahnya persis → otomatis split), memo yang terhubung dihapus setelah simpan; split tampil seperti transaksi biasa; toolbar `.bl27/.gl27` (lonceng di bilah judul), “Tidak ada tagihan” `.nb27` → `nbSet15`; 3/2/1 kolom; BOO hanya pojok kanan bawah (tutup saat mouseout); quick view tanpa lup & rasio asli (`thbFill`); `topLayer27` mencegah Enter/Esc tembus.
+- Transaksi tabel: No. ref abu-abu `txDeco27/refOf27`, filter bank & kartu + chip akun, klik judul lagi = tutup filter, ganti jenis tidak reset/lompat; sinkron latar `freshTx27` (sebelum cek dobel & saat kembali ke tab).
+- Rekap Tagihan: kartu pakai `tNm27` (Label platform lama kalah oleh merchant baru), no. ref abu-abu, **dobel persis** (nominal + tanggal + no. ref + kartu) → `dupScan27` + bar “Hapus dobel” `dupDel27` (yang paling lengkap disimpan), garis geser `gut27` (`--l27`, `localStorage rkL27`). Simpan transaksi: Label platform lama dikosongkan bila merchant diganti.
+- Cicilan › Bagikan: halaman publik `?ci=` dibungkus `pubR11` → lencana mode, KRK = plafon/dipinjam/dibayar/sisa (bukan rencana tenor), bagian **Rincian utang & pembayaran** (`pubLedger27`, saldo berjalan) + foto bukti besar (lazy, IntersectionObserver), zoom bukti s.d. 900px.
+- Loading `ld9`: langkah “A → B” jadi checklist maju + pesan menenangkan, tanpa backdrop-blur (ringan di HP).
+- Kelola: sub-akun dihapus (`subMerge27` menggabung ke induk), kategori punya Induk + pencarian sinonim `catSem27/SYN27` + rapikan AI di latar.
+
+### Tabel ID → lokasi menu (2026.11.27)
+| ID | Menu | Isi |
+|---|---|---|
+| DN-261128-113608-118 | Transaksi › Catat | Upload struk tanpa menunggu: foto/PDF langsung tampil, OCR+AI mengisi tiap kotak dengan efek ketik di latar; kamu bisa terus mengisi. |
+| DN-261128-112524-761 | Transaksi › Catat | AI belajar dari koreksimu: baris yang kamu pilih sebagai merchant diingat per format struk (Learn_Map "mr27"). |
+| DN-261128-112158-477 | Transaksi › Catat | Kartu "Hasil baca struk" selalu sinkron dengan isian transaksi (cermin dua arah). |
+| DN-261127-155657-141 | Transaksi › Jepret struk (HP) | Tombol "Jepret struk": kamera langsung, dibaca otomatis, kategori ditebak, unggahan anti-dobel + coba ulang otomatis. |
+| DN-261124-164738-902 | Transaksi › tabel | No. ref / ID pesanan abu-abu di bawah nama transaksi. |
+| DN-261124-164658-575 | Transaksi › Catat | Alur otomatis: OCR lokal → AI isi semua kotak sampai kartu (••1234) & metode bayar, tanpa layar kunci penuh. |
+| DN-261124-154250-773 | Transaksi › Catat | Nama merchant tidak lagi asal baris teratas (Shopee/Tokopedia dll dilewati); pakai pola yang dipelajari. |
+| DN-261124-143416-416 | Transaksi › tabel | Ganti jenis transaksi tidak me-reset filter & tidak melompat ke atas. |
+| DN-261124-142703-902 | Transaksi › filter | Filter bank & kartu tampil lagi; pencarian prediktif (salah ketik/konteks tetap ketemu). |
+| DN-261124-142142-995 | Transaksi › Catat (bukti) | Banyak bukti: 1 penampil utama + strip mini yang bisa digeser urutannya, tanpa gulir panjang. |
+| DN-261123-221153-687 | Transaksi › tabel | Klik judul kolom lagi = menutup menu filter. |
+| DN-261123-220829-477 | Transaksi › Catat | Tanggal (dan jam) otomatis terisi dari hasil OCR. |
+| DN-261123-220806-590 | Transaksi › Catat | Panel kanan: isian kamu di atas, hasil OCR/Smart AI di bawah. |
+| DN-261123-220644-797 | Transaksi › Catat | Tidak ada loading layar penuh — hanya kotak yang sedang diproses yang berkedip. |
+| DN-261123-190525-533 | Transaksi › filter | Filter per akun pembayar (chip ringkas) + kategori dirapikan. |
+| DN-261123-165756-269 | Kelola › Akun | Sub-akun dihapus: semua sub-akun digabung ke akun induk (konteks pindah ke Kategori & sub-kategori). |
+| DN-261123-165551-669 | Transaksi / Beranda | Data dari HP & web disinkron di latar sebelum cek dobel dan saat kembali ke aplikasi. |
+| DN-261123-165504-441 | Transaksi › Rincian | Rincian otomatis seperti struk: per barang (qty × harga), biaya admin, ongkir, pajak, diskon, total. |
+| DN-261125-110955-587 | Tagihan › Konfirmasi Pembayaran | Bukti bayar dibaca OCR (+AI) dan tampil di kartu "Hasil baca bukti bayar" yang sama; klik nilai untuk mengubah. |
+| DN-261124-230822-420 | Tagihan › Input/Verifikasi | Baris tagihan bisa disambung dari pencarian transaksi; bila belum ada → upload struk. |
+| DN-261124-230636-954 | Tagihan › Input/Verifikasi | Split tetap dicocokkan ke transaksi tercatat; jumlah persis → otomatis split & terhubung. |
+| DN-261124-225449-882 | Tagihan › Simpan | Error HTTP 546/5xx/jaringan → coba ulang otomatis tanpa dobel (actionId). |
+| DN-261124-113035-383 | Tagihan | Baris atas dirapatkan (lonceng & target kartu di bilah judul), warna tenang: teal utama, hijau lunas, kuning segera, merah hanya terlambat. |
+| DN-261123-191347-354 | Tagihan › Input/Verifikasi | Baris yang cocok dengan transaksimu menampilkan struk & data lengkapnya. |
+| DN-261123-191044-470 | Tagihan › Rincian & bukti | Satu kartu "Hasil baca struk" (fungsi sama dengan Catat); editor rincian dilipat di tombol "Ubah rincian" — tidak ada tabel berulang. |
+| DN-261123-190737-430 | Tagihan › Input | Bilah AI ringkas & opsional. |
+| DN-261123-190104-361 | Tagihan | "Tidak ada tagihan": klik → konfirmasi → selesai. |
+| DN-261123-185710-452 | Semua halaman | BOO hanya di pojok kanan bawah, muncul saat kursor di tombolnya, tertutup saat kursor pergi. |
+| DN-261123-183658-322 | Tagihan › Split | Tombol Selesai/Hapus selalu di bagian paling bawah kartu. |
+| DN-261123-183104-678 | Tagihan › Split | Bagian split tampil seperti transaksi biasa: kiri bukti, kanan detail · akun · kategori. |
+| DN-261123-182859-588 | Tagihan › Input/Verifikasi | Tombol "Cari transaksi" dari semua transaksi; tidak ketemu → upload struk. |
+| DN-261123-182429-369 | Tagihan › Quick view | Tanpa kaca pembesar; ukuran mengikuti rasio asli (tanpa ruang kosong). |
+| DN-261123-182103-333 | Tagihan › Input/Verifikasi | Hubungkan ke transaksi tercatat (lanjutan 182023-346). |
+| DN-261123-182023-346 | Tagihan › Input/Verifikasi | Baris pembayaran terhubung ke riwayat bayar tagihan bulan lalu (struk & data bayar tampil). |
+| DN-261123-181912-754 | Tagihan › Input | Halaman bisa bergulir sedikit, PDF & kartu edit setinggi layar; Enter/Esc tidak tembus ke belakang. |
+| DN-261123-165123-268 | Kelola › Kategori | Sub-kategori (Induk) + pencarian kategori paham konteks + rapikan kategori dengan AI (di latar). |
+| DN-261123-164817-685 | Transaksi › Catat (bukti) | Tambah foto/PDF bisa seret-lepas; banyak file sekaligus diproses AI. |
+| DN-261123-164635-981 | Tagihan | 3 / 2 / 1 kolom mengikuti lebar jendela. |
+| DN-261125-110327-256 | Cicilan › Bagikan (link publik) | Halaman link dibedakan KRK (plafon, dipinjam, dibayar, sisa) vs Cicilan tetap (tenor); Rincian utang & pembayaran di bawah dengan foto bukti besar. |
+| DN-261125-104056-689 | Rekap Tagihan / Tagihan | Tombol OCR & Baca ulang ada di semua jenis bukti (gambar & PDF), termasuk penampil melayang. |
+| DN-261125-103708-125 | Catatan Developer | Mode klik-sorot memakai selector unik + elemen asli → yang disorot tepat yang kamu klik. |
+| DN-261125-103638-417 | Rekap Tagihan / Transaksi | Ganti merchant: judul otomatis lama (mis. "SHOPEE") ikut diganti; kartu Rekap memakai nama baru. |
+| DN-261125-103239-889 | Semua halaman | Unggah/OCR/AI di latar; sidik jari isi file mencegah unggah 2× (juga setelah muat ulang). |
+| DN-261125-102926-224 | Rekap Tagihan | No. ref abu-abu di bawah nama; transaksi dobel persis (nominal, tanggal, no. ID) ditandai + tombol "Hapus dobel". |
+| DN-261125-101348-833 | Semua halaman | Loading dinamis ringan: langkah → jadi checklist yang maju + pesan menenangkan, tanpa blur berat. |
+| DN-261125-100951-549 | Rekap Tagihan › Edit transaksi | Edit transaksi punya "Isi dengan AI" + alat bukti yang sama dengan Catat. |
+| DN-261125-100521-585 | Semua penampil bukti | Satu penampil & satu kartu hasil baca untuk Catat, Edit, Rincian & bukti, Bayar tagihan — ubah satu, semua ikut. |
+| DN-261125-095407-765 | Rekap Tagihan | Garis geser di antara 2 panel (desktop), lebar diingat; klik ganda = normal. |
+| DN-261124-164327-380 | Beranda › Cek dobel | Cek dobel memakai no. referensi & kemiripan merchant — Telkomsel vs saldo iklan Shopee tidak dianggap sama. |
+
+### Catatan uji 2026.11.27
+Harness: backend asli di Node + DB memori + Playwright + Tesseract lokal. Desktop 1400 & HP 390: semua halaman tanpa error JS; alur Catat (foto tampil seketika, OCR isi merchant/ID/tanggal/total, kartu ••2082 cocok), PDF+gambar 1 penampil, auto-link & auto-split Tagihan, kartu hasil baca di Rincian & bukti dan Konfirmasi Pembayaran, Rekap (dobel + garis geser), halaman link Cicilan KRK & tenor diuji.
+- Belum diuji langsung: Gemini sungguhan (`api_aiCat27`, isi AI), kamera HP fisik, PDF tagihan bank asli.
+
+### Ide berikutnya
+- SOC Fase 1 (pisah file sumber + build 1 file) — lihat SOC-BOOQ.md §4; lapisan `fe18…fe27` makin tebal → saatnya dirapikan.
